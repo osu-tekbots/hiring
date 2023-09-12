@@ -1,0 +1,7 @@
+*.ini
+.htaccess
+private/
+.private/
+uploads/
+.vs/
+**/.DS_Store
