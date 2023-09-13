@@ -159,6 +159,7 @@ header("Expires: 0");
                 '/education/hiring/pages/login.php', 
                 '/education/hiring/pages/localLogin.php',
                 '/education/hiring/pages/localForgotPassword.php',
+                '/education/hiring/pages/localResetPassword.php',
                 '/education/hiring/pages/localNewUser.php',
                 '/education/hiring/pages/error.php']))
                 echo '<div class="d-flex w-100 align-items-end justify-content-center navbarBrowser">

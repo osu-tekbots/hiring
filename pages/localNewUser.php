@@ -24,6 +24,10 @@ include_once PUBLIC_FILES . '/modules/header.php';
         <div class="container py-5 h-100">
             <div class="row d-flex justify-content-center align-items-center h-100">
                 <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        You will set your password after creating an account and verifying your email address.
+                    </div>
                     <div class="card shadow-2-strong bg-light" style="border-radius: 1rem;">
                         <div class="card-body p-5 text-center">
                             <h3 class="mb-5">Create Local Account</h3>
@@ -38,10 +42,6 @@ include_once PUBLIC_FILES . '/modules/header.php';
                             <div class="mb-4 input-group">
                                 <div class="input-group-prepend"><label class="input-group-text" for="userEmail">Email Address</label></div>
                                 <input type="email" required name="userEmail" id="userEmail" class="form-control form-control-lg" />
-                            </div>
-                            <div class="mb-4 input-group">
-                                <div class="input-group-prepend"><label class="input-group-text" for="userPassword">Password</label></div>
-                                <input type="password" required name="userPassword" id="userPassword" class="form-control form-control-lg" />
                             </div>
                             <button class="btn btn-primary btn-lg btn-block" type="submit">Create Account</button>
                         </div>

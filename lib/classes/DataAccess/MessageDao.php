@@ -91,11 +91,13 @@ class MessageDao {
     public function updateMessage($message) {
         try {
             $sql = 'UPDATE hiring_Message
-                SET `_lastUpdated` = :messageLastUpdated
-                WHERE `m_id` = :messageID;';
+                SET `m_subject` = :subject,
+                    `m_body` = :body
+                WHERE `m_id` = :id;';
             $params = array(
-                ':messageLastUpdated' => $message->getLastUpdated()->format('Y-m-d H:i:s'),
-                ':messageID' => $message->getID()
+                ':subject' => $message->getSubject(),
+                ':body' => $message->getBody(),
+                ':id' => $message->getID()
             );
             $this->conn->execute($sql, $params);
 
@@ -118,6 +120,7 @@ class MessageDao {
         $message->setSubject($row['m_subject']);
         $message->setBody($row['m_body']);
         $message->setPurpose($row['m_purpose']);
+        $message->setInserts($row['m_inserts']);
 
         return $message;
     }

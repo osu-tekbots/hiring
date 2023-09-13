@@ -27,13 +27,13 @@ $user = $userDao->getUserByID($_SESSION['userID']);
 $messages = $messageDao->getAllMessages();
 ?>
 
-<div class="admin-content" id="content-wrapper">
+<div id="content-wrapper">
 <br><br><br>
-<div class="container">
-    <div class="alert alert-danger">
-        I haven't had a chance to make the <kbd>Update</kbd> and <kbd>Test Stored Email</kbd> buttons work yet; I got pulled away to higher-priority
-        changes throughout the site.<br>
-        -- Nate
+<div class="container" style="border: 2px solid black">
+    <div class="row py-3" style="border: 1px solid black">
+        <div class="col">
+            <h2 class="my-auto" style="text-align: center">Messages</h2>
+        </div>
     </div>
     <?php
         foreach ($messages as $m) {
@@ -41,36 +41,35 @@ $messages = $messageDao->getAllMessages();
             $subject = $m->getSubject();
             $body = $m->getBody();
             $usage = $m->getPurpose();
+            $inserts = $m->getInserts();
             
-            echo '<div class="admin-paper">
-                    <h6>Message ID: '.$message_id.'<BR>Purpose: '.$usage.'</h6>
-                    <form>
-                        <div id="row'.$message_id.'" style="padding-left:4px;padding-right:4px;margin-top:4px;margin-bottom:4px;" oninput="setActive(this, true)">
-                            <div class="form-group row">
-                                <label for="subject'.$message_id.'" class="col-sm-1 col-form-label">Subject</label>
-                                <div class="col-sm-11"><input type="text" class="form-control" id="subject'.$message_id.'" value="'.$subject.'"></div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="body'.$message_id.'" class="col-sm-1 col-form-label">Body</label>
-                                <div class="col-sm-8">
+            echo '<div class="row" style="border: 1px solid black">
+                    <div id="row'.$message_id.'" class="container m-1 p-2" oninput="setActive(this, true)">
+                        <div class="row m-1">
+                            <h5>'.$usage.'</h5>
+                        </div>
+                        <div class="row m-1">
+                            <div class="col-sm-9">
+                                <div class="input-group p-1">
+                                    <div class="input-group-prepend"><label for="subject'.$message_id.'" class="input-group-text">Subject</label></div>
+                                    <input type="text" class="form-control" id="subject'.$message_id.'" value="'.$subject.'">
+                                </div>
+                                <div class="input-group p-1">
+                                    <div class="input-group-prepend"><label for="body'.$message_id.'" class="input-group-text">Body</label></div>
                                     <textarea rows="6" type="text" class="form-control" id="body'.$message_id.'" style="min-height: 100%">'.$body.'</textarea>
                                 </div>
-                                <div class="col-sm-3">
-                                    <strong>Inserts</strong><BR>
-                                    {{name}}: Full Name<BR>
-                                    {{role}}: Role for Position<BR>
-                                    {{position}}: Position Name<BR>
-                                    {{positionID}}: Position ID<BR>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <div class="col-sm-10">
-                                    <button type="button" class="btn btn-primary" onclick="updateMessage(\''.$message_id.'\');" disabled>Saved</button>
+                                <div class="d-flex justify-content-end p-1">
+                                    <div style="flex-grow: 1"><h6>Message ID: '.$message_id.'</h6></div>
+                                    <button type="button" class="btn btn-primary mx-1" onclick="updateMessage(\''.$message_id.'\');" disabled>Saved</button>
                                     <button type="button" class="btn btn-outline-primary" onclick="sendTestMessage(\''.$message_id.'\');">Test Stored Email</button>
                                 </div>
                             </div>
+                            <div class="col-sm-3">
+                                <strong>Inserts</strong><BR>
+                                '.$inserts.'
+                            </div>
                         </div>
-                    </form>
+                    </div>
                 </div>';
         }
 
@@ -107,13 +106,13 @@ $messages = $messageDao->getAllMessages();
         
         let content = {
             action: 'updateMessage',
+            id: id,
             subject: subject,
-            body: body,
-            format: format,
-            message_id: id
+            body: body
         }
         
         api.post('/message.php', content).then(res => {
+            setActive(document.getElementById('row'+id), false);
             snackbar(res.message, 'success');
         }).catch(err => {
             snackbar(err.message, 'error');
@@ -127,9 +126,9 @@ $messages = $messageDao->getAllMessages();
         let email = "<?php echo $user->getEmail();?>"
         if(confirm('Confirm that a test email will be sent to your email address (' + email + ')?')) {
             let content = {
-                action: 'sendMessage',
-                email: email,
-                message_id: id
+                action: 'sendTestMessage',
+                id: id,
+                email: email
             }
             
             api.post('/message.php', content).then(res => {

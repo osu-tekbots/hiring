@@ -5,14 +5,24 @@ use Model\User;
 use Model\Role;
 use Model\RoleForPosition;
 use DataAccess\RoleDao;
+use Email\HiringMailer;
 
 /**
  * Defines the logic for how to handle API requests made to modify Role information.
  */
 class RoleActionHandler extends ActionHandler {
 
+    /** @var \DataAccess\PositionDao */
+    private $positionDao;
+
     /** @var \DataAccess\RoleDao */
     private $roleDao;
+
+    /** @var \DataAccess\UserDao */
+    private $userDao;
+
+    /** @var \DataAccess\MessageDao */
+    private $messageDao;
 	
     /**
      * Constructs a new instance of the Role action handler.
@@ -23,10 +33,13 @@ class RoleActionHandler extends ActionHandler {
      * @param \DataAccess\RoleDao $roleDao The class for accessing the Role database table
      * @param \Util\Logger $logger The class for logging execution details
      */
-	public function __construct($roleDao, $logger)
+	public function __construct($positionDao, $roleDao, $userDao, $messageDao, $logger)
     {
         parent::__construct($logger);
+        $this->positionDao = $positionDao;
 		$this->roleDao = $roleDao;
+		$this->userDao = $userDao;
+		$this->messageDao = $messageDao;
     }
 
     /**
@@ -47,8 +60,20 @@ class RoleActionHandler extends ActionHandler {
         // Get request body
         $body = $this->requestBody;
 
+        // Get the position
+        $position = $this->positionDao->getPosition($body['positionID']);
+        if(!$position) {
+            $this->respond(new Response(Response::BAD_REQUEST, 'Position Not Found'));
+        }
+
         // Check if the user is allowed to add an instance
         $this->verifyUserRole('Search Chair', $body['positionID']);
+        
+        // Get the role
+        $role = $this->roleDao->getRoleByID($body['roleID']);
+
+        // Get the user
+        $user = $this->userDao->getUserByID($body['userID']);
 
         // Make sure user doesn't already have a role for this position
         $alreadyExists = $this->roleDao->getUserRoleForPosition($body['userID'], $body['positionID']);
@@ -61,9 +86,18 @@ class RoleActionHandler extends ActionHandler {
         
         // Use Response object to send DAO action results
         if($roleForPositionID===false) {
-            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Role not created'));
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Role not added'));
         }
-		$this->respond(new Response(Response::OK, 'Role created', $roleForPositionID));
+
+        // Email the new member to tell them they've been added
+        $hiringMailer = new HiringMailer($position->getCommitteeEmail(), null, $this->logger);
+        $message = $this->messageDao->getMessageByID(1);
+        $ok = $hiringMailer->sendAddedToCommitteeEmail($user, $message, $position, $role->getName());
+        if(!$ok) {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'New User Not Notified of Addition'));
+        }
+
+		$this->respond(new Response(Response::OK, 'Role added', $roleForPositionID));
     }
 
 

@@ -8,16 +8,19 @@ include_once '../bootstrap.php';
 
 // Setup our data access and handler classes
 use DataAccess\UserDao;
+use DataAccess\MessageDao;
 use Model\User;
 use Model\UserAuth;
 use Util\IdGenerator;
 use Email\Mailer;
+use Email\HiringMailer;
 
 if(!session_id()) {
     session_start();
 }
 
 $userDao = new UserDao($dbConn, $logger);
+$messageDao = new MessageDao($dbConn, $logger);
 
 // Verify parameters
 if (!isset($_POST) || (isset($_POST) && !isset($_POST['userEmail'])) ) {
@@ -27,11 +30,11 @@ if (!isset($_POST) || (isset($_POST) && !isset($_POST['userEmail'])) ) {
 // Call the appropriate handler function
 switch($_POST['action']) {
     case 'addUser': 
-        addUser($userDao, $configManager, $logger);
+        addUser($userDao, $messageDao, $configManager, $logger);
         break;
 
     case 'forgotPassword':
-        forgotPassword($userDao, $configManager, $logger);
+        forgotPassword($userDao, $messageDao, $configManager, $logger);
         break;
     
     case 'resetPassword':
@@ -70,7 +73,7 @@ function displayError($message) {
  * 
  * @return void
  */
-function addUser($userDao, $configManager, $logger) {
+function addUser($userDao, $messageDao, $configManager, $logger) {
     $user = $userDao->getUserByEmail($_POST['userEmail']);
 
     // Verify that there's no already-existing user & all necessary information is given
@@ -80,11 +83,12 @@ function addUser($userDao, $configManager, $logger) {
     if ($_POST['userFirst'] == '' || $_POST['userLast'] == ''){
         displayError('Please enter a first and last name for your account.');
     }
-    if($_POST['userPassword'] == '') {
-        displayError('Please enter a password for your account.');
-    }
 
     $localProvider = $userDao->getAuthProviderByName('Local');
+
+    //
+    // Create a new user
+    //
 
     // Create a user with the given information
     $u = new User();
@@ -99,7 +103,7 @@ function addUser($userDao, $configManager, $logger) {
 
     // Set local credentials
     $localAuthID = IdGenerator::generateSecureUniqueId();
-    $ok = $userDao->addNewLocalAuth($localAuthID, $_POST['userPassword']);
+    $ok = $userDao->addNewLocalAuth($localAuthID, IdGenerator::generateSecureUniqueId(24)); // Generate random password to protect the account until the user creates a password. Increase `24` for greater security.
     if(!$ok) {
         displayError('We failed to save your password. Please contact the site admins for help.');
     }
@@ -111,20 +115,40 @@ function addUser($userDao, $configManager, $logger) {
     $ua->setProviderID($localAuthID);
     $ok = $userDao->addNewUserAuth($ua);
     if(!$ok) {
-        displayError('We failed to link your password with your account. Please contact the site admins for help.');
+        displayError('We failed to link your credentials with your account. Please contact the site admins for help.');
     }
-
-    // Set the user as logged in
-    $_SESSION['site'] = 'hiring';
-    $_SESSION['userID'] = $u->getID();
-    $_SESSION['userAccessLevel'] = $u->getAccessLevel();
-    $_SESSION['newUser'] = true;
 
     $logger->info("Added local user ". $_POST['userFirst'] . " " . $_POST['userLast']);
 
-    // Redirect the user to their newly-generated dashboard
-    $redirect = $configManager->getBaseUrl() . 'pages/userDashboard.php';
-    echo "<script>location.replace('" . $redirect . "');</script>";
+
+    //
+    // Force the user to reset their password to verify their email address is correct
+    //
+
+    // Generate and save a reset code (increase `24` for greater security)
+    $resetCode = IdGenerator::generateSecureUniqueId(24);
+    $ok = $userDao->setLocalResetAttempt($_POST['userEmail'], $resetCode);
+    if(!$ok) {
+        displayError("We were unable to generate a code for setting your password. Please contact the site admins for support.");
+    }
+
+    // Generate an email with the user's password-set code & information on how to set their password
+    $message = $messageDao->getMessageByID(2);
+    $mailer = new HiringMailer($configManager->get('email.admin_address'), 'TekBots Admin');
+    $link = $configManager->getBaseUrl() . 'pages/localResetPassword.php?email='.$_POST['userEmail'].'&resetCode=' .$resetCode;
+    
+    // Send the email to the user
+    $ok = $mailer->sendLocalPasswordEmail($u, $message, $link, $resetCode);
+    if(!$ok) {
+        displayError("We were unable to send you a password creation email.");
+    }
+
+    // Redirect back to the base login page
+    $redirect = $configManager->getBaseUrl() . 'pages/index.php';
+    echo "<script>
+            alert('You have been sent an email to verify your account and set your password. Follow the link in the email to finish setting up your account.');
+            location.replace('" . $redirect . "');
+        </script>";
     die();
 }
 
@@ -137,7 +161,7 @@ function addUser($userDao, $configManager, $logger) {
  * 
  * @return void
  */
-function forgotPassword($userDao, $configManager, $logger) {
+function forgotPassword($userDao, $messageDao, $configManager, $logger) {
     // Check that the user uses local authentication
     $authProviders = $userDao->getAuthProvidersForUserByEmail($_POST['userEmail']);
     $providerNames = [];
@@ -156,21 +180,12 @@ function forgotPassword($userDao, $configManager, $logger) {
     }
 
     // Generate an email with the user's reset code & information on how to reset their password
-    $mailer = new Mailer($configManager->get('email.admin_address'), 'TekBots Admin');
+    $message = $messageDao->getMessageByID(3);
+    $mailer = new HiringMailer($configManager->get('email.admin_address'), 'TekBots Admin');
     $link = $configManager->getBaseUrl() . 'pages/localResetPassword.php?email='.$_POST['userEmail'].'&resetCode=' .$resetCode;
-    $to = $_POST['userEmail'];
-    $subject = "EECS Hiring Password Reset";
-    $message = "<p>There was a request to reset a password for this email on the EECS Hiring site. 
-        If this was not you or was in error, you may safely ignore this email. If you would like to reset your password,
-        follow the link below within 45 minutes. If the link does not work, you can copy and past the link into your 
-        address bar.</p>
-        
-        <a href='$link'>$link</a>
-
-        <h1>Password Reset Code: $resetCode</h1>";
     
     // Send the email to the user
-    $ok = $mailer->sendEmail($to, $subject, $message, true);
+    $ok = $mailer->sendLocalPasswordEmail($userDao->getUserByEmail($_POST['userEmail']), $message, $link, $resetCode);
     if(!$ok) {
         displayError("We were unable to send you a password reset email.");
     }

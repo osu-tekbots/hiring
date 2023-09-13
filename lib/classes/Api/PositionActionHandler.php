@@ -5,6 +5,7 @@ use Model\User;
 use Model\Position;
 use DataAccess\PositionDao;
 use DataAccess\RoleDao;
+use Email\HiringMailer;
 
 /**
  * Defines the logic for how to handle API requests made to modify Position information.

@@ -60,7 +60,7 @@ class RoleDao {
      * 
      * @param string $name The role to fetch
      *
-     * @return Role|boolean an array of Role objects if the fetch succeeds, false otherwise
+     * @return Role|boolean a Role object if the fetch succeeds, false otherwise
      */
     public function getRoleByName($name) {
         try {
@@ -71,6 +71,29 @@ class RoleDao {
             return self::ExtractRoleFromRow($result[0]);
         } catch (\Exception $e) {
             $this->logError('Failed to fetch role by name: ' . $e->getMessage());
+
+            return false;
+        }
+    }
+
+    /**
+     * Fetches the matching Role from the database.
+     * 
+     * If an error occurs during the fetch, the function will return `false`.
+     * 
+     * @param string $id The role to fetch
+     *
+     * @return Role|boolean a Role object if the fetch succeeds, false otherwise
+     */
+    public function getRoleByID($id) {
+        try {
+            $sql = 'SELECT * FROM hiring_Role WHERE r_id=:id;';
+            $params = array(':id'=>$id);
+            $result = $this->conn->query($sql, $params);
+
+            return self::ExtractRoleFromRow($result[0]);
+        } catch (\Exception $e) {
+            $this->logError('Failed to fetch role by id: ' . $e->getMessage());
 
             return false;
         }

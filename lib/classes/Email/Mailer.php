@@ -39,6 +39,7 @@ class Mailer {
      * @param string $message the email content to send
      * @param boolean $html indicates whether the message content is HTML or plain text
      * @param string $cc the email address or addresses to carbon-copy on the email
+     * 
      * @return boolean true on success, false otherwise
      */
     public function sendEmail($to, $subject, $message, $html = false, $cc = null) {
@@ -95,24 +96,5 @@ class Mailer {
         }
 
         return true;
-    }
-
-    /**
-     * Sends the specified email.
-     *
-     * @param \Model\User $user the email address or addresses to send the message to
-     * @param \Model\Message $message model from database for template, body
-     * @return boolean true on success, false otherwise
-     */
-    public function sendMODEL_NAMEEmail($user, $message) {
-        $replacements = Array();
-		
-		$replacements['email'] = Security::HtmlEntitiesEncode($user->getEmail());
-		// FILL REPLACEMENTS
-		
-		$subject = $message->fillTemplateSubject($replacements);
-		$body = $message->fillTemplateBody($replacements);
-
-        return $this->sendEmail($replacements['email'], $subject, $body, true);
     }
 }

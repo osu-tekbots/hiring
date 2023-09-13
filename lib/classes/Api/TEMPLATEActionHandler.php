@@ -17,7 +17,7 @@ use DataAccess\__ModelName__Dao;
  */
 class __ModelName__ActionHandler extends ActionHandler {
 
-    /** @var \DataAccess\* */
+    /** @var \DataAccess\__ModelName__Dao */
     private $__modelName__Dao;
 	
     /**
