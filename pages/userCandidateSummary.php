@@ -3,6 +3,7 @@ include_once '../bootstrap.php';
 
 use DataAccess\CandidateDao;
 use DataAccess\CandidateFileDao;
+use DataAccess\CandidateRoundNoteDao;
 use DataAccess\FeedbackDao;
 use DataAccess\FeedbackFileDao;
 use DataAccess\FeedbackForQualDao;
@@ -28,6 +29,7 @@ include_once PUBLIC_FILES . '/modules/header.php';
 $qualificationStatusDao = new QualificationStatusDao($dbConn, $logger);
 $candidateDao = new CandidateDao($dbConn, $logger);
 $candidateFileDao = new CandidateFileDao($dbConn, $logger);
+$candidateRoundNoteDao = new CandidateRoundNoteDao($dbConn, $logger);
 $roundDao = new RoundDao($dbConn, $logger);
 $qualificationDao = new QualificationDao($dbConn, $logger);
 $positionDao = new PositionDao($dbConn, $logger);
@@ -99,22 +101,18 @@ renderBreadcrumb(["./pages/userDashboard.php"=>"Dashboard", ("./pages/userPositi
                     <button data-toggle='collapse' data-target='#round". $index+1 ."' type='button' class='btn btn-outline-dark float-right'><i class='fas fa-chevron-down'></i></button>
                 </div>
             
-                <div id='round". $index+1 ."' class='collapse container'>";
-                    /* <div class='row d-block p-2 mb-3 mx-1 rounded' style='background: #ccc;'>
-                        <p>Round Description: ".$round->getDescription()."</p>"; */ // Removed in favor of showing description in header
+                <div id='round". $index+1 ."' class='collapse container mt-2".(isset($_REQUEST['round'])&&$_REQUEST['round']==$round->getID() ? ' show' : '')."'>";
         if($round->getInterviewQuestionLink()) {
             $output .= "
                     <div class='row d-block p-2 mb-3 mx-1 rounded' style='background: #ccc;'>
                         <p>Interview Questions: <a target='_blank' href='http://".$round->getInterviewQuestionLink()."'>".$round->getInterviewQuestionLink()."</a></p>
                     </div>";
         }
-                    
-        // $output .= "</div>"; // Info about the round 
-
 
         // Start output for qualification evaluation table
         $output .= "
             <div class='row px-3' style='overflow: scroll'>
+                <h6 class='ml-2'>Group Evaluations</h6>
                 <table style='border: 1px solid black; min-width: calc(100% - 4px); margin-left: 2px;'>
                     <tr class='border border-dark'>
                         <th class='p-1'>Qualification</th>";
@@ -128,7 +126,7 @@ renderBreadcrumb(["./pages/userDashboard.php"=>"Dashboard", ("./pages/userPositi
             $output .= "<tr class='border border-dark'>";
     
             $output .= "<td class='p-1'>
-                <button type='button' data-toggle='modal' data-target='#qualModal".$qualification->getID()."' class='btn btn-link text-primary text-left".($qualification->getLevel() == 'Minimum' ? " font-weight-bold" : "")."'>
+                <button type='button' data-toggle='modal' data-target='#qualModal".$qualification->getID()."' class='btn btn-link text-primary text-left py-2".($qualification->getLevel() == 'Minimum' ? " font-weight-bold" : "")."'>
                     ".$qualification->getDescription()."
                 </button></td>";
             foreach($users as $user) {
@@ -154,20 +152,39 @@ renderBreadcrumb(["./pages/userDashboard.php"=>"Dashboard", ("./pages/userPositi
 
         // End output for the qualification evaluation table
         $output .= "</table>
-            </div>
-            <br>";
+            </div>";
         
-        // Notes & files
+        // Group Notes
+        $roundNote = $candidateRoundNoteDao->getCandidateNotesForRound($candidate->getID(), $round->getID());
+        if($roundNote === false) {
+            $roundNote = ' ';
+        } else {
+            $roundNote = $roundNote->getNotes(); // Avoid issues with string vs object below
+        }
+        $output .= "
+            <div class='row p-2 mb-3 rounded'>
+                <div class='col mt-2'>
+                    <h6>Group Notes</h6>";
+        if(checkRoleForPosition('Search Chair', $position?->getID())) {
+            $output .= "<textarea class='form-control' onchange='groupNotes(this, \"".$round->getID()."\")'>$roundNote</textarea>";
+        } else {
+            $output .= "<p class='form-control' style='height:auto'>$roundNote</p>";
+        }
+        $output .= "
+                </div>
+            </div>";
+        
+        // User notes & files
         $feedback = $feedbackDao->getFeedbackForUser($_SESSION['userID'], $candidateID, $round->getID());
         if($feedback !== false) {
             $feedbackFiles = $feedbackFileDao->getAllFilesForFeedback($feedback->getID());
             $output .= "
                 <div class='row p-2 mb-3 rounded'>
-                    <div class='col-8'>
+                    <div class='col-sm-8 mt-2'>
                         <h6>My Notes</h6>
                         <p class='form-control' style='height:auto'>".$feedback->getNotes()." </p>
                     </div>
-                    <div class='col'>
+                    <div class='col-sm-4 mt-2'>
                         <h6>My Uploads</h6>
                         <ul id='feedbackFiles".$feedback->getID()."'>";
             if($feedbackFiles) {
@@ -260,6 +277,23 @@ renderBreadcrumb(["./pages/userDashboard.php"=>"Dashboard", ("./pages/userPositi
 
         api.post('/candidate.php', data).then(res => {
             document.getElementById('closeStatusModal').click();
+            snackbar(res.message, 'success');
+        }).catch(err => {
+            snackbar(err.message, 'error');
+        }).finally(() => thisVal.disabled = false);
+    }
+
+    function groupNotes(thisVal, roundID) {
+        data = {
+            action: 'createOrUpdateRoundNotes',
+            candidateID: CANDIDATE_ID,
+            roundID: roundID,
+            notes: thisVal.value
+        }
+
+        thisVal.disabled = true;
+
+        api.post('/candidate.php', data).then(res => {
             snackbar(res.message, 'success');
         }).catch(err => {
             snackbar(err.message, 'error');

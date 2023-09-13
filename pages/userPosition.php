@@ -116,6 +116,7 @@ function determineNextRound($roundDao, $feedbackDao, $qualForRoundDao, $feedback
         if(count($candidates)) {
             foreach($candidates as $candidate) {
                 $status = $candidate->getCandidateStatus()?->getName();
+                $lastRoundQuery = '';
                 $statusColor = ($status == null ? "" : ($status == "Hired" ? "text-success" : "text-danger")); // Set here to all 'in progress' statuses are black
                 
                 if($status == null) {
@@ -124,6 +125,7 @@ function determineNextRound($roundDao, $feedbackDao, $qualForRoundDao, $feedback
                         $status = "No Reviews Completed";
                     } else {
                         $status = "Completed ".$lastRound->getDescription();
+                        $lastRoundQuery = '&round='.$lastRound->getID();
                     }
                 }
 
@@ -138,7 +140,7 @@ function determineNextRound($roundDao, $feedbackDao, $qualForRoundDao, $feedback
                     $nextRound = "Complete ".$nextRound->getDescription();
                 }
                 
-                // NOTE: Below, date '-0001-11-30' seems random, but is the result for the timestamp '0000-00-00 00:00:00'
+                // NOTE: Below, date '-0001-11-30' seems random, but is the format result for the timestamp '0000-00-00 00:00:00' in the database
                 $output = "
                 <div class='row py-3' style='border: 1px solid black'>
                     <div class='col-sm-2 my-auto' style='vertial-align: middle'>
@@ -159,8 +161,7 @@ function determineNextRound($roundDao, $feedbackDao, $qualForRoundDao, $feedback
                     <div class='col-sm-2 my-auto'>";
 
                 if($position->getStatus() == 'Interviewing' || $position->getStatus() == 'Closed') {
-                    $output .= "<a href='userCandidateSummary.php?id=".$candidate->getID().
-                        "' class='btn btn-outline-primary float-right'>View All Reviews</a>";
+                    $output .= "<a href='userCandidateSummary.php?id=".$candidate->getID()."$lastRoundQuery' class='btn btn-outline-primary float-right'>View All Reviews</a>";
                 }
 
                 $output .= "</div>

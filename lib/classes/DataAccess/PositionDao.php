@@ -184,7 +184,7 @@ class PositionDao {
                 WHERE hiring_RoleForPosition.rfp_u_id=:userID
                     AND hiring_RoleForPosition.rfp_r_id<>5
                     AND hiring_Position.p_id=hiring_RoleForPosition.rfp_p_id
-                ORDER BY p_dateCreated DESC;'; // rfp_r_id=5 means inactive
+                ORDER BY hiring_Position.p_dateCreated DESC;'; // rfp_r_id=5 means inactive
             $params = array(
                 ':userID'=>$userID
             );

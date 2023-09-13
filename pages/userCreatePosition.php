@@ -18,12 +18,12 @@ include_once PUBLIC_FILES."/modules/header.php";
 
 <div class="container py-4">
     <h2 class="text-center">Add A New Position</h2>
-    <p class="text-secondary px-5" style="white-space: normal">
-        This is a form to create a new position. You will be automatically set as the Committee Chair for this position. 
-        After creating the position, you will be given the opportunity to create add qualifications, rounds, candidates,
-        and committee members to the position. The site admins will verify all positions before the review process can 
-        begin.
-    </p>
+    <div class="alert alert-info mx-5">
+        <i class="fas fa-info-circle"></i>
+        This form is used to create a new position. You will be automatically set as the Committee Chair for this position. 
+        After creating the position, the site admins will verify that it is legitimate. After your position is approved, 
+        you will be given the opportunity to add qualifications, rounds, candidates, and committee members to the position.
+    </div>
 
     <div class="row border border-dark rounded my-3 p-2">
         <h3 class="text-center w-100">General Position Information</h3>

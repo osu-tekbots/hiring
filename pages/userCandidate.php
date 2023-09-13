@@ -123,7 +123,7 @@ renderBreadcrumb(["./pages/userDashboard.php"=>"Dashboard", ("./pages/userPositi
             $output .= "
                 <div class='row p-2 m-3 rounded bg-light border rounded'>
                     <div class='col-md'>
-                        <button type='button' data-toggle='modal' data-target='#qualModal".$qualification->getID()."' class='btn btn-link text-primary text-left".($qualification->getLevel() == 'Minimum' ? " font-weight-bold" : "")."'>
+                        <button type='button' data-toggle='modal' data-target='#qualModal".$qualification->getID()."' class='btn btn-link text-primary text-left py-2".($qualification->getLevel() == 'Minimum' ? " font-weight-bold" : "")."'>
                             ".$qualification->getDescription()."
                         </button>
                     </div>
@@ -153,11 +153,11 @@ renderBreadcrumb(["./pages/userDashboard.php"=>"Dashboard", ("./pages/userPositi
         $feedbackFiles = $feedbackFileDao->getAllFilesForFeedback($feedback->getID());
         $output .= "
             <div class='row p-2 mb-3 rounded'>
-                <div class='col-8'>
+                <div class='col-sm-8 mt-2'>
                     <h6>My Notes</h6>
                     <textarea class='form-control' rows='5' placeholder='Notes for this round' onchange='updateNotes(this, \"".$feedback->getID()."\")'>".$feedback->getNotes()."</textarea>
                 </div>
-                <div class='col-4'>
+                <div class='col-sm-4 mt-2'>
                     <h6>My Uploads</h6>
                     <div class='custom-file'>
                         <label for='uploadFileInput".$feedback->getID()."' class='custom-file-label'>Upload New Feedback File</label>
@@ -226,8 +226,9 @@ renderBreadcrumb(["./pages/userDashboard.php"=>"Dashboard", ("./pages/userPositi
 
     function updateFFQ(thisVal, feedbackID, qualificationID) {
         let status = document.getElementById(`score${feedbackID},${qualificationID}`).value;
-        if(!confirm('Are you sure you want to update your feedback? You should only do this if your committee has not yet discussed feedback for this round.'))
-            return false;
+        // Removed because we recieved feedback that it was annoying to have to approve it each time
+        // if(!confirm('Are you sure you want to update your feedback? You should only do this if your committee has not yet discussed feedback for this round.'))
+            // return false;
         
         let data = {
             action: 'updateFFQ',

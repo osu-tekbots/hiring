@@ -8,6 +8,7 @@ include_once '../bootstrapApi.php';
 
 // Setup our data access and handler classes
 use DataAccess\CandidateDao;
+use DataAccess\CandidateRoundNoteDao;
 use DataAccess\CandidateFileDao;
 use DataAccess\FeedbackFileDao;
 use Api\CandidateActionHandler;
@@ -18,9 +19,10 @@ if(!session_id()) {
 }
 
 $candidateDao = new CandidateDao($dbConn, $logger);
+$candidateRoundNoteDao = new CandidateRoundNoteDao($dbConn, $logger);
 $candidateFileDao = new CandidateFileDao($dbConn, $logger);
 $feedbackFileDao = new FeedbackFileDao($dbConn, $logger);
-$handler = new CandidateActionHandler($candidateDao, $candidateFileDao, $feedbackFileDao, $configManager, $logger);
+$handler = new CandidateActionHandler($candidateDao, $candidateRoundNoteDao, $candidateFileDao, $feedbackFileDao, $configManager, $logger);
 
 // Ensure the user is logged in
 if (verifyPermissions(['user', 'admin'])) {

@@ -144,6 +144,58 @@ class CandidateDao {
     }
 
     /**
+     * Insert new Candidate row into the database.
+     * 
+     * If an error occurs during the fetch, the function will return `false`.
+     * 
+     * @param \Model\Candidate $candidate The candidate to insert into the database
+     *
+     * @return boolean true if insert succeeds, false otherwise
+     */
+    public function createCandidate($candidate) {
+        try {
+            $sql = 'INSERT INTO `hiring_Candidate` 
+            (
+                `c_id`,
+                `c_fName`,
+                `c_lName`,
+                `c_location`,
+                `c_email`,
+                `c_phone`,
+                `c_p_id`, 
+                `c_dateCreated`
+            )
+            VALUES (
+                :id,
+                :firstname,
+                :lastname,
+                :location,
+                :email,
+                :phone,
+                :positionId,
+                :dateCreated
+            );';
+            $params = array (
+                ':firstname' => $candidate->getFirstName(),
+                ':lastname' => $candidate->getLastName(),
+                ':location' => $candidate->getLocation(),
+                ':email' => $candidate->getEmail(),
+                ':phone' => $candidate->getPhoneNumber(),
+                ':positionId' => $candidate->getPositionID(),
+                ':dateCreated' => $candidate->getDateCreated()->format('Y-m-d H:i:s'),
+                ':id' => $candidate->getId()
+            );
+            $result = $this->conn->execute($sql, $params);
+
+            return true;
+        } catch (\Exception $e) {
+            $this->logError('Failed to create Candidate: ' . $e->getMessage());
+
+            return false;
+        }
+    }
+
+    /**
      * Deletes candidate by ID in the database.
      * 
      * If an error occurs during the fetch, the function will return `false`.
@@ -307,58 +359,6 @@ class CandidateDao {
             return \array_map('self::ExtractCandidateStatusOptionFromRow', $result);
         } catch (\Exception $e) {
             $this->logError('Failed to fetch all CandidateStatusOptions: ' . $e->getMessage());
-
-            return false;
-        }
-    }
-
-    /**
-     * Insert new Candidate row into the database.
-     * 
-     * If an error occurs during the fetch, the function will return `false`.
-     * 
-     * @param \Model\Candidate $candidate The candidate to insert into the database
-     *
-     * @return boolean true if insert succeeds, false otherwise
-     */
-    public function createCandidate($candidate) {
-        try {
-            $sql = 'INSERT INTO `hiring_Candidate` 
-            (
-                `c_id`,
-                `c_fName`,
-                `c_lName`,
-                `c_location`,
-                `c_email`,
-                `c_phone`,
-                `c_p_id`, 
-                `c_dateCreated`
-            )
-            VALUES (
-                :id,
-                :firstname,
-                :lastname,
-                :location,
-                :email,
-                :phone,
-                :positionId,
-                :dateCreated
-            );';
-            $params = array (
-                ':firstname' => $candidate->getFirstName(),
-                ':lastname' => $candidate->getLastName(),
-                ':location' => $candidate->getLocation(),
-                ':email' => $candidate->getEmail(),
-                ':phone' => $candidate->getPhoneNumber(),
-                ':positionId' => $candidate->getPositionID(),
-                ':dateCreated' => $candidate->getDateCreated()->format('Y-m-d H:i:s'),
-                ':id' => $candidate->getId()
-            );
-            $result = $this->conn->execute($sql, $params);
-
-            return true;
-        } catch (\Exception $e) {
-            $this->logError('Failed to create Candidate: ' . $e->getMessage());
 
             return false;
         }

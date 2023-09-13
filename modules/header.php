@@ -77,32 +77,29 @@ $css = array_merge(
     $css
 );
 
-$loggedIn = verifyPermissions(['user', 'admin']);
-
-
 // Setup the buttons to use in the header
-// All users
-$buttons = array(
-    // 'Reserve<BR>Equipment' => 'pages/publicEquipmentList.php'
-);
-// Signed in users
-if ($loggedIn) {
-	//All signed in users types can view these pages
-    $buttons['Dashboard'] = './pages/userDashboard.php';
+$buttons = array();
 
+if (verifyPermissions(['user', 'admin'])) {
+    // User is signed in
+    $buttons['Dashboard'] = 'pages/userDashboard.php';
     
     // Admin only
     if (verifyPermissions('admin')) {
         $buttons['Admin'] = 'pages/adminDashboard.php';
     }
-}
 
-if ($loggedIn) {
     $buttons['Logout'] = 'pages/logout.php';
 } else {
+    // User is signed out
     $buttons['Login'] = 'pages/login.php';
 }
 
+	
+//Inherited from TekBots. Intended to help with image uploads. May slow everything else down.	
+header("Cache-Control: no-cache, must-revalidate"); // HTTP 1.1
+header("Pragma: no-cache"); // HTTP 1.0
+header("Expires: 0");
 ?>
 
 <!DOCTYPE html>
@@ -144,12 +141,6 @@ if ($loggedIn) {
             echo $link;
         }
     } 
-	
-//Inherited from TekBots. Intended to help with image uploads. May slow everything else down.	
-header("Cache-Control: no-cache, must-revalidate"); // HTTP 1.1
-header("Pragma: no-cache"); // HTTP 1.0
-header("Expires: Wed, 1 Jan 2020 00:00:00 GMT"); // Anytime in the past
-	
 	?>
 
 </head>
@@ -172,7 +163,8 @@ header("Expires: Wed, 1 Jan 2020 00:00:00 GMT"); // Anytime in the past
                 '/education/hiring/pages/error.php']))
                 echo '<div class="d-flex w-100 align-items-end justify-content-center navbarBrowser">
                     <div class="alert alert-warning mb-0">
-                        This site is currently under development. Please direct questions and feedback <a href="mailto:bairdn@oregonstate.edu">here</a>.
+                        <i class="fas fa-question-circle"></i>
+                        This site is currently under development. Please direct questions and feedback <a style="text-decoration: underline" href="mailto:bairdn@oregonstate.edu">here</a>.
                     </div>
                 </div>';
         ?>

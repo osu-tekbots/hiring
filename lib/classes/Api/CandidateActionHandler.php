@@ -4,6 +4,7 @@ namespace Api;
 use Model\User;
 use Model\Candidate;
 use Model\CandidateStatus;
+use Model\CandidateRoundNote;
 use DataAccess\CandidateDao;
 
 /**
@@ -13,6 +14,9 @@ class CandidateActionHandler extends ActionHandler {
 
     /** @var \DataAccess\CandidateDao */
     private $candidateDao;
+
+    /** @var \DataAccess\CandidateRoundNoteDao */
+    private $candidateRoundNoteDao;
 
     /** @var \DataAccess\CandidateFileDao */
     private $candidateFileDao;
@@ -30,15 +34,17 @@ class CandidateActionHandler extends ActionHandler {
      * internally.
      *
      * @param \DataAccess\CandidateDao $candidateDao The class for accessing the Candidate database table
+     * @param \DataAccess\CandidateRoundNoteDao $candidateRoundNoteDao The class for accessing the CandidateRoundNote database table
      * @param \DataAccess\CandidateFileDao $candidateFileDao The class for accessing the CandidateFile database table
      * @param \DataAccess\FeedbackFileDao $feedbackFileDao The class for accessing the FeedbackFile database table
      * @param \Util\ConfigManager $configManager The class for reading data from /config.ini
      * @param \Util\Logger $logger The class for logging execution details
      */
-	public function __construct($candidateDao, $candidateFileDao, $feedbackFileDao, $configManager, $logger)
+	public function __construct($candidateDao, $candidateRoundNoteDao, $candidateFileDao, $feedbackFileDao, $configManager, $logger)
     {
         parent::__construct($logger);
 		$this->candidateDao = $candidateDao;
+        $this->candidateRoundNoteDao = $candidateRoundNoteDao;
         $this->candidateFileDao = $candidateFileDao;
         $this->feedbackFileDao = $feedbackFileDao;
         $this->configManager = $configManager;
@@ -241,6 +247,57 @@ class CandidateActionHandler extends ActionHandler {
 		$this->respond(new Response(Response::OK, 'Candidate Status Updated'));
     }
 
+    /**
+     * Updates (or creates if the candidate has no linked notes for this round) the candidate round note.
+     * 
+     * @param string candidateID Must exist in the POST request body.
+     * @param string roundID Must exist in the POST request body.
+     * @param string notes May exist in the POST request body.
+     * 
+     * @return Api/Response object
+     */
+    public function handleCreateOrUpdateRoundNotes() {
+        // Ensure the required parameters exist
+        $this->requireParam('candidateID');
+        $this->requireParam('roundID');
+        $this->requireParam('notes');
+        
+        $body = $this->requestBody;
+        
+        // Get Candidate from database
+        $candidate = $this->candidateDao->getCandidateById($body['candidateID']);
+        if(!$candidate) {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Candidate Not Found', $body));
+        }
+
+        // Check if the user is allowed to update an instance
+        $this->verifyUserRole('Search Chair', $candidate->getPositionID());
+
+        // Update or create the candidate round note
+        $candidateRoundNote = $this->candidateRoundNoteDao->getCandidateNotesForRound($body['candidateID'], $body['roundID']);
+        $noteExists = true;
+        if(!$candidateRoundNote) {
+            $noteExists = false;
+            $candidateRoundNote = new CandidateRoundNote();
+            $candidateRoundNote->setCandidateID($body['candidateID']);
+            $candidateRoundNote->setRoundID($body['roundID']);
+        }
+        $candidateRoundNote->setNotes($body['notes']);
+
+        // Update the candidate round note or create a new one if the candidate doesn't have one for this round yet
+        if($noteExists) {
+            $ok = $this->candidateRoundNoteDao->updateCandidateRoundNote($candidateRoundNote);
+        } else {
+            $ok = $this->candidateRoundNoteDao->createCandidateRoundNote($candidateRoundNote);
+        }
+        
+        // Use Response object to send DAO action results 
+        if(!$ok) {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Group Note Not Updated', $body));
+        }
+		$this->respond(new Response(Response::OK, 'Group Note Updated'));
+    }
+
 	/**
      * Handles the HTTP request on the API resource. 
      * 
@@ -267,6 +324,9 @@ class CandidateActionHandler extends ActionHandler {
                 break;
             case 'createOrUpdateStatus':
                 $this->handleCreateOrUpdateStatus();
+                break;
+            case 'createOrUpdateRoundNotes':
+                $this->handleCreateOrUpdateRoundNotes();
                 break;
             default:
                 $this->respond(new Response(Response::BAD_REQUEST, 'Invalid action on Candidate resource'));

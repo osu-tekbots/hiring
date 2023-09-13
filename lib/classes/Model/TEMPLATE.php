@@ -43,11 +43,11 @@ class __ModelName__ {
     /**
      * Getter and Setters
      */
-    public function getId(){
+    public function getID(){
 		return $this->id;
 	}
 
-	public function setId($id){
+	public function setID($id){
 		$this->id = $id;
 	}
 

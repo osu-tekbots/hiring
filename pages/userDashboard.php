@@ -23,15 +23,18 @@ $positions = $positionDao->getPositionsForUser($_SESSION['userID']);
 
 ?>
 
-<br><br><br>
+<div class="alert alert-info container mt-2">
+    <i class="fas fa-info-circle"></i>
+    Welcome to the Hiring tool! You can use this tool to track your thoughts about each candidate you review and share
+    those thoughts with the other members of your search committee. If you're the Search Chair for a new position, you 
+    can <a href="./pages/userCreatePosition.php">add the position to our system</a> to utilize our tool during your
+    search.
+</div>
+<br>
 <div class="container" style="border: 2px solid black">
     <div class="row py-3" style="border: 1px solid black">
-        <div class="col-sm-4 d-block"><!-- Used to keep title centered --></div>
         <div class="col">
-            <h2 class="my-auto" style="text-align: center">Your Positions</h2>
-        </div>
-        <div class="col-sm-4">
-            <a href="userCreatePosition.php" class="btn btn-outline-primary float-right">Add Position</a>
+            <h2 class="my-auto" style="text-align: center">Search Membership</h2>
         </div>
     </div>
     <?php

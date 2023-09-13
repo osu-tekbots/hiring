@@ -297,23 +297,26 @@ button h6{
 
 a {
 	color: #D73F09;
-	text-decoration: none;
+	text-decoration: underline;
 }
 .btn-link {
 	color: #D73F09;
-	text-decoration: none;
+	text-decoration: underline;
   padding: 0;
   margin: -6px 0 -4px 0;
   border-width: 0;
 }
+a.btn {
+  text-decoration: none;
+}
 
 a:hover {
   color:#D73F09 ;
-  text-decoration: underline;
+  text-decoration: none;
 }
 .btn-link:hover {
   color:#D73F09 ;
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 
@@ -721,6 +724,10 @@ header {
   display: flex;
   align-items: center;
   padding: 10px 30px;
+}
+
+header a {
+  text-decoration: none;
 }
 
 header.dark {
