@@ -73,7 +73,7 @@ config_file = ; database.ini, or another name pointing to the database configura
 The `.htaccess` file has also been removed from the repository to further simplify configuration and is being ignored
 by Git. When used, place the `.htaccess` file at the root of the repository with the following configuration:
 
-```ini
+```apacheconf
 # Deny access to files with specific extensions
 <FilesMatch "\.(ini|sh|sql)$">
 Order allow,deny
