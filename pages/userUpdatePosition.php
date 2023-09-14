@@ -258,7 +258,7 @@ $memberTemplate = <<<HTML
             <!-- Name -->
             <div class="col input-group p-1">
                 <div class="input-group-prepend"><label for="member{{num}}" class="input-group-text">Name</label></div>
-                <select class="custom-select" id="member{{num}}" name="member{{num}}" {{disableUserSelect}}>
+                <select class="custom-select selectUser" id="member{{num}}" name="member{{num}}" {{disableUserSelect}} onchange="checkAddUser(this);">
                     {{userOptions}}
                 </select>
             </div>
@@ -279,11 +279,11 @@ HTML;
 
 <div class="container py-4">
     <h2 class="text-center">Update Position</h2>
-    <p class="text-secondary px-5" style="white-space: normal">
-        This form allows you to modify a position. Only the Search Chair can modify a position. If the position has 
-        not yet been approved by the site admins, you will still need to wait for verification before beginning the 
-        hiring review process.
-    </p> 
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i>
+        This form allows you, as the Search Chair, to modify this position. You will need to click 
+        the green <kbd class="bg-success">Start Interviewing</kbd> button before your committee can begin submitting feedback.
+    </div> 
 
     <!-- General Position -->
     <div class="row border border-dark rounded my-3 p-2" oninput="setActive(this, true)">
@@ -538,6 +538,14 @@ HTML;
             <button type="button" id="addMember" class="btn btn-outline-primary float-right my-2">Add Member</button>
         </div>
 
+        <!-- May be good for clarity, but need to find way to seperate it out -->
+        <!-- <div class="alert alert-info container mt-2">
+            <i class="fas fa-info-circle"></i>
+            If you cannot find a member of your search committee in the 
+            <kbd style="background: rgb(12, 84, 96);">Name</kbd> dropdown, select the 
+            <kbd style="background: rgb(12, 84, 96);">** Add User**</kbd> option.
+        </div> -->
+
         <?php
             // Add all currently-existing members using the HTML template
             foreach($members as $index=>$member) {
@@ -576,6 +584,7 @@ HTML;
                 $output = str_replace("{{jsButton}}", "<button class='btn btn-primary float-right' onclick='saveMember(this, {{num}}, \"{{id}}\")'>Save Member</button>", $output);
 
                 $userOptions = "<option selected>--</option>";
+                $userOptions .= "<option>** Add User **</option>";
                 foreach($allUsers as $user) {
                     $userOptions .= "<option value='".$user->getID()."'>".$user->getFirstName()." ".$user->getLastName()."</option>\n";
                 }
@@ -593,6 +602,47 @@ HTML;
                 echo $output;
             ?>
         </template>
+    </div>
+</div>
+
+<!-- New User Modal Trigger -->
+<button id="triggerNewUserModal" type="button" class="d-none btn btn-primary" data-toggle="modal" data-target="#newUserModal">Add New User</button>
+<!-- New User Modal -->
+<div class="modal fade" id="newUserModal" tabindex="-1" role="dialog" aria-labelledby="newUserModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title w-100 text-center" id="newUserModal">Add A New User</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body row m-1">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    This form allows you to create a new user account in case a member of your committee has not yet 
+                    logged into this site. <b>This method only supports ONID accounts</b> for security reasons. If a 
+                    committee member does not have an ONID, they will need to create an account before you can add them
+                    to this position.
+                </div>
+                <div class="input-group p-1 col-sm">
+                    <div class="input-group-prepend"><label for="newFirstName" class="input-group-text">First Name</label></div>
+                    <input id="newFirstName" class="form-control">
+                </div>
+                <div class="input-group p-1 col-sm">
+                    <div class="input-group-prepend"><label for="newLastName" class="input-group-text">Last Name</label></div>
+                    <input id="newLastName" class="form-control">
+                </div>
+                <div class="input-group p-1 col-sm">
+                    <div class="input-group-prepend"><label for="newONID" class="input-group-text">ONID</label></div>
+                    <input id="newONID" class="form-control">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" id="closeNewUserModal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="addNewUser(this)">Add User</button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -1168,10 +1218,44 @@ HTML;
         }).finally(() => thisVal.disabled = false);
     }
 
+    function checkAddUser(thisVal) {
+        if(thisVal.value == '** Add User **') {
+            thisVal.children[0].selected = true;
+            document.getElementById('triggerNewUserModal').click();
+        }
+    }
+
+    function addNewUser(thisVal) {
+        let onid = document.getElementById('newONID').value;
+        let fName = document.getElementById('newFirstName').value;
+        let lName = document.getElementById('newLastName').value;
+        if(!confirm(`Please verify that the committee member's ONID is ${onid}`))
+            return;
+
+        let data = {
+            action: 'addUser',
+            onid: onid,
+            firstName: fName,
+            lastName: lName
+        }
+
+        thisVal.disabled = true;
+
+        api.post('/user.php', data).then(res => {
+            let selects = document.getElementsByClassName('selectUser');
+            for(let i = 0; i < selects.length; i++) {
+                let newOption = document.createElement('option');
+                newOption.value = res.content;
+                newOption.innerText = data.firstName + ' ' + data.lastName;
+                selects[i].insertBefore(newOption, selects[i].children[2]);
+            }
+            document.getElementById('closeNewUserModal').click();
+            snackbar(res.message, 'success');
+        }).catch(err => {
+            snackbar(err.message, 'error');
+        }).finally(() => thisVal.disabled = false);
+    }
+
 </script>
 
-<?php
-
-include_once PUBLIC_FILES."/modules/footer.php"
-
-?>
+<?php include_once PUBLIC_FILES."/modules/footer.php" ?>

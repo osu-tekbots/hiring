@@ -2,6 +2,7 @@
 namespace Api;
 
 use Model\User;
+use Model\UserAuth;
 use DataAccess\UserDao;
 
 /**
@@ -26,7 +27,6 @@ class UserActionHandler extends ActionHandler {
         parent::__construct($logger);
 		$this->userDao = $userDao;
     }
-
 
 	/**
      * Updates the User's access level.
@@ -62,6 +62,57 @@ class UserActionHandler extends ActionHandler {
         }
 		$this->respond(new Response(Response::OK, 'Access level updated'));
     }
+    
+    /**
+     * Adds a new User for search chairs' convinience.
+     * 
+     * @param onid Must exist in the POST request body.
+     * @param firstName Must exist in the POST request body.
+     * @param lastName Must exist in the POST request body.
+     * 
+     * @return \Api\Response HTTP response for whether the API call successfully completed
+     */
+    public function handleAddUser() {
+        // Ensure the required parameters exist
+        $this->requireParam('onid');
+        $this->requireParam('firstName');
+        $this->requireParam('lastName');
+        
+        $body = $this->requestBody;
+
+        $onidProvider = $this->userDao->getAuthProviderByName('ONID');
+        $user = $this->userDao->getUserFromAuth($onidProvider, $body['onid']);
+        if($user) {
+            $this->respond(new Response(Response::BAD_REQUEST, 'User Already Exists'));
+        }
+
+        // Create a new user with the given info
+        $user = new User();
+        $user->setFirstName($body['firstName']);
+        $user->setLastName($body['lastName']);
+        $user->setEmail($body['onid'].'@oregonstate.edu');
+        $user->setAccessLevel('User');
+        $user->setDateUpdated(new \DateTime());
+        
+        // Add the user to the database
+        $ok = $this->userDao->addNewUser($user);
+        // Use Response object to send DAO action results 
+        if(!$ok) {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'User Not Added'));
+        }
+
+        $ua = new UserAuth();
+        $ua->setUserID($user->getID());
+        $ua->setAuthProvider($onidProvider);
+        $ua->setProviderID($body['onid']);
+        $ok = $this->userDao->addNewUserAuth($ua);
+
+        // Use Response object to send DAO action results 
+        if(!$ok) {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'User Credentials Not Added'));
+        }
+		$this->respond(new Response(Response::OK, 'User Added', $user->getID()));
+    }
 	
     /**
      * Handles the HTTP request on the API resource. 
@@ -80,6 +131,9 @@ class UserActionHandler extends ActionHandler {
         switch($this->requestBody['action']) {
             case 'changeAccessLevel':
                 $this->handleChangeAccessLevel();
+                break;
+            case 'addUser':
+                $this->handleAddUser();
                 break;
 
             default:

@@ -446,19 +446,16 @@ class UserDao {
         try {
             $sql = '
                 INSERT INTO hiring_UserAuth(
-                    ua_id, 
                     ua_u_id,
                     ua_uap_id,
                     ua_providerId
                 ) 
                 VALUES (
-                    :id,
                     :uId,
                     :uapId,
                     :providerId
                 )';
             $params = array(
-                ':id' => $userAuth->getID(),
                 ':uId' => $userAuth->getUserID(),
                 ':uapId' => $userAuth->getAuthProvider()->getID(),
                 ':providerId' => $userAuth->getProviderID(),
