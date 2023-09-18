@@ -120,6 +120,75 @@ class UserActionHandler extends ActionHandler {
         }
 		$this->respond(new Response(Response::OK, 'User Added', $user->getID()));
     }
+
+    /**
+     * Starts masquerading as the provided user, allowing admins to see things from the viewpoint of a normal user.
+     *
+     * @param string id Must exist in the POST request body -- the user to masquerade as.
+     * 
+     * @return \Api\Response HTTP response for whether the API call successfully completed
+     */
+    public function handleStartMasquerade() {
+        // Ensure the required parameters exist
+        $this->requireParam('id');
+        $body = $this->requestBody;
+
+        // Check if the user is allowed to masquerade
+        $this->verifyUserRole('Admin', NULL);
+
+        $user = $this->userDao->getUserByID($body['id']);
+
+        if(!$user) {
+            $this->respond(new Response(Response::BAD_REQUEST, 'User Not Found'));
+        }
+
+        $this->logger->warn('User '.$_SESSION['userID'].' began masquerading as '.$user->getID());
+
+        if(isset($_SESSION['masq'])) $this->endMasquerade();
+
+        $_SESSION['masq'] = array(
+            'active' => true,
+            'savedPreviousUser' => true,
+            'userID' => $_SESSION['userID'],
+            'userAccessLevel' => $_SESSION['userAccessLevel'],
+            'newUser' => $_SESSION['newUser'],
+        );
+        $_SESSION['userID'] = $user->getID();
+        $_SESSION['userAccessLevel'] = $user->getAccessLevel();
+        $_SESSION['newUser'] = false;
+
+        $this->respond(new Response(Response::OK, 'Masquerading as '.$user->getFirstName().' '.$user->getLastName()));
+    }
+    
+    /**
+     * Stops masquerading (if the user currently is) and restores the original user session variables.
+     *
+     * @return \Api\Response HTTP response for whether the API call successfully completed
+     */
+    public function handleStopMasquerade() {
+        if (isset($_SESSION['masq'])) {
+            $this->endMasquerade();
+        } else {
+            $this->respond(new Response(Response::BAD_REQUEST, 'Not Masquerading'));    
+        }
+
+        $this->respond(new Response(Response::OK, 'Masquerading Ended'));
+    }
+
+    /**
+     * Restores the session data for the normal user. Assumes that $_SESSION['masq] is confirmed to exist
+     */
+    private function endMasquerade() {
+        unset($_SESSION['userID']);
+        unset($_SESSION['userAccessLevel']);
+        unset($_SESSION['newUser']);
+        if (isset($_SESSION['masq']['savedPreviousUser'])) {
+            $_SESSION['userID'] = $_SESSION['masq']['userID'];
+            $_SESSION['userAccessLevel'] = $_SESSION['masq']['userAccessLevel'];
+            $_SESSION['newUser'] = $_SESSION['masq']['newUser'];
+        }
+        unset($_SESSION['masq']);
+    }
 	
     /**
      * Handles the HTTP request on the API resource. 
@@ -141,6 +210,13 @@ class UserActionHandler extends ActionHandler {
                 break;
             case 'addUser':
                 $this->handleAddUser();
+                break;
+
+            case 'startMasquerade':
+                $this->handleStartMasquerade();
+                break;
+            case 'stopMasquerade':
+                $this->handleStopMasquerade();
                 break;
 
             default:

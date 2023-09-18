@@ -40,11 +40,14 @@ $userDao = new UserDao($dbConn, $logger);
                     <div class='col my-auto'>
                         <h4>".$user->getFirstName()." ".$user->getLastName()."</h4>
                     </div>
-                    <div class='col-3 my-auto'>";
+                    <div class='col-2 my-auto'>";
                 if($user->getAccessLevel() == 'User')
                     echo "<button type='button' id='level".$user->getID()."' onclick='makeAdmin(\"".$user->getID()."\")' class='btn btn-outline-success float-right mx-2'>Make Admin</a>";
                 else
                     echo "<button type='button' id='level".$user->getID()."' onclick='makeUser(\"".$user->getID()."\")' class='btn btn-outline-danger float-right mx-2'>Make User</a>";
+                echo "</div>
+                    <div class='col-3 my-auto'>";
+                    echo "<button type='button' id='masq".$user->getID()."' onclick='startMasquerade(\"".$user->getID()."\")' class='btn btn-outline-warning float-right mx-2'>Become ".$user->getFirstName()." ".$user->getLastName()."</a>";
                 echo "</div>
                 </div>";
             }
@@ -101,6 +104,21 @@ $userDao = new UserDao($dbConn, $logger);
             document.getElementById('level'+id).disabled = false;
             snackbar(err.message, 'error');
         }).finally(() => document.getElementById('level'+id).disabled = false);
+    }
+    
+    function startMasquerade(id) {
+        data = {
+            action: 'startMasquerade',
+            id: id
+        }
+        
+        document.getElementById('masq'+id).disabled = true;
+
+        api.post('/user.php', data).then(res => {
+            location.href = './userDashboard.php';
+        }).catch(err => {
+            snackbar(err.message, 'error');
+        }).finally(() => document.getElementById('masq'+id).disabled = false);
     }
 </script>
 
