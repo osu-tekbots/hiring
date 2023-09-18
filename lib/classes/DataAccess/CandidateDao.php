@@ -208,13 +208,15 @@ class CandidateDao {
         try {
             // Delete everything possible
             $sql = 'DELETE 
-                        `hiring_CandidateNotes`, 
+                        `hiring_CandidateNotes`,
+                        `hiring_CandidateRoundNote`,
                         `hiring_CandidateStatus`, 
                         `hiring_CandidateFiles`, 
                         `hiring_FeedbackFiles`, 
                         `hiring_FeedbackForQual`
                     FROM `hiring_Candidate`
                 LEFT JOIN `hiring_CandidateNotes` ON `hiring_CandidateNotes`.`cn_c_id` = `hiring_Candidate`.`c_id`
+                LEFT JOIN `hiring_CandidateRoundNote` ON `hiring_CandidateRoundNote`.`crn_c_id` = `hiring_Candidate`.`c_id`
                 LEFT JOIN `hiring_CandidateStatus` ON `hiring_Candidate`.`c_cs_id` = `hiring_CandidateStatus`.`cs_id`
                 LEFT JOIN `hiring_CandidateFiles` ON `hiring_CandidateFiles`.`cf_c_id` = `hiring_Candidate`.`c_id`
                 LEFT JOIN `hiring_Feedback` ON `hiring_Feedback`.`f_c_id` = `hiring_Candidate`.`c_id`

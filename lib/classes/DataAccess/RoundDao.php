@@ -165,8 +165,12 @@ class RoundDao {
      */
     public function deleteRound($roundID) {
         try {
-            $sql = 'DELETE `hiring_QualificationForRound`, `hiring_FeedbackForQual`, `hiring_FeedbackFiles`
-                FROM `hiring_Round`
+            $sql = 'DELETE 
+                        `hiring_QualificationForRound`, 
+                        `hiring_FeedbackForQual`, 
+                        `hiring_FeedbackFiles`, 
+                        `hiring_CandidateRoundNote`
+                    FROM `hiring_Round`
                 LEFT JOIN `hiring_QualificationForRound`
                     ON `hiring_Round`.`r_id` = `hiring_QualificationForRound`.`rf_r_id`
                 LEFT JOIN `hiring_Feedback`
@@ -175,6 +179,8 @@ class RoundDao {
                     ON `hiring_Feedback`.`f_id` = `hiring_FeedbackForQual`.`ffq_f_id`
                 LEFT JOIN `hiring_FeedbackFiles`
                     ON `hiring_Feedback`.`f_id` = `hiring_FeedbackFiles`.`ff_f_id`
+                LEFT JOIN `hiring_CandidateRoundNote`
+                    ON `hiring_Round`.`r_id` = `hiring_CandidateRoundNote`.`crn_r_id`
                 WHERE `hiring_Round`.`r_id` = :id;';
             $params = array(
                 ':id' => $roundID
