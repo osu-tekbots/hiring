@@ -80,6 +80,13 @@ class UserActionHandler extends ActionHandler {
         
         $body = $this->requestBody;
 
+        if($body['onid'] == '') {
+            $this->respond(new Response(Response::BAD_REQUEST, 'ONID must be provided'));
+        }
+        if($body['firstName'] == '' || $body['lastName'] == '') {
+            $this->respond(new Response(Response::BAD_REQUEST, 'Full name must be provided'));
+        }
+
         $onidProvider = $this->userDao->getAuthProviderByName('ONID');
         $user = $this->userDao->getUserFromAuth($onidProvider, $body['onid']);
         if($user) {
