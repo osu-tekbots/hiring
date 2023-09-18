@@ -1,6 +1,6 @@
-# EECS Hiring Web Application
+# EECS Search Progress Tracker
 
-The Hiring Web Application provides a central, accessible location for OSU hiring committees to track candidates through the hiring process. The committee's Search Chair has the ability to create and modify all information related to the position they're hiring for. Once they've filled out this information, the interviewing process can begin. For each interview round *(eg Resume Review, Phone interview, etc)* everyone on the committee can submit their notes about each candidate and score them for how well they meet each qualification for the position. Once a final decision has been made for a candidate, the Search Chair can update their status based on options provided by OSU HR.
+The Search Progress Tracker provides a central, accessible location for OSU hiring committees to track candidates through the hiring process. The committee's Search Chair has the ability to create and modify all information related to the position they're hiring for. Once they've filled out this information, the interviewing process can begin. For each interview round *(eg Resume Review, Phone interview, etc)* everyone on the committee can submit their notes about each candidate and score them for how well they meet each qualification for the position. Once a final decision has been made for a candidate, the Search Chair can update their status based on options provided by OSU HR.
 
 **Initial Development**: Summer 2023 - (Development still ongoing)
 

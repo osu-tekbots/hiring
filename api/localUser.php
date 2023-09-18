@@ -134,7 +134,7 @@ function addUser($userDao, $messageDao, $configManager, $logger) {
 
     // Generate an email with the user's password-set code & information on how to set their password
     $message = $messageDao->getMessageByID(2);
-    $mailer = new HiringMailer($configManager->get('email.admin_address'), 'TekBots Admin');
+    $mailer = new HiringMailer($configManager->get('email.admin_address'), 'SPT Admin');
     $link = $configManager->getBaseUrl() . 'pages/localResetPassword.php?email='.$_POST['userEmail'].'&resetCode=' .$resetCode;
     
     // Send the email to the user
@@ -181,7 +181,7 @@ function forgotPassword($userDao, $messageDao, $configManager, $logger) {
 
     // Generate an email with the user's reset code & information on how to reset their password
     $message = $messageDao->getMessageByID(3);
-    $mailer = new HiringMailer($configManager->get('email.admin_address'), 'TekBots Admin');
+    $mailer = new HiringMailer($configManager->get('email.admin_address'), 'SPT Admin');
     $link = $configManager->getBaseUrl() . 'pages/localResetPassword.php?email='.$_POST['userEmail'].'&resetCode=' .$resetCode;
     
     // Send the email to the user

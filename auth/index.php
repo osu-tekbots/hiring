@@ -103,8 +103,8 @@ die();
 function renderErrorMessage() {
     global $configManager;
 
-    $_SESSION['error'] = "Looks like we weren't able to successfully authenticate you using the method you chose. You 
-        can try choosing another method or contact the website administrators in the OSU Tekbots lab for assistance.";
+    $_SESSION['error'] = "Looks like we weren't able to successfully authenticate you using the method you chose. Please 
+        try choosing another authentication.";
 
     echo "<script>window.location.replace('".$configManager->getBaseUrl()."/error.php');</script>";
 

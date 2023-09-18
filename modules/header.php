@@ -111,7 +111,7 @@ header("Expires: 0");
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <base href="<?php echo $baseUrl ?>" />
-    <title><?php echo 'Hiring | '.$title; ?></title>
+    <title><?php echo 'SPT | '.$title; ?></title>
 
     <?php
     // Include the JavaScript files
@@ -150,7 +150,7 @@ header("Expires: 0");
         <a class="header-main-link" href="">
             <div class="logo">
                 <img class="logo" src="../tekbotSuite/tekbot/assets/img/osu-logo-orange.png" />
-                <h1><span id="projectPrefix"><b>HIRING</b></span> </h1>
+                <h1><span id="projectPrefix"><b>Search Progress Tracker</b></span> </h1>
             </div>
         </a>
         <?php 
@@ -162,7 +162,7 @@ header("Expires: 0");
                 '/education/hiring/pages/localResetPassword.php',
                 '/education/hiring/pages/localNewUser.php',
                 '/education/hiring/pages/error.php']))
-                echo '<div class="d-flex w-100 align-items-end justify-content-center navbarBrowser">
+                echo '<div class="d-flex align-items-end justify-content-center navbarBrowser" style="flex-grow: 1">
                     <div class="alert alert-warning mb-0">
                         <i class="fas fa-question-circle"></i>
                         This site is currently under development. Please direct questions and feedback <a style="text-decoration: underline" href="mailto:bairdn@oregonstate.edu">here</a>.

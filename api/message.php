@@ -18,7 +18,7 @@ if(!session_id()) {
 }
 
 $messageDao = new MessageDao($dbConn, $logger);
-$hiringMailer = new HiringMailer($configManager->get('email.admin_address'), 'TekBots Admin', $logger);
+$hiringMailer = new HiringMailer($configManager->get('email.admin_address'), 'SPT Admin', $logger);
 $handler = new MessageActionHandler($messageDao, $hiringMailer, $logger);
 
 // Ensure the user is logged in
