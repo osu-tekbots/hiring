@@ -1,6 +1,4 @@
 function sendDiagnostics(issue) {
-    if(issue.toLowerCase().trim() == 'script error.')
-        return; // Don't need to hear about external issues we can't fix
     let data = {
         action: 'errorEmail',
         body: issue,
@@ -77,6 +75,8 @@ window.onunhandledrejection = event => {
 };
 
 window.onerror = function(message, source, lineNumber, colno, error) {
+    if(message.toLowerCase().trim() == 'script error.')
+        return; // Don't need to hear about external issues we can't fix
     const issue = `UNHANDLED ERROR:\n${message} \nSource: ${source}\nLocation: line ${lineNumber}, col ${colno}\nWebpage: ${window.location}\n${getBrowserInfo()}`;
     sendDiagnostics(issue);
 };
