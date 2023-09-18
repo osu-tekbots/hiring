@@ -105,7 +105,7 @@ renderBreadcrumb(["./pages/userDashboard.php"=>"Dashboard", ("./pages/userPositi
         if($round->getInterviewQuestionLink()) {
             $output .= "
                     <div class='row d-block p-2 mb-3 mx-1 rounded' style='background: #ccc;'>
-                        <p>Interview Questions: <a target='_blank' href='http://".$round->getInterviewQuestionLink()."'>".$round->getInterviewQuestionLink()."</a></p>
+                        <p>Interview Questions: <a target='_blank' href='".$round->getInterviewQuestionLink()."'>".$round->getInterviewQuestionLink()."</a></p>
                     </div>";
         }
 
@@ -143,7 +143,12 @@ renderBreadcrumb(["./pages/userDashboard.php"=>"Dashboard", ("./pages/userPositi
         foreach($users as $user) {
             $feedback = $feedbackDao->getFeedbackForUser($user->getID(), $candidateID, $round->getID());
             if($feedback) {
-                $output .= "<td class='p-1'>".$feedback->getNotes()."</td>\n";
+                $feedbackFiles = $feedbackFileDao->getAllFilesForFeedback($feedback->getID());
+                $output .= "<td class='p-1'>".$feedback->getNotes();
+                foreach($feedbackFiles as $feedbackFile) {
+                    $output .= "<br><a target='_blank' href='uploads/feedback/".$feedbackFile->getFileName()."'>".$feedbackFile->getFileName()."</a>";
+                }
+                $output .= "</td>\n";
             } else {
                 $output .= "<td class='p-1'></td>";
             }
