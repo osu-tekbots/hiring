@@ -214,13 +214,13 @@ header("Expires: 0");
                 '/education/hiring/pages/localForgotPassword.php',
                 '/education/hiring/pages/localNewUser.php',
                 '/education/hiring/pages/error.php']))
-                echo '<div class="alert alert-warning mb-0 navbarMobile">
+                echo '<div class="alert alert-warning mb-0 navbarMobile w-100">
                         This site is currently under development. Please direct questions and feedback <a href="mailto:bairdn@oregonstate.edu">here</a>.
                     </div>';
         } else {
             $user = $userDao->getUserByID($_SESSION['userID']);
 
-            echo '<div class="navbarMobile" style="flex-grow: 1">
+            echo '<div class="navbarMobile w-100" style="flex-grow: 1">
                     <div class="alert alert-info mb-0">
                         <i class="fas fa-user-secret mr-2"></i>
                         You are currently masquerading as '.$user->getFirstName().' '.$user->getLastName().'. <button id="masq" type="button" onclick="stopMasquerade()" class="btn btn-link" style="margin-bottom: -1px">Stop masquerading</button>
