@@ -144,8 +144,8 @@ class QualificationDao {
         try {
             $sql = 'SELECT * FROM hiring_Qualification
             INNER JOIN hiring_QualificationForRound
-                ON hiring_Qualification.q_id = hiring_QualificationForRound.rf_q_id
-            WHERE hiring_QualificationForRound.rf_r_id=:r_id
+                ON hiring_Qualification.q_id = hiring_QualificationForRound.qfr_q_id
+            WHERE hiring_QualificationForRound.qfr_r_id=:r_id
             ORDER BY hiring_Qualification.q_dateCreated ASC;';
             $params = array(
                 ":r_id"=>$roundID
@@ -241,7 +241,7 @@ class QualificationDao {
             $sql = 'DELETE hiring_QualificationForRound, hiring_FeedbackForQual
                 FROM `hiring_Qualification`
                 LEFT JOIN `hiring_QualificationForRound` 
-                    ON `hiring_Qualification`.`q_id` = `hiring_QualificationForRound`.`rf_q_id`
+                    ON `hiring_Qualification`.`q_id` = `hiring_QualificationForRound`.`qfr_q_id`
                 LEFT JOIN `hiring_FeedbackForQual`
                     ON `hiring_Qualification`.`q_id` = `hiring_FeedbackForQual`.`ffq_q_id`
                 WHERE `hiring_Qualification`.`q_id` = :id;';

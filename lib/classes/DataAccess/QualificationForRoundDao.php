@@ -42,8 +42,8 @@ class QualificationForRoundDao {
     public function getAllQualificationsForRound($roundID) {
         try {
             $sql = 'SELECT * FROM hiring_QualificationForRound 
-                INNER JOIN hiring_Qualification ON hiring_Qualification.q_id = hiring_QualificationForRound.rf_q_id
-                WHERE rf_r_id=:roundid
+                INNER JOIN hiring_Qualification ON hiring_Qualification.q_id = hiring_QualificationForRound.qfr_q_id
+                WHERE qfr_r_id=:roundid
                 ORDER BY hiring_Qualification.q_level, hiring_Qualification.q_dateCreated ASC;';
             $params = array(':roundid' => $roundID);
             $result = $this->conn->query($sql, $params);
@@ -68,8 +68,8 @@ class QualificationForRoundDao {
     public function getAllRoundsForQualification($qualificationID) {
         try {
             $sql = 'SELECT * FROM `hiring_QualificationForRound`
-                INNER JOIN `hiring_Round` ON `hiring_Round`.`r_id` = `hiring_QualificationForRound`.`rf_r_id`
-                WHERE `hiring_QualificationForRound`.`rf_q_id` = :qualificationid
+                INNER JOIN `hiring_Round` ON `hiring_Round`.`r_id` = `hiring_QualificationForRound`.`qfr_r_id`
+                WHERE `hiring_QualificationForRound`.`qfr_q_id` = :qualificationid
                 ORDER BY `hiring_Round`.`r_dateCreated` ASC;';
             $params = array(':qualificationid' => $qualificationID);
             $result = $this->conn->query($sql, $params);
@@ -95,9 +95,9 @@ class QualificationForRoundDao {
     public function getQualForRound($qualificationID, $roundID) {
         try {
             $sql = 'SELECT * FROM `hiring_QualificationForRound`
-                INNER JOIN `hiring_Round` ON `hiring_Round`.`r_id` = `hiring_QualificationForRound`.`rf_r_id`
-                WHERE `hiring_QualificationForRound`.`rf_q_id` = :qualificationid
-                    AND `hiring_QualificationForRound`.`rf_r_id` = :roundid;';
+                INNER JOIN `hiring_Round` ON `hiring_Round`.`r_id` = `hiring_QualificationForRound`.`qfr_r_id`
+                WHERE `hiring_QualificationForRound`.`qfr_q_id` = :qualificationid
+                    AND `hiring_QualificationForRound`.`qfr_r_id` = :roundid;';
             $params = array(
                 ':qualificationid' => $qualificationID,
                 ':roundid' => $roundID
@@ -127,8 +127,8 @@ class QualificationForRoundDao {
     public function createQualificationForRound($qfr) {
         try {
             $sql = 'INSERT INTO `hiring_QualificationForRound`(
-                    `rf_r_id`, 
-                    `rf_q_id`
+                    `qfr_r_id`, 
+                    `qfr_q_id`
                 )
                 VALUES (
                     :roundid, 
@@ -173,7 +173,7 @@ class QualificationForRoundDao {
             $this->conn->execute($sql, $params);
             
             // Delete QualForRound
-            $sql = 'DELETE FROM `hiring_QualificationForRound` WHERE `rf_r_id`=:roundID AND `rf_q_id`=:qualificationID;';
+            $sql = 'DELETE FROM `hiring_QualificationForRound` WHERE `qfr_r_id`=:roundID AND `qfr_q_id`=:qualificationID;';
             $this->conn->execute($sql, $params);
 
             return true;
@@ -190,7 +190,7 @@ class QualificationForRoundDao {
      * @return \Model\QualificationForRound
      */
     public static function ExtractQualificationForRoundFromRow($row) {
-        $qfr = new QualificationForRound($row['rf_r_id'], $row['rf_q_id']);
+        $qfr = new QualificationForRound($row['qfr_r_id'], $row['qfr_q_id']);
         return $qfr;
     }
 

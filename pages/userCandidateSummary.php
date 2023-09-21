@@ -95,7 +95,7 @@ renderBreadcrumb(["./pages/userDashboard.php"=>"Dashboard", ("./pages/userPositi
         $output = "
             <div class='row py-3'>
                 <div class='col-sm py-1 my-auto' style='vertial-align: middle'>
-                    <h4>".($index+1).": ".$round->getDescription()."</h4>
+                    <h4>".($index+1).": ".$round->getName()."</h4>
                 </div>
                 <div class='col-sm-2 py-1 my-auto'>
                     <button data-toggle='collapse' data-target='#round". $index+1 ."' type='button' class='btn btn-outline-dark float-right'><i class='fas fa-chevron-down'></i></button>

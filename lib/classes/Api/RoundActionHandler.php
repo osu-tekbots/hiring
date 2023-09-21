@@ -42,7 +42,7 @@ class RoundActionHandler extends ActionHandler {
      * Creates a Round in the database.
      * 
      * @param positionID Must exist in the POST request body.
-     * @param description May exist in the POST request body.
+     * @param name May exist in the POST request body.
      * @param link May exist in the POST request body.
      * 
      * @return \Api\Response HTTP response for whether the API call successfully completed
@@ -59,7 +59,7 @@ class RoundActionHandler extends ActionHandler {
         // Create a new round
         $newRound = new Round();
         $newRound->setPositionID($body['positionID']);
-        $newRound->setDescription($body['description'] ?? NULL);
+        $newRound->setName($body['name'] ?? NULL);
         $newRound->setInterviewQuestionLink($body['link'] ?? NULL);
 
         // Save the round in the database
@@ -77,7 +77,7 @@ class RoundActionHandler extends ActionHandler {
      * Updates the Round state.
      * 
      * @param id Must exist in the POST request body.
-     * @param description Must exist in the POST request body.
+     * @param name Must exist in the POST request body.
      * @param link May exist in the POST request body.
      * 
      * @return \Api\Response HTTP response for whether the API call successfully completed
@@ -85,7 +85,7 @@ class RoundActionHandler extends ActionHandler {
     public function handleUpdateRound() {
         // Ensure the required parameters exist
         $this->requireParam('id');
-        $this->requireParam('description');
+        $this->requireParam('name');
         
         $body = $this->requestBody;
 
@@ -99,7 +99,7 @@ class RoundActionHandler extends ActionHandler {
         $this->verifyUserRole('Search Chair', $round->getPositionID());
 
         // Update the round with the given information
-		$ok = $this->roundDao->updateRound($body['id'], $body['description'], $body['link'] ?? '');
+		$ok = $this->roundDao->updateRound($body['id'], $body['name'], $body['link'] ?? '');
         
         if(!$ok) {
             $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Round not updated'));
@@ -111,7 +111,7 @@ class RoundActionHandler extends ActionHandler {
      * Updates the Round link's state.
      * 
      * @param id Must exist in the POST request body.
-     * @param description Must exist in the POST request body.
+     * @param name Must exist in the POST request body.
      * @param link Must exist in the POST request body.
      * 
      * @return \Api\Response HTTP response for whether the API call successfully completed
@@ -119,7 +119,7 @@ class RoundActionHandler extends ActionHandler {
     public function handleUpdateRoundLink() {
         // Ensure the required parameters exist
         $this->requireParam('id');
-        $this->requireParam('description');
+        $this->requireParam('name');
         $this->requireParam('link');
         
         $body = $this->requestBody;
@@ -134,7 +134,7 @@ class RoundActionHandler extends ActionHandler {
         $this->verifyUserRole('Search Chair', $round->getPositionID());
 
         // Update the round with the given information
-		$ok = $this->roundDao->updateRound($body['id'], $body['description'], $body['link']);
+		$ok = $this->roundDao->updateRound($body['id'], $body['name'], $body['link']);
         
         if(!$ok) {
             $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Round not updated'));

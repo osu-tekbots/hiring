@@ -109,7 +109,7 @@ class RoundDao {
     public function updateRound($roundID, $description, $link) {
         try {
             $sql = 'UPDATE `hiring_Round`
-                    SET `r_description`=:description,`r_interviewQLink`=:link
+                    SET `r_name`=:description,`r_interviewQLink`=:link
                     WHERE `r_id`=:id;';
             $params = array(
                 ':id' => $roundID,
@@ -135,12 +135,12 @@ class RoundDao {
      */
     public function createRound($round) {
         try {
-            $sql = 'INSERT INTO `hiring_Round` (`r_id`, `r_p_id`, `r_description`, `r_interviewQLink`, `r_dateCreated`)
+            $sql = 'INSERT INTO `hiring_Round` (`r_id`, `r_p_id`, `r_name`, `r_interviewQLink`, `r_dateCreated`)
             VALUES (:id, :p_id, :description, :link, :dateCreated);';
             $params = array(
                 ':id' => $round->getId(),
                 ':p_id' => $round->getPositionId(),
-                ':description' => $round->getDescription(),
+                ':description' => $round->getName(),
                 ':link' => $round->getInterviewQuestionLink(),
                 ':dateCreated' => $round->getDateCreated()->format('Y-m-d H:i:s')
             );
@@ -172,7 +172,7 @@ class RoundDao {
                         `hiring_CandidateRoundNote`
                     FROM `hiring_Round`
                 LEFT JOIN `hiring_QualificationForRound`
-                    ON `hiring_Round`.`r_id` = `hiring_QualificationForRound`.`rf_r_id`
+                    ON `hiring_Round`.`r_id` = `hiring_QualificationForRound`.`qfr_r_id`
                 LEFT JOIN `hiring_Feedback`
                     ON `hiring_Round`.`r_id` = `hiring_Feedback`.`f_r_id`
                 LEFT JOIN `hiring_FeedbackForQual`
@@ -217,7 +217,7 @@ class RoundDao {
         $round = new Round($row['r_id']);
         $round->setDateCreated(new \DateTime(($row['r_dateCreated'] == '' ? 'now' : $row['r_dateCreated'])));
         $round->setPositionID($row['r_p_id']);
-        $round->setDescription($row['r_description']);
+        $round->setName($row['r_name']);
         $round->setInterviewQuestionLink($row['r_interviewQLink']);
         return $round;
     }

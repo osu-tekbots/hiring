@@ -16,7 +16,7 @@ class Round {
     private $positionID;
 
     /** @var string */
-    private $description;
+    private $name;
 
     /** @var string */
     private $interviewQLink;
@@ -60,12 +60,12 @@ class Round {
 		$this->positionID = $positionID;
 	}
 
-    public function getDescription() {
-        return $this->description;
+    public function getName() {
+        return $this->name;
     }
 
-    public function setDescription($description) {
-        $this->description = $description;
+    public function setName($name) {
+        $this->name = $name;
     }
 
     public function getInterviewQuestionLink() {

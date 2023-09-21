@@ -210,7 +210,7 @@ $roundTemplate = <<<HTML
         <!-- Header -->
         <div class="row m-1">
             <div class="col-2"></div>
-            <div class="col"><h4 class="text-center w-100 pt-1" style="height: 30px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{num}}: <span id="roundName{{num}}">{{description}}</span></h4></div>
+            <div class="col"><h4 class="text-center w-100 pt-1" style="height: 30px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{num}}: <span id="roundName{{num}}">{{name}}</span></h4></div>
             <div class="col-2 pr-1"><button data-toggle='collapse' data-target='#roundCollapse{{num}}' type='button' class='btn btn-outline-dark float-right'><i class='fas fa-chevron-down'></i></button></div>
         </div>
 
@@ -218,8 +218,8 @@ $roundTemplate = <<<HTML
         <div id="roundCollapse{{num}}" class='collapse pt-1' oninput="setActive(this, true)">
             <!-- Name -->
             <div class="input-group p-1">
-                <div class="input-group-prepend"><label for="rndDescription{{num}}" class="input-group-text">Name</label></div>
-                <input class="form-control" id="rndDescription{{num}}" name="rndDescription{{num}}" value="{{description}}">
+                <div class="input-group-prepend"><label for="rndName{{num}}" class="input-group-text">Name</label></div>
+                <input class="form-control" id="rndName{{num}}" name="rndName{{num}}" value="{{name}}">
             </div>
             <!-- Interview Questions Link -->
             <BR>
@@ -470,7 +470,7 @@ HTML;
                 $output = $roundTemplate;
                 $output = str_replace("{{num}}", $index + 1, $output);
                 $output = str_replace("{{id}}", $round->getID(), $output);
-                $output = str_replace("{{description}}", $round->getDescription() ?? "", $output);
+                $output = str_replace("{{name}}", $round->getName() ?? "", $output);
                 $output = str_replace("{{link}}", $round->getInterviewQuestionLink() ?? "", $output);
 
                 $output = preg_replace("/[{]{2}[a-zA-z]*[}]{2}/", "", $output); // Remove any unused replacements
@@ -501,7 +501,7 @@ HTML;
                     <th class="p-2">Qualification</th>
                     <?php
                         foreach($rounds as $round) {
-                            echo "<th id='qualForRound_RoundName".$round->getID()."' class='p-2 text-center'>".$round->getDescription()."</th>";
+                            echo "<th id='qualForRound_RoundName".$round->getID()."' class='p-2 text-center'>".$round->getName()."</th>";
                         }
                     ?>
                 </tr>
@@ -885,7 +885,7 @@ HTML;
         let data = {
             action: 'updateRound',
             id: roundID,
-            description: document.getElementById('rndDescription'+num).value,
+            name: document.getElementById('rndName'+num).value,
             link: link
         };
         console.log(data)
@@ -895,8 +895,8 @@ HTML;
             if (isFile) {
                 document.getElementById('rndLink'+num).value = link;
             }
-            document.getElementById('roundName'+num).innerText = data.description;
-            document.getElementById('qualForRound_RoundName'+data.id).innerText = data.description;
+            document.getElementById('roundName'+num).innerText = data.name;
+            document.getElementById('qualForRound_RoundName'+data.id).innerText = data.name;
             setActive(document.getElementById('roundCollapse'+num), false);
             snackbar(res.message, 'success');
         }).catch(err => {

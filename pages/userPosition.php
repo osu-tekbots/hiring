@@ -124,7 +124,7 @@ function determineNextRound($roundDao, $feedbackDao, $qualForRoundDao, $feedback
                     if($lastRound === false) {
                         $status = "No Reviews Completed";
                     } else {
-                        $status = "Completed ".$lastRound->getDescription();
+                        $status = "Completed ".$lastRound->getName();
                         $lastRoundQuery = '&round='.$lastRound->getID();
                     }
                 }
@@ -137,7 +137,7 @@ function determineNextRound($roundDao, $feedbackDao, $qualForRoundDao, $feedback
                     $nextRoundBtnStyle = "btn-warning";
                 } else {
                     $nextRoundQuery = "&round=".$nextRound->getID();
-                    $nextRound = "Complete ".$nextRound->getDescription();
+                    $nextRound = "Complete ".$nextRound->getName();
                 }
                 
                 // NOTE: Below, date '-0001-11-30' seems random, but is the format result for the timestamp '0000-00-00 00:00:00' in the database
