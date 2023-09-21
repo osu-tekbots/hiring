@@ -111,8 +111,8 @@ class FeedbackActionHandler extends ActionHandler {
 	/**
      * Handles updating a user's notes for a feedback
      * 
-     * @param feedbackID Must exist in the POST request body
-     * @param note Must exist in the POST request body
+     * @param integer feedbackID Must exist in the POST request body
+     * @param string note Must exist in the POST request body
      * 
      * @return \Api\Response HTTP response for whether the API call successfully completed
      */

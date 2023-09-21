@@ -1,8 +1,8 @@
-    <?php 
-    /**
-     * Placeholder for future implementation
-     */
-    ?>
+        <?php 
+        /**
+         * Placeholder for future implementation
+         */
+        ?>
     </main>
     <footer>
         <!-- Placeholder for future implementation -->

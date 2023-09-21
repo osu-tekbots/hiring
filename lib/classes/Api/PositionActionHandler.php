@@ -38,9 +38,9 @@ class PositionActionHandler extends ActionHandler {
     /**
      * Creates the Position state.
      * 
-     * @param title Must exist in the POST request body.
-     * @param postingLink May exist in the POST request body.
-     * @param email May exist in the POST request body.
+     * @param string title Must exist in the POST request body.
+     * @param string postingLink May exist in the POST request body.
+     * @param string email May exist in the POST request body.
      * 
      * @return \Api\Response HTTP response for whether the API call successfully completed
      */
@@ -82,10 +82,10 @@ class PositionActionHandler extends ActionHandler {
 	/**
      * Updates the Position state.
      * 
-     * @param id Must exist in the POST request body.
-     * @param title Must exist in the POST request body.
-     * @param postingLink May exist in the POST request body.
-     * @param email May exist in the POST request body.
+     * @param string id Must exist in the POST request body.
+     * @param string title Must exist in the POST request body.
+     * @param string postingLink May exist in the POST request body.
+     * @param string email May exist in the POST request body.
      * 
      * @return \Api\Response HTTP response for whether the API call successfully completed
      */
@@ -119,7 +119,7 @@ class PositionActionHandler extends ActionHandler {
 	/**
      * Approves the Position state.
      * 
-     * @param id Must exist in the POST request body.
+     * @param string id Must exist in the POST request body.
      * 
      * @return \Api\Response HTTP response for whether the API call successfully completed
      */
@@ -153,7 +153,7 @@ class PositionActionHandler extends ActionHandler {
 	/**
      * Changes the Position state to start interviewing.
      * 
-     * @param id Must exist in the POST request body.
+     * @param string id Must exist in the POST request body.
      * 
      * @return \Api\Response HTTP response for whether the API call successfully completed
      */
@@ -192,7 +192,7 @@ class PositionActionHandler extends ActionHandler {
 	/**
      * Changes the Position state to closed after a candidate has been hired.
      * 
-     * @param id Must exist in the POST request body.
+     * @param string id Must exist in the POST request body.
      * 
      * @return \Api\Response HTTP response for whether the API call successfully completed
      */

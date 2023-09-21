@@ -45,9 +45,9 @@ class RoleActionHandler extends ActionHandler {
     /**
      * Adds a Role for a user for a position.
      * 
-     * @param positionID Must exist in the POST request body.
-     * @param roleID Must exist in the POST request body.
-     * @param userID Must exist in the POST request body.
+     * @param string positionID Must exist in the POST request body.
+     * @param integer roleID Must exist in the POST request body.
+     * @param string userID Must exist in the POST request body.
      * 
      * @return \Api\Response HTTP response for whether the API call successfully completed
      */
@@ -104,10 +104,10 @@ class RoleActionHandler extends ActionHandler {
 	/**
      * Updates the Role state for a position committee member.
      * 
-     * @param roleForPositionID Must exist in the POST request body.
-     * @param positionID Must exist in the POST request body.
-     * @param roleID Must exist in the POST request body.
-     * @param userID Must exist in the POST request body.
+     * @param integer roleForPositionID Must exist in the POST request body.
+     * @param string positionID Must exist in the POST request body.
+     * @param integer roleID Must exist in the POST request body.
+     * @param string userID Must exist in the POST request body.
      * 
      * @return \Api\Response HTTP response for whether the API call successfully completed
      */

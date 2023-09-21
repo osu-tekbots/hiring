@@ -31,8 +31,8 @@ class UserActionHandler extends ActionHandler {
 	/**
      * Updates the User's access level.
      * 
-     * @param id Must exist in the POST request body.
-     * @param level May exist in the POST request body
+     * @param string id Must exist in the POST request body.
+     * @param string level May exist in the POST request body
      * 
      * @return \Api\Response HTTP response for whether the API call successfully completed
      */
@@ -66,9 +66,9 @@ class UserActionHandler extends ActionHandler {
     /**
      * Adds a new User for search chairs' convinience.
      * 
-     * @param onid Must exist in the POST request body.
-     * @param firstName Must exist in the POST request body.
-     * @param lastName Must exist in the POST request body.
+     * @param string onid Must exist in the POST request body.
+     * @param string firstName Must exist in the POST request body.
+     * @param string lastName Must exist in the POST request body.
      * 
      * @return \Api\Response HTTP response for whether the API call successfully completed
      */

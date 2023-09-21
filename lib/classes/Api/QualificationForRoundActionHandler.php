@@ -43,8 +43,8 @@ class QualificationForRoundActionHandler extends ActionHandler {
 	/**
      * Creates the QualificationForRound state.
      * 
-     * @param roundID Must exist in the POST request body.
-     * @param qualificationID Must exist in the POST request body
+     * @param string roundID Must exist in the POST request body.
+     * @param string qualificationID Must exist in the POST request body
      * 
      * @return \Api\Response HTTP response for whether the API call successfully completed
      */
@@ -81,8 +81,8 @@ class QualificationForRoundActionHandler extends ActionHandler {
     /**
      * Deletes the QualificationForRound state.
      * 
-     * @param roundID Must exist in the POST request body.
-     * @param qualificationID Must exist in the POST request body
+     * @param string roundID Must exist in the POST request body.
+     * @param string qualificationID Must exist in the POST request body
      * 
      * @return \Api\Response HTTP response for whether the API call successfully completed
      */
@@ -126,7 +126,7 @@ class QualificationForRoundActionHandler extends ActionHandler {
 	/**
      * Updates the QualificationForRound state.
      * 
-     * @param data Must exist in the POST request body
+     * @param \Model\QualForRound[] data Must exist in the POST request body
      * 
      * @return \Api\Response HTTP response for whether the API call successfully completed
      */

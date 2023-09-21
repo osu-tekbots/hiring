@@ -39,8 +39,8 @@ class __ModelName__ActionHandler extends ActionHandler {
 	/**
      * Updates the __ModelName__ state.
      * 
-     * @param id Must exist in the POST request body.
-     * @param __example__ May exist in the POST request body
+     * @param type id Must exist in the POST request body.
+     * @param type __example__ May exist in the POST request body
      * 
      * @return \Api\Response HTTP response for whether the API call successfully completed
      */

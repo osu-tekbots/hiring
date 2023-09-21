@@ -1,3 +1,9 @@
+<?php
+    /**
+     * Generates the sidebar with links to all current admin pages.
+     */
+?>
+
 <!-- Sidebar -->
 <ul class="sidebar navbar-nav">
     <!-- Template for dropdown sections -->

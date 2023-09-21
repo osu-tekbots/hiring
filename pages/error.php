@@ -1,6 +1,6 @@
 <?php
 /**
- * Error page for the project showcase site. When redirecting to this page, you should set the `$_SESSION['error']`
+ * Error page for the hiring site. When redirecting to this page, you should set the `$_SESSION['error']`
  * variable to the message you want to display on this page. This provides one place for all errors to be redirected,
  * giving the user a better experience with the site when things go wrong.
  */

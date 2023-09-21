@@ -45,8 +45,8 @@ class FeedbackFileActionHandler extends ActionHandler {
 	/**
      * Create new FeedbackFile in the database.
      * 
-     * @param feedbackID Must exist in the POST request body.
-     * @param filename Must exist in the POST request body
+     * @param integer feedbackID Must exist in the POST request body.
+     * @param string filename Must exist in the POST request body
      * 
      * @return \Api\Response HTTP response for whether the API call successfully completed
      */
@@ -81,7 +81,7 @@ class FeedbackFileActionHandler extends ActionHandler {
     /**
      * Remove the FeedbackFile (from the database AND the server).
      * 
-     * @param fileID Must exist in the POST request body.
+     * @param integer fileID Must exist in the POST request body.
      * 
      * @return \Api\Response HTTP response for whether the API call successfully completed
      */

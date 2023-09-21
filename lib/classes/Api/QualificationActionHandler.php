@@ -31,13 +31,13 @@ class QualificationActionHandler extends ActionHandler {
     /**
      * Creates the Qualification state.
      * 
-     * @param positionID Must exist in the POST request body.
-     * @param level May exist in the POST request body.
-     * @param description May exist in the POST request body.
-     * @param transferable May exist in the POST request body.
-     * @param screeningCriteria May exist in the POST request body.
-     * @param priority May exist in the POST request body.
-     * @param strengthIndicators May exist in the POST request body.
+     * @param string positionID Must exist in the POST request body.
+     * @param string level May exist in the POST request body.
+     * @param string description May exist in the POST request body.
+     * @param boolean transferable May exist in the POST request body.
+     * @param string screeningCriteria May exist in the POST request body.
+     * @param string priority May exist in the POST request body.
+     * @param string strengthIndicators May exist in the POST request body.
      * 
      * @return \Api\Response HTTP response for whether the API call successfully completed
      */
@@ -74,13 +74,13 @@ class QualificationActionHandler extends ActionHandler {
     /**
      * Updates the Qualification state.
      * 
-     * @param id Must exist in the POST request body.
-     * @param level Must exist in the POST request body.
-     * @param transferable Must exist in the POST request body.
-     * @param priority Must exist in the POST request body.
-     * @param description May exist in the POST request body.
-     * @param screeningCriteria May exist in the POST request body.
-     * @param strengthIndicators May exist in the POST request body.
+     * @param string id Must exist in the POST request body.
+     * @param string level Must exist in the POST request body.
+     * @param boolean transferable Must exist in the POST request body.
+     * @param string priority Must exist in the POST request body.
+     * @param string description May exist in the POST request body.
+     * @param string screeningCriteria May exist in the POST request body.
+     * @param string strengthIndicators May exist in the POST request body.
      * 
      * @return \Api\Response HTTP response for whether the API call successfully completed
      */
@@ -123,7 +123,7 @@ class QualificationActionHandler extends ActionHandler {
     /**
      * Deletes a Qualification and all data tied to it.
      * 
-     * @param id Must exist in the POST request body.
+     * @param string id Must exist in the POST request body.
      * 
      * @return \Api\Response HTTP response for whether the API call successfully completed
      */

@@ -42,9 +42,9 @@ class MessageActionHandler extends ActionHandler {
 	/**
      * Updates the Message state.
      * 
-     * @param id Must exist in the POST request body
-     * @param subject Must exist in the POST request body
-     * @param body May exist in the POST request body
+     * @param integer id Must exist in the POST request body
+     * @param string subject Must exist in the POST request body
+     * @param string body Must exist in the POST request body
      * 
      * @return \Api\Response HTTP response for whether the API call successfully completed
      */
@@ -76,6 +76,14 @@ class MessageActionHandler extends ActionHandler {
 		$this->respond(new Response(Response::OK, 'Message updated'));
     }
 
+    /**
+     * Updates the Message state.
+     * 
+     * @param integer id Must exist in the POST request body
+     * @param string email Must exist in the POST request body
+     * 
+     * @return \Api\Response HTTP response for whether the API call successfully completed
+     */
     public function handleSendTestMessage() {
         // Ensure the required parameters exist
         $this->requireParam('id');

@@ -1,3 +1,11 @@
+<?php
+    /**
+     * Generates an email modal that allows users to write up an email (subject and body) to send from the committee's
+     *      email address to a given candidate. The modal can be opened by a button with the attributes
+     *          ` type="button" data-toggle="modal" data-target="#emailModal" `
+     */
+?>
+
 <!-- Email Modal -->
 <div class="modal fade" id="emailModal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
