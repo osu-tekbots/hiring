@@ -18,7 +18,7 @@ include_once PUBLIC_FILES . '/modules/header.php';
 ?>
 
 <section class="vh-100">
-    <form action="./api/localUser.php" method="POST">
+    <form action="./auth/localEndpoint.php" method="POST">
         <input type="hidden" name="action" value="resetPassword">
 		<div class="container py-5 h-100">
             <div class="row d-flex justify-content-center align-items-center h-100">

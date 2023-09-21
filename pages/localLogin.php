@@ -19,7 +19,8 @@ include_once PUBLIC_FILES . '/modules/header.php';
 ?>
 
 <section>
-    <form action="./auth/localAttempt.php" method="POST">
+    <form action="./auth/localEndpoint.php" method="POST">
+        <input type="hidden" name="action" value="login">
         <div class="container py-5 h-100">
             <div class="row d-flex justify-content-center align-items-center h-100">
                 <div class="col-12 col-md-8 col-lg-6 col-xl-5">
@@ -27,8 +28,8 @@ include_once PUBLIC_FILES . '/modules/header.php';
                         <div class="card-body p-5 text-center">
                             <h3 class="mb-5">Local Sign in</h3>
                             <div class="mb-4 input-group">
-                                <div class="input-group-prepend"><label class="input-group-text" for="localEmail">Email</label></div>
-                                <input type="email" name="localEmail" id="localEmail" class="form-control form-control-lg" />
+                                <div class="input-group-prepend"><label class="input-group-text" for="userEmail">Email</label></div>
+                                <input type="email" name="userEmail" id="userEmail" class="form-control form-control-lg" />
                             </div>
                             <div class="mb-4 input-group">
                                 <div class="input-group-prepend"><label class="input-group-text" for="localPassword">Password</label></div>

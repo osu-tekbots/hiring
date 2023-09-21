@@ -19,7 +19,7 @@ include_once PUBLIC_FILES . '/modules/header.php';
 ?>
 
 <section>
-    <form action="./api/localUser.php" method="POST">
+    <form action="./auth/localEndpoint.php" method="POST">
         <input type="hidden" name="action" value="forgotPassword">
         <div class="container py-5 h-100">
             <div class="row d-flex justify-content-center align-items-center h-100">

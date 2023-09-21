@@ -19,8 +19,8 @@ include_once PUBLIC_FILES . '/modules/header.php';
 ?>
 
 <section>
-    <form action="./api/localUser.php" method="POST">
-    <input type="hidden" name="action" value="addUser">
+    <form action="./auth/localEndpoint.php" method="POST">
+        <input type="hidden" name="action" value="addUser">
         <div class="container py-5 h-100">
             <div class="row d-flex justify-content-center align-items-center h-100">
                 <div class="col-12 col-md-8 col-lg-6 col-xl-5">

@@ -23,12 +23,16 @@ $userDao = new UserDao($dbConn, $logger);
 $messageDao = new MessageDao($dbConn, $logger);
 
 // Verify parameters
-if (!isset($_POST) || (isset($_POST) && !isset($_POST['userEmail'])) ) {
+if (!isset($_POST) || (isset($_POST) && !isset($_POST['userEmail'])) || (isset($_POST) && !isset($_POST['action'])) ) {
     displayError('It looks like you submitted a form without the required data. Please be sure to enter an email address.');
 } 
 
 // Call the appropriate handler function
 switch($_POST['action']) {
+    case 'login':
+        login($userDao, $configManager);
+        break;
+
     case 'addUser': 
         addUser($userDao, $messageDao, $configManager, $logger);
         break;
@@ -38,11 +42,11 @@ switch($_POST['action']) {
         break;
     
     case 'resetPassword':
-        resetPassword($userDao, $configManager, $logger);
+        resetPassword($userDao, $configManager, $logger, $dbConn);
         break;
     
     default:
-        displayError('Your request to the local user API is invalid.');
+        // displayError('Your request to the local user API is invalid.');
 
 }
 
@@ -62,6 +66,52 @@ function displayError($message) {
     $redirect = $configManager->getBaseUrl() . 'pages/error.php';
     echo "<script>window.location.replace('$redirect');</script>";
     die();    
+}
+
+/**
+ * Attempts to authenticate a user with the credentials given. On successful authentication, this script will set 
+ *  $_SESSION and $_SESSION['auth'] with the user's information. On failure, it redirects to the error landing page.
+ * 
+ * @param \DataAccess\UserDao $userDao The class for communicating with the user database table
+ * @param \Util\ConfigManager $configManager The class for accessing info in /config.ini
+ * 
+ * @return void
+ */
+function login($userDao, $configManager) {
+    // Redirect to homepage if already logged in
+    if (verifyPermissions(['user', 'admin'])) {
+        // Redirect to their dashboard
+        $redirect = $configManager->getBaseUrl() . 'pages/userDashboard.php';
+        echo "<script>window.location.replace('$redirect');</script>";
+        die();
+    }
+
+    // Ensure request contains login credentials
+    if (!isset($_POST['localPassword'])) {
+        displayError('Your login request did not provide all necessary authentication information. Please be sure to enter a password!');
+    } 
+
+    // Try to get a user using the login credentials
+    $u = $userDao->getLocalUserWithCredentials($_POST['userEmail'], $_POST['localPassword']);
+    if ($u) {
+        // Set $_SESSION with the user's information
+        $hiringProvider = $userDao->getAuthProviderByName('Local');
+        $_SESSION['auth']['method'] = 'hiring';
+        $_SESSION['auth']['id'] = $userDao->getProviderUserID($u->getID(), $hiringProvider);
+
+        $_SESSION['site'] = 'hiring';
+        $_SESSION['userID'] = $u->getID();
+        $_SESSION['userAccessLevel'] = $u->getAccessLevel();
+        $_SESSION['newUser'] = false;
+        
+        // Redirect to homepage
+        $redirect = $configManager->getBaseUrl() . 'pages/userDashboard.php';
+        echo "<script>location.replace('" . $redirect . "');</script>";
+        die();
+    }
+
+    // No matching user found; tell the user that authentication failed
+    displayError('We were unable to locate an account with those credentials. Either your username/password was incorrect, or you need to create a new account.');
 }
 
 /**
@@ -134,7 +184,7 @@ function addUser($userDao, $messageDao, $configManager, $logger) {
 
     // Generate an email with the user's password-set code & information on how to set their password
     $message = $messageDao->getMessageByID(2);
-    $mailer = new HiringMailer($configManager->get('email.admin_address'), 'SPT Admin');
+    $mailer = new HiringMailer($configManager->get('email.admin_address'), $configManager->get('email.admin_subject_tag'));
     $link = $configManager->getBaseUrl() . 'pages/localResetPassword.php?email='.$_POST['userEmail'].'&resetCode=' .$resetCode;
     
     // Send the email to the user
@@ -164,6 +214,9 @@ function addUser($userDao, $messageDao, $configManager, $logger) {
 function forgotPassword($userDao, $messageDao, $configManager, $logger) {
     // Check that the user uses local authentication
     $authProviders = $userDao->getAuthProvidersForUserByEmail($_POST['userEmail']);
+    if($authProviders === false) {
+        displayError('It looks like there\'s no account associated with that email address.');
+    }
     $providerNames = [];
     foreach($authProviders as $authProvider) {
         $providerNames[] = $authProvider->getName();
@@ -181,7 +234,7 @@ function forgotPassword($userDao, $messageDao, $configManager, $logger) {
 
     // Generate an email with the user's reset code & information on how to reset their password
     $message = $messageDao->getMessageByID(3);
-    $mailer = new HiringMailer($configManager->get('email.admin_address'), 'SPT Admin');
+    $mailer = new HiringMailer($configManager->get('email.admin_address'), $configManager->get('email.admin_subject_tag'));
     $link = $configManager->getBaseUrl() . 'pages/localResetPassword.php?email='.$_POST['userEmail'].'&resetCode=' .$resetCode;
     
     // Send the email to the user
@@ -202,10 +255,11 @@ function forgotPassword($userDao, $messageDao, $configManager, $logger) {
  * @param \DataAccess\UserDao $userDao The class for communicating with the user database table
  * @param \Util\ConfigManager $configManager The class for accessing info in /config.ini
  * @param \Util\Logger $logger The class for logging execution details
+ * @param \Util\DatabaseConnection $dbConn The class for communicating directly with the database (used for including header.php)
  * 
  * @return void
  */
-function resetPassword($userDao, $configManager, $logger) {
+function resetPassword($userDao, $configManager, $logger, $dbConn) {
     // Check that the user uses local authentication
     $authProviders = $userDao->getAuthProvidersForUserByEmail($_POST['userEmail']);
     $providerNames = [];
@@ -241,8 +295,9 @@ function resetPassword($userDao, $configManager, $logger) {
     // Log in the user with their new credentials
     include_once PUBLIC_FILES . '/modules/header.php';
     echo "
-        <form style='visibility: hidden' action='./auth/localAttempt.php' method='POST'>
-            <input type='hidden' name='localEmail' value='".$_REQUEST['userEmail']."'>
+        <form style='visibility: hidden' action='./auth/localEndpoint.php' method='POST'>
+            <input type='hidden' name='action' value='login'>
+            <input type='hidden' name='userEmail' value='".$_REQUEST['userEmail']."'>
             <input type='hidden' name='localPassword' value='".$_REQUEST['newUserPassword']."'>
             <button id='clickMe' class='btn btn-primary btn-lg' type='submit'>Login</button>
         <script>setTimeout(() => {document.getElementById('clickMe').click();}, 0);</script>";
