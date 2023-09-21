@@ -83,7 +83,7 @@ class EmailActionHandler extends ActionHandler {
         $body = $this->requestBody;
 
         // Create mailer
-        $mailer = new Mailer('tekbot-worker@engr.oregonstate.edu', 'Hiring Site', $this->logger);
+        $mailer = new Mailer($this->configManager->get('email.admin_address'), $this->configManager->get('email.admin_subject_tag'), $this->logger);
 
         //  Send the email
 		$ok = $mailer->sendEmail('bairdn@oregonstate.edu', 'Uncaught Error', str_replace("\n", "<br>", $body['body']), true);
