@@ -11,11 +11,6 @@ allowIf(verifyPermissions(['admin', 'user']), 'It looks like you\'re not signed 
 allowIf(!is_null($_REQUEST['id']), 'It looks like your request failed to specify a position to pull data for.', true);
 allowIf(checkRoleForPosition('Any', $_REQUEST['id']), 'It looks like you\'re not on the committee for that position. Please speak to the committee\'s search chair if you believe you should be added.', true); // Implicitly verifies that position exists
 
-$title = 'View Position';
-include_once PUBLIC_FILES . '/modules/header.php';
-
-include_once PUBLIC_FILES."/modules/breadcrumb.php";
-renderBreadcrumb(["./pages/userDashboard.php"=>"Dashboard"], $title);
 
 use DataAccess\CandidateDao;
 use DataAccess\PositionDao;
@@ -39,6 +34,12 @@ $candidates = $candidateDao->getCandidatesByPositionId($_REQUEST['id']);
 
 // Prevent unverified users from accessing the whole site
 allowIf($position->getStatus() != 'Requested' || verifyPermissions('admin'), "It looks like this position hasn't been approved yet. Please request approval from the site admins to view this position.", true);
+
+$title = 'View Position';
+include_once PUBLIC_FILES . '/modules/header.php';
+
+include_once PUBLIC_FILES."/modules/breadcrumb.php";
+renderBreadcrumb(["./pages/userDashboard.php"=>"Dashboard"], $position->getTitle());
 
 /**
  * Determines the last round that the current user has finished submitting FeedbackForQuals for the given candidate for. 
