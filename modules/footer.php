@@ -6,6 +6,7 @@
     </main>
     <footer>
         <!-- Placeholder for future implementation -->
+        <br><br><br>
     </footer>
 </body>
 </html>

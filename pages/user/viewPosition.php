@@ -108,9 +108,13 @@ function determineNextRound($roundDao, $feedbackDao, $qualForRoundDao, $feedback
         <div class="col-2">
             <?php
                 if($position->getStatus() == 'Open' && checkRoleForPosition('Search Chair', $_REQUEST['id'])) {
-                    echo "<button id='startInterviewingBtn' type='button' class='btn btn-outline-success float-right'>Start Interviewing</a>";
+                    echo "<button id='startInterviewingBtn' type='button' class='btn btn-outline-success float-right mb-2'>Start Interviewing</button>";
                 }
             ?>
+            <div class="form-check d-inline-block">
+                <input type="checkbox" class="form-check-input" id="hideDisqualified">
+                <label class="form-check-label" for="hideDisqualified">Hide Disqualified Candidates</label>
+            </div>
         </div>
     </div>
     <?php
@@ -118,6 +122,7 @@ function determineNextRound($roundDao, $feedbackDao, $qualForRoundDao, $feedback
             foreach($candidates as $candidate) {
                 $status = $candidate->getCandidateStatus()?->getName();
                 $lastRoundQuery = '';
+                $disqualified = (isset($status) && $status != "Hired");
                 $statusColor = ($status == null ? "" : ($status == "Hired" ? "text-success" : "text-danger")); // Set here to all 'in progress' statuses are black
                 
                 if($status == null) {
@@ -143,7 +148,7 @@ function determineNextRound($roundDao, $feedbackDao, $qualForRoundDao, $feedback
                 
                 // NOTE: Below, date '-0001-11-30' seems random, but is the format result for the timestamp '0000-00-00 00:00:00' in the database
                 $output = "
-                <div class='row py-3' style='border: 1px solid black'>
+                <div class='row py-3 candidate' style='border: 1px solid black' ".($disqualified ? "data-disqual" : "").">
                     <div class='col-sm-2 my-auto' style='vertial-align: middle'>
                         <h4>".$candidate->getFirstName()." ".$candidate->getLastName()."</h4>
                     </div>
@@ -182,28 +187,40 @@ function determineNextRound($roundDao, $feedbackDao, $qualForRoundDao, $feedback
 <script>
     const POSITION_ID = (new URL(window.location.href)).searchParams.get('id');
 
-    // Suppress unneeded error if button doesn't exist
-    try {
-        document.getElementById('startInterviewingBtn').addEventListener('click', e => {
-            if(!confirm('Are you sure you want to change the position\'s status to "Interviewing"? This will restrict your options for modifying this position and allow committee members to begin submitting feedback for candidates.'))
-                return false;
+    document.getElementById('startInterviewingBtn')?.addEventListener('click', e => {
+        if(!confirm('Are you sure you want to change the position\'s status to "Interviewing"? This will restrict your options for modifying this position and allow committee members to begin submitting feedback for candidates.'))
+            return false;
 
-            let data = {
-                action: 'startInterviewing',
-                id: POSITION_ID
-            };
+        let data = {
+            action: 'startInterviewing',
+            id: POSITION_ID
+        };
 
-            e.target.disabled = true;
+        e.target.disabled = true;
 
-            api.post('/position.php', data).then(res => {
-                snackbar(res.message, 'success');
-                location.reload();
-            }).catch(err => {
-                snackbar(err.message, 'error');
-            }).finally(() => e.target.disabled = false);
-        });
-    } catch(e) {
-    }
+        api.post('/position.php', data).then(res => {
+            snackbar(res.message, 'success');
+            location.reload();
+        }).catch(err => {
+            snackbar(err.message, 'error');
+        }).finally(() => e.target.disabled = false);
+    });
+
+    document.getElementById('hideDisqualified').addEventListener('input', e => {
+        let disqualified = document.querySelectorAll('.candidate[data-disqual]');
+
+        if(e.target.checked) {
+            // Hide disqualified candidates
+            for(let i = 0; i < disqualified.length; i++) {
+                disqualified[i].classList.add('d-none');
+            }
+        } else {
+            // Show disqualified candidates
+            for(let i = 0; i < disqualified.length; i++) {
+                disqualified[i].classList.remove('d-none');
+            }
+        }
+    });
 </script>
 
 <?php
