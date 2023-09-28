@@ -406,7 +406,7 @@ class CandidateDao {
             $candidateStatus->setResponsiblePartyDescription($row['cs_responsiblePartyDescription']);
             $candidateStatus->setComments($row['cs_comments']);
             $candidateStatus->setHowNotified($row['cs_howNotified']);
-            $candidateStatus->setDateDecided($row['cs_dateDecided']);
+            $candidateStatus->setDateDecided(new \DateTime($row['cs_dateDecided']));
             return $candidateStatus;
         } else {
             return NULL;

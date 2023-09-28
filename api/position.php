@@ -8,7 +8,16 @@ include_once '../bootstrapApi.php';
 
 // Set up our data access and handler classes
 use DataAccess\PositionDao;
+use DataAccess\CandidateDao;
+use DataAccess\CandidateFileDao;
+use DataAccess\CandidateRoundNoteDao;
+use DataAccess\QualificationDao;
+use DataAccess\RoundDao;
 use DataAccess\RoleDao;
+use DataAccess\FeedbackDao;
+use DataAccess\FeedbackForQualDao;
+use DataAccess\FeedbackFileDao;
+use DataAccess\UserDao;
 use Api\PositionActionHandler;
 use Api\Response;
 
@@ -17,8 +26,17 @@ if(!session_id()) {
 }
 
 $positionDao = new PositionDao($dbConn, $logger);
+$candidateDao = new CandidateDao($dbConn, $logger);
+$candidateFileDao = new CandidateFileDao($dbConn, $logger);
+$candidateRoundNoteDao = new CandidateRoundNoteDao($dbConn, $logger);
+$qualificationDao = new QualificationDao($dbConn, $logger);
+$roundDao = new RoundDao($dbConn, $logger);
 $roleDao = new RoleDao($dbConn, $logger);
-$handler = new PositionActionHandler($positionDao, $roleDao, $logger);
+$feedbackDao = new FeedbackDao($dbConn, $logger);
+$ffqDao = new FeedbackForQualDao($dbConn, $logger);
+$feedbackFileDao = new FeedbackFileDao($dbConn, $logger);
+$userDao = new UserDao($dbConn, $logger);
+$handler = new PositionActionHandler($positionDao, $candidateDao, $candidateFileDao, $candidateRoundNoteDao, $qualificationDao, $roundDao, $roleDao, $feedbackDao, $ffqDao, $feedbackFileDao, $userDao, $configManager, $logger);
 
 // Ensure the user is logged in
 if (verifyPermissions(['user', 'admin'])) {
