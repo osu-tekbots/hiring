@@ -8,7 +8,7 @@ if(!isset($_SESSION)) {
 $isLoggedIn = verifyPermissions(['user', 'admin']);
 if ($isLoggedIn) {
     // Redirect to their dashboard
-    $redirect = $configManager->getBaseUrl() . 'pages/userDashboard.php';
+    $redirect = $configManager->getBaseUrl() . 'pages/user/dashboard.php';
     echo "<script>window.location.replace('$redirect');</script>";
     die();
 }

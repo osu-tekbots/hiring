@@ -1,5 +1,5 @@
 <?php
-include_once '../bootstrap.php';
+include_once '../../bootstrap.php';
 
 if(!isset($_SESSION)) {
     @session_start();
@@ -115,7 +115,7 @@ $userDao = new UserDao($dbConn, $logger);
         document.getElementById('masq'+id).disabled = true;
 
         api.post('/user.php', data).then(res => {
-            location.href = './userDashboard.php';
+            location.href = './user/dashboard.php';
         }).catch(err => {
             snackbar(err.message, 'error');
         }).finally(() => document.getElementById('masq'+id).disabled = false);

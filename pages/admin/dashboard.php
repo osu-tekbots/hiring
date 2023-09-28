@@ -1,5 +1,5 @@
 <?php
-include_once '../bootstrap.php';
+include_once '../../bootstrap.php';
 
 if(!isset($_SESSION)) {
     @session_start();
@@ -40,16 +40,19 @@ $positionDao = new PositionDao($dbConn, $logger);
                     ($status == "Requested" ? "" : "text-danger"));
                 echo "
                 <div class='row py-3' style='border: 1px solid black'>
-                    <div class='col my-auto'>
+                    <div class='col-md-4 my-auto'>
                         <h4>".$position->getTitle()."</h4>
                     </div>
-                    <div class='col my-auto'>
+                    <div class='col-3 my-auto'>
                         <h4 id='status".$position->getID()."' class='$statusColor'>$status</h4>
                     </div>
-                    <div class='col-4 my-auto'>
-                    <a href='userPosition.php?id=".$position->getID()."' class='btn btn-primary float-right'>View</a>";
+                    <div class='col-2 my-auto'>
+                        <button type='button' class='btn btn-outline-info' onclick='exportPosition(this, \"".$position->getID()."\")'>Export Data</button>
+                    </div>
+                    <div class='col-3 my-auto'>
+                    <a href='user/viewPosition.php?id=".$position->getID()."' class='btn btn-primary float-right'>View</a>";
                 if(checkRoleForPosition('Search Chair', $position->getID()))
-                    echo "<a href='userUpdatePosition.php?id=".$position->getID()."' class='btn btn-outline-warning float-right mx-2'>Edit</a>";
+                    echo "<a href='user/updatePosition.php?id=".$position->getID()."' class='btn btn-outline-warning float-right mx-2'>Edit</a>";
                 if($position->getStatus() == 'Requested')
                     echo "<button type='button' id='approve".$position->getID()."' onclick='approvePosition(\"".$position->getID()."\")' class='btn btn-outline-success float-right'>Approve</a>";
                 echo "</div>
@@ -80,16 +83,19 @@ $positionDao = new PositionDao($dbConn, $logger);
                     ($status == "Requested" ? "" : "text-danger"));
                 echo "
                 <div class='row py-3' style='border: 1px solid black'>
-                    <div class='col my-auto'>
+                    <div class='col-md-4 my-auto'>
                         <h4>".$position->getTitle()."</h4>
                     </div>
-                    <div class='col my-auto'>
+                    <div class='col-3 my-auto'>
                         <h4 id='status".$position->getID()."' class='$statusColor'>$status</h4>
                     </div>
-                    <div class='col-4 my-auto'>
-                    <a href='userPosition.php?id=".$position->getID()."' class='btn btn-primary float-right'>View</a>";
+                    <div class='col-2 my-auto'>
+                        <button type='button' class='btn btn-outline-info' onclick='exportPosition(this, \"".$position->getID()."\")'>Export Data</button>
+                    </div>
+                    <div class='col-3 my-auto'>
+                    <a href='user/viewPosition.php?id=".$position->getID()."' class='btn btn-primary float-right'>View</a>";
                 if(checkRoleForPosition('Search Chair', $position->getID()))
-                    echo "<a href='userUpdatePosition.php?id=".$position->getID()."' class='btn btn-outline-warning float-right mx-2'>Edit</a>";
+                    echo "<a href='user/updatePosition.php?id=".$position->getID()."' class='btn btn-outline-warning float-right mx-2'>Edit</a>";
                 if($position->getStatus() == 'Requested')
                     echo "<button type='button' id='approve".$position->getID()."' onclick='approvePosition(\"".$position->getID()."\")' class='btn btn-outline-success float-right'>Approve</a>";
                 echo "</div>
@@ -125,6 +131,23 @@ $positionDao = new PositionDao($dbConn, $logger);
             document.getElementById('approve'+id).disabled = false;
             snackbar(err.message, 'error');
         })
+    }
+
+    function exportPosition(thisVal, id) {
+        let data = {
+            action: 'exportPosition',
+            id: id
+        }
+
+        thisVal.disabled = true;
+
+        snackbar('Generating Export Email', 'info');
+
+        api.post('/position.php', data).then(res => {
+            snackbar(res.message, 'success');
+        }).catch(err => {
+            snackbar(err.message, 'error');
+        }).finally(() => thisVal.disabled = false);
     }
 </script>
 

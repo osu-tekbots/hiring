@@ -23,19 +23,19 @@
     </li> -->
 
     <li class="nav-item <?php echo ($active == 'Positions' ? 'active' : '') ?>">
-        <a style="color: lightblue;" class="nav-link" href="pages/adminDashboard.php">
+        <a style="color: lightblue;" class="nav-link" href="pages/admin/dashboard.php">
             <i class="fas fa-fw fa-user-tie"></i>
             <span>Positions</span>
         </a>
     </li>
     <li class="nav-item <?php echo ($active == 'Users' ? 'active' : '') ?>">
-        <a style="color: lightblue;" class="nav-link" href="pages/adminUser.php">
+        <a style="color: lightblue;" class="nav-link" href="pages/admin/user.php">
             <i class="fas fa-fw fa-users"></i>
             <span>Users</span>
         </a>
     </li>
     <li class="nav-item <?php echo ($active == 'Messages' ? 'active' : '') ?>">
-        <a style="color: lightblue;" class="nav-link" href="pages/adminMessages.php">
+        <a style="color: lightblue;" class="nav-link" href="pages/admin/messages.php">
             <i class="fas fa-fw fa-envelope"></i>
             <span>Messages</span>
         </a>

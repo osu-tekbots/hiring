@@ -1,5 +1,5 @@
 <?php
-include_once '../bootstrap.php';
+include_once '../../bootstrap.php';
 
 if(!isset($_SESSION)) {
     session_start();
@@ -8,7 +8,7 @@ if(!isset($_SESSION)) {
 $isLoggedIn = verifyPermissions(['user', 'admin']);
 if ($isLoggedIn) {
     // Redirect to their dashboard
-    $redirect = $configManager->getBaseUrl() . 'pages/userDashboard.php';
+    $redirect = $configManager->getBaseUrl() . 'pages/user/dashboard.php';
     echo "<script>window.location.replace('$redirect');</script>";
     die();
 }
@@ -35,10 +35,10 @@ include_once PUBLIC_FILES . '/modules/header.php';
                                 <div class="input-group-prepend"><label class="input-group-text" for="localPassword">Password</label></div>
                                 <input type="password" name="localPassword" id="localPassword" class="form-control form-control-lg" />
                             </div>
-                            <a class="forgot-password float-right mb-2" href="pages/localForgotPassword.php">Forgot Password?</a>
+                            <a class="forgot-password float-right mb-2" href="pages/local/forgotPassword.php">Forgot Password?</a>
                             <button class="btn btn-primary btn-lg btn-block" type="submit">Login</button>
                             <hr class="my-4">
-                            <a class="text-primary" href="pages/localNewUser.php">Create Account</a>
+                            <a class="text-primary" href="pages/local/newUser.php">Create Account</a>
                         </div>
                     </div>
                 </div>

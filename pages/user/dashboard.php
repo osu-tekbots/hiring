@@ -1,5 +1,5 @@
 <?php
-include_once '../bootstrap.php';
+include_once '../../bootstrap.php';
 
 if(!isset($_SESSION)) {
     @session_start();
@@ -27,7 +27,7 @@ $positions = $positionDao->getPositionsForUser($_SESSION['userID']);
     <i class="fas fa-info-circle"></i>
     Welcome to the Hiring tool! You can use this tool to track your thoughts about each candidate you review and share
     those thoughts with the other members of your search committee. If you're the Search Chair for a new position, you 
-    can <a href="./pages/userCreatePosition.php">add the position to our system</a> to utilize our tool during your
+    can <a href="./pages/user/createPosition.php">add the position to our system</a> to utilize our tool during your
     search.
 </div>
 <br>
@@ -45,17 +45,22 @@ $positions = $positionDao->getPositionsForUser($_SESSION['userID']);
                     ($status == "Requested" ? "text-warning" : ""));
                 echo "
                 <div class='row py-3' style='border: 1px solid black'>
-                    <div class='col-md-5 my-auto'>
+                    <div class='col-md-4 my-auto'>
                         <h4>".$position->getTitle()."</h4>
                     </div>
-                    <div class='col-5 my-auto'>
+                    <div class='col-4 my-auto'>
                         <h4 class='$statusColor'>$status</h4>
                     </div>
-                    <div class='col my-auto'>";
+                    <div class='col-2 my-auto'>";
+                if(checkRoleForPosition('Search Chair', $position->getID())) {
+                    echo "<button type='button' class='btn btn-outline-info' onclick='exportPosition(this, \"".$position->getID()."\")'>Export Data</button>";
+                }
+                echo "</div>
+                    <div class='col-2 my-auto'>";
                 if($position->getStatus() != 'Requested' || verifyPermissions('admin'))
-                    echo "<a href='userPosition.php?id=".$position->getID()."' class='btn btn-primary float-right'>View</a>";
+                    echo "<a href='user/viewPosition.php?id=".$position->getID()."' class='btn btn-primary float-right'>View</a>";
                 if(checkRoleForPosition('Search Chair', $position->getID()) && $position->getStatus() != 'Requested' || verifyPermissions('admin'))
-                    echo "<a href='userUpdatePosition.php?id=".$position->getID()."' class='btn btn-outline-warning float-right mx-2'>Edit</a>";
+                    echo "<a href='user/updatePosition.php?id=".$position->getID()."' class='btn btn-outline-warning float-right mx-2'>Edit</a>";
                 echo "</div>
                 </div>";
             }
@@ -67,6 +72,25 @@ $positions = $positionDao->getPositionsForUser($_SESSION['userID']);
         }
     ?>
 </div>
+
+<script>
+    function exportPosition(thisVal, id) {
+        let data = {
+            action: 'exportPosition',
+            id: id
+        }
+
+        thisVal.disabled = true;
+
+        snackbar('Generating Export Email', 'info');
+
+        api.post('/position.php', data).then(res => {
+            snackbar(res.message, 'success');
+        }).catch(err => {
+            snackbar(err.message, 'error');
+        }).finally(() => thisVal.disabled = false);
+    }
+</script>
 
 <?php
 include_once PUBLIC_FILES . '/modules/footer.php';

@@ -76,11 +76,11 @@ if ($provider) {
 // If we get to this point, we have authenticated successfully. Redirect back to the appropriate page.
 switch ($_SESSION['userAccessLevel']) {
     case 'User':
-        $redirect = $configManager->getBaseUrl() . 'pages/userDashboard.php';
+        $redirect = $configManager->getBaseUrl() . 'pages/user/dashboard.php';
         break;
 
     case 'Admin':
-        $redirect = $configManager->getBaseUrl() . 'pages/userDashboard.php';
+        $redirect = $configManager->getBaseUrl() . 'pages/user/dashboard.php';
         break;
 
     default:

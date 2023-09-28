@@ -1,5 +1,5 @@
 <?php
-include_once '../bootstrap.php';
+include_once '../../bootstrap.php';
 
 use Model\Candidate;
 use Model\Feedback;
@@ -52,7 +52,7 @@ allowIf(checkRoleForPosition('Any', $position?->getID()), 'It looks like you\'re
 allowIf($position->getStatus() == 'Interviewing' || $position->getStatus() == 'Closed' || verifyPermissions('admin'), "It looks like this position hasn't started interviewing yet. Please ask the committee's search chair to update the position's status.", true);
 
 include_once PUBLIC_FILES."/modules/breadcrumb.php";
-renderBreadcrumb(["./pages/userDashboard.php"=>"Dashboard", ("./pages/userPosition.php?id=".$position->getID())=>$position->getTitle()], $title);
+renderBreadcrumb(["./pages/user/dashboard.php"=>"Dashboard", ("./pages/user/viewPosition.php?id=".$position->getID())=>$position->getTitle()], $title);
 ?>
 
 <br><br>

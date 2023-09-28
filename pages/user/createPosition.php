@@ -1,6 +1,6 @@
 <?php
 
-include_once "../bootstrap.php";
+include_once "../../bootstrap.php";
 
 if(!isset($_SESSION)) {
     @session_start();
@@ -65,8 +65,8 @@ include_once PUBLIC_FILES."/modules/header.php";
         api.post('/position.php', data).then(res => {
             snackbar(res.message, 'success');
             setTimeout(() => {
-                let url = './userDashboard.php'; // Changed to require approval before updating position
-                // let url = new URL('./userUpdatePosition.php', document.baseURI);
+                let url = './user/dashboard.php'; // Changed to require approval before updating position
+                // let url = new URL('./user/updatePosition.php', document.baseURI);
                 // url.searchParams.set('id', res.content);
                 
                 window.location.replace(url);

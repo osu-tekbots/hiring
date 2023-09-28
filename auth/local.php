@@ -19,14 +19,14 @@ function authenticateWithLocal() {
     // Redirect to homepage if already logged in
     $isLoggedIn = verifyPermissions(['user', 'admin']);
     if ($isLoggedIn) {
-        $redirect = $configManager->getBaseUrl() . 'pages/userDashboard.php';
+        $redirect = $configManager->getBaseUrl() . 'pages/user/dashboard.php';
         echo "<script>window.location.replace('$redirect');</script>";
         die();
     }
 
     // Redirect to local login page
 	$pageURL = $configManager->getBaseUrl();
-    $url = $pageURL . 'pages/localLogin.php';
+    $url = $pageURL . 'pages/local/login.php';
     echo "<script>location.replace('" . $url . "');</script>";
     die();
 

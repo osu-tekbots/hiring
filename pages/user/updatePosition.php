@@ -1,6 +1,6 @@
 <?php
 
-include_once "../bootstrap.php";
+include_once "../../bootstrap.php";
 
 if(!isset($_SESSION)) {
     @session_start();
@@ -49,7 +49,7 @@ $candidates = $candidateDao->getCandidatesByPositionId($_REQUEST['id']);
 allowIf($position->getStatus() != 'Requested' || verifyPermissions('admin'), "It looks like this position hasn't been approved yet. Please request approval from the site admins to edit this position.", true);
 
 include_once PUBLIC_FILES."/modules/breadcrumb.php";
-renderBreadcrumb(["./pages/userDashboard.php"=>"Dashboard"], $title);
+renderBreadcrumb(["./pages/user/dashboard.php"=>"Dashboard"], $title);
 
 $candidateTemplate = <<<HTML
     <div class="container border bg-light m-1 p-2">

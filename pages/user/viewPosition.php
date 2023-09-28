@@ -1,5 +1,5 @@
 <?php
-include_once '../bootstrap.php';
+include_once '../../bootstrap.php';
 
 if(!isset($_SESSION)) {
     @session_start();
@@ -39,7 +39,7 @@ $title = 'View Position';
 include_once PUBLIC_FILES . '/modules/header.php';
 
 include_once PUBLIC_FILES."/modules/breadcrumb.php";
-renderBreadcrumb(["./pages/userDashboard.php"=>"Dashboard"], $position->getTitle());
+renderBreadcrumb(["./pages/user/dashboard.php"=>"Dashboard"], $position->getTitle());
 
 /**
  * Determines the last round that the current user has finished submitting FeedbackForQuals for the given candidate for. 
@@ -155,14 +155,14 @@ function determineNextRound($roundDao, $feedbackDao, $qualForRoundDao, $feedback
                     </div>
                     <div class='col-sm-2 my-auto'>";
                 if($position->getStatus() == 'Interviewing' || $position->getStatus() == 'Closed')
-                    $output .= "<a href='userCandidate.php?id=".$candidate->getID()."$nextRoundQuery' class='btn $nextRoundBtnStyle float-right'>$nextRound</a>";
+                    $output .= "<a href='user/reviewCandidate.php?id=".$candidate->getID()."$nextRoundQuery' class='btn $nextRoundBtnStyle float-right'>$nextRound</a>";
 
                 $output .= "
                 </div>
                     <div class='col-sm-2 my-auto'>";
 
                 if($position->getStatus() == 'Interviewing' || $position->getStatus() == 'Closed') {
-                    $output .= "<a href='userCandidateSummary.php?id=".$candidate->getID()."$lastRoundQuery' class='btn btn-outline-primary float-right'>View All Reviews</a>";
+                    $output .= "<a href='user/viewCandidateSummary.php?id=".$candidate->getID()."$lastRoundQuery' class='btn btn-outline-primary float-right'>View All Reviews</a>";
                 }
 
                 $output .= "</div>

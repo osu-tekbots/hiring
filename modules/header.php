@@ -84,11 +84,11 @@ $buttons = array();
 
 if (verifyPermissions(['user', 'admin'])) {
     // User is signed in
-    $buttons['Dashboard'] = 'pages/userDashboard.php';
+    $buttons['Dashboard'] = 'pages/user/dashboard.php';
     
     // Admin only
     if (verifyPermissions('admin')) {
-        $buttons['Admin'] = 'pages/adminDashboard.php';
+        $buttons['Admin'] = 'pages/admin/dashboard.php';
     }
 
     $buttons['Logout'] = 'pages/logout.php';
@@ -152,7 +152,7 @@ header("Expires: 0");
             document.getElementById('masq').disabled = true;
 
             api.post('/user.php', {action: 'stopMasquerade'}).then(res => {
-                location.href = './adminUser.php';
+                location.href = './admin/user.php';
             }).catch(err => {
                 snackbar(err.message, 'error');
             }).finally(() => document.getElementById('masq').disabled = false);
@@ -171,10 +171,10 @@ header("Expires: 0");
                 if(!in_array($_SERVER['SCRIPT_NAME'], [
                     '/education/hiring/pages/index.php', 
                     '/education/hiring/pages/login.php', 
-                    '/education/hiring/pages/localLogin.php',
-                    '/education/hiring/pages/localForgotPassword.php',
-                    '/education/hiring/pages/localResetPassword.php',
-                    '/education/hiring/pages/localNewUser.php',
+                    '/education/hiring/pages/local/login.php',
+                    '/education/hiring/pages/local/forgotPassword.php',
+                    '/education/hiring/pages/local/resetPassword.php',
+                    '/education/hiring/pages/local/newUser.php',
                     '/education/hiring/pages/error.php']))
                     echo '<div class="d-flex align-items-end justify-content-center navbarBrowser" style="flex-grow: 1">
                         <div class="alert alert-warning mb-0">
@@ -210,9 +210,9 @@ header("Expires: 0");
             if(!in_array($_SERVER['SCRIPT_NAME'], [
                 '/education/hiring/pages/index.php', 
                 '/education/hiring/pages/login.php', 
-                '/education/hiring/pages/localLogin.php',
-                '/education/hiring/pages/localForgotPassword.php',
-                '/education/hiring/pages/localNewUser.php',
+                '/education/hiring/pages/local/login.php',
+                '/education/hiring/pages/local/forgotPassword.php',
+                '/education/hiring/pages/local/newUser.php',
                 '/education/hiring/pages/error.php']))
                 echo '<div class="alert alert-warning mb-0 navbarMobile w-100">
                         This site is currently under development. Please direct questions and feedback <a href="mailto:bairdn@oregonstate.edu">here</a>.

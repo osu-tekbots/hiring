@@ -58,6 +58,6 @@
   
 - The `modules/` folder contains encapsulated code that is shared between multiple files in the `pages/` folder. 
   Whenever possible , please consolidate duplicate functionality into a single module or folder. For example, the 
-  `modules/emailModal.php` will contain code utilized in `pages/userCandidate.php` and 
-  `pages/userCandidateSummary.php` to add a modal that lets users email candidates directly from the web app.
+  `modules/emailModal.php` will contain code utilized in `pages/user/reviewCandidate.php` and 
+  `pages/user/viewCandidateSummary.php` to add a modal that lets users email candidates directly from the web app.
 

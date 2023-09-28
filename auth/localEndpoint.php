@@ -81,7 +81,7 @@ function login($userDao, $configManager) {
     // Redirect to homepage if already logged in
     if (verifyPermissions(['user', 'admin'])) {
         // Redirect to their dashboard
-        $redirect = $configManager->getBaseUrl() . 'pages/userDashboard.php';
+        $redirect = $configManager->getBaseUrl() . 'pages/user/dashboard.php';
         echo "<script>window.location.replace('$redirect');</script>";
         die();
     }
@@ -105,7 +105,7 @@ function login($userDao, $configManager) {
         $_SESSION['newUser'] = false;
         
         // Redirect to homepage
-        $redirect = $configManager->getBaseUrl() . 'pages/userDashboard.php';
+        $redirect = $configManager->getBaseUrl() . 'pages/user/dashboard.php';
         echo "<script>location.replace('" . $redirect . "');</script>";
         die();
     }
@@ -185,7 +185,7 @@ function addUser($userDao, $messageDao, $configManager, $logger) {
     // Generate an email with the user's password-set code & information on how to set their password
     $message = $messageDao->getMessageByID(2);
     $mailer = new HiringMailer($configManager->get('email.admin_address'), $configManager->get('email.admin_subject_tag'));
-    $link = $configManager->getBaseUrl() . 'pages/localResetPassword.php?email='.$_POST['userEmail'].'&resetCode=' .$resetCode;
+    $link = $configManager->getBaseUrl() . 'pages/local/resetPassword.php?email='.$_POST['userEmail'].'&resetCode=' .$resetCode;
     
     // Send the email to the user
     $ok = $mailer->sendLocalPasswordEmail($u, $message, $link, $resetCode);
@@ -235,7 +235,7 @@ function forgotPassword($userDao, $messageDao, $configManager, $logger) {
     // Generate an email with the user's reset code & information on how to reset their password
     $message = $messageDao->getMessageByID(3);
     $mailer = new HiringMailer($configManager->get('email.admin_address'), $configManager->get('email.admin_subject_tag'));
-    $link = $configManager->getBaseUrl() . 'pages/localResetPassword.php?email='.$_POST['userEmail'].'&resetCode=' .$resetCode;
+    $link = $configManager->getBaseUrl() . 'pages/local/resetPassword.php?email='.$_POST['userEmail'].'&resetCode=' .$resetCode;
     
     // Send the email to the user
     $ok = $mailer->sendLocalPasswordEmail($userDao->getUserByEmail($_POST['userEmail']), $message, $link, $resetCode);
@@ -244,7 +244,7 @@ function forgotPassword($userDao, $messageDao, $configManager, $logger) {
     }
 
     // Redirect back to the base login page
-    $redirect = $configManager->getBaseUrl() . 'pages/localLogin.php';
+    $redirect = $configManager->getBaseUrl() . 'pages/local/login.php';
     echo "<script>alert('Password reset email has been sent. Follow the link in the email.');location.replace('" . $redirect . "');</script>";
     die();
 }
