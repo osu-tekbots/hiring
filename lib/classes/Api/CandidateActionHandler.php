@@ -191,19 +191,17 @@ class CandidateActionHandler extends ActionHandler {
      * 
      * @param string candidateID Must exist in the POST request body.
      * @param integer status Must exist in the POST request body.
-     * @param string disposition Must exist in the POST request body.
      * @param string reason Must exist in the POST request body.
      * @param string notificationMethod Must exist in the POST request body.
      * @param string responsiblePartyDesc May exist in the POST request body.
      * @param string comments May exist in the POST request body.
      * 
-     * @return Api/Response object
+     * @return \Api\Response HTTP response for whether the API call successfully completed
      */
     public function handleCreateOrUpdateStatus() {
         // Ensure the required parameters exist
         $this->requireParam('candidateID');
         $this->requireParam('status');
-        $this->requireParam('disposition');
         $this->requireParam('reason');
         $this->requireParam('notificationMethod');
         
@@ -248,13 +246,45 @@ class CandidateActionHandler extends ActionHandler {
     }
 
     /**
+     * Deletes the candidate status state
+     * 
+     * @param string candidateID Must exist in the POST request body.
+     * 
+     * @return \Api\Response HTTP response for whether the API call successfully completed
+     */
+    public function handleDeleteCandidateStatus() {
+        // Ensure the required parameters exist
+        $this->requireParam('candidateID');
+
+        $body = $this->requestBody;
+
+        // Get Candidate from database
+        $candidate = $this->candidateDao->getCandidateById($body['candidateID']);
+        if(!$candidate) {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Candidate Not Found', $body));
+        }
+
+        // Check if the user is allowed to update an instance
+        $this->verifyUserRole('Search Chair', $candidate->getPositionID());
+
+        // Delete the status
+        $ok = $this->candidateDao->deleteCandidateStatus($body['candidateID']);
+
+        // Use Response object to send DAO action results 
+        if(!$ok) {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Candidate Status Not Updated', $body));
+        }
+		$this->respond(new Response(Response::OK, 'Candidate Status Updated'));
+    }
+
+    /**
      * Updates (or creates if the candidate has no linked notes for this round) the candidate round note.
      * 
      * @param string candidateID Must exist in the POST request body.
      * @param string roundID Must exist in the POST request body.
      * @param string notes May exist in the POST request body.
      * 
-     * @return Api/Response object
+     * @return \Api\Response HTTP response for whether the API call successfully completed
      */
     public function handleCreateOrUpdateRoundNotes() {
         // Ensure the required parameters exist
@@ -324,6 +354,9 @@ class CandidateActionHandler extends ActionHandler {
                 break;
             case 'createOrUpdateStatus':
                 $this->handleCreateOrUpdateStatus();
+                break;
+            case 'deleteStatus':
+                $this->handleDeleteCandidateStatus();
                 break;
             case 'createOrUpdateRoundNotes':
                 $this->handleCreateOrUpdateRoundNotes();

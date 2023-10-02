@@ -81,7 +81,7 @@ renderBreadcrumb(["./pages/user/dashboard.php"=>"Dashboard", ("./pages/user/view
         <div class="col-sm-2">
             <?php
                 if(checkRoleForPosition('Search Chair', $position?->getID()))
-                    echo '<button class="btn btn-outline-danger float-right" type="button" data-toggle="modal" data-target="#statusModal">Update Status</button>';
+                    echo '<button class="btn btn-outline-danger float-right" type="button" data-toggle="modal" data-target="#statusModal">Set Final Disposition</button>';
             ?>
         </div>
     </div>
@@ -219,7 +219,7 @@ renderBreadcrumb(["./pages/user/dashboard.php"=>"Dashboard", ("./pages/user/view
   <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
     <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title w-100 text-center" id="exampleModalLongTitle">Update Candidate Status</h5>
+            <h5 class="modal-title w-100 text-center" id="exampleModalLongTitle">Set Final Disposition</h5>
         </div>
         <div class="modal-body">
             <div class="input-group my-2">
@@ -253,7 +253,7 @@ renderBreadcrumb(["./pages/user/dashboard.php"=>"Dashboard", ("./pages/user/view
         </div>
         <div class="modal-footer">
             <button id="closeStatusModal" type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel </button>
-            <button type="button" class="btn btn-danger" onclick="candidateStatus(this)">Update</button>
+            <button type="button" class="btn btn-danger" onclick="candidateStatus(this)">&nbsp;Set&nbsp;</button>
         </div>
     </div>
   </div>
@@ -267,12 +267,18 @@ renderBreadcrumb(["./pages/user/dashboard.php"=>"Dashboard", ("./pages/user/view
     const CANDIDATE_ID = (new URL(window.location.href)).searchParams.get('id');
 
     function candidateStatus(thisVal) {
-        data = {
+        let status = document.getElementById('disposition').value;
+        
+        if(status == '--') {
+            deleteCandidateStatus(thisVal);
+            return;
+        }
+
+        let data = {
             action: 'createOrUpdateStatus',
             candidateID: CANDIDATE_ID,
-            status: document.getElementById('disposition').value,
+            status: status,
             responsiblePartyDesc: document.getElementById('responsiblePartyDesc').value,
-            disposition: document.getElementById('disposition').value,
             reason: document.getElementById('reason').value,
             notificationMethod: document.getElementById('notificationMethod').value,
             comments: document.getElementById('comments').value
@@ -288,8 +294,24 @@ renderBreadcrumb(["./pages/user/dashboard.php"=>"Dashboard", ("./pages/user/view
         }).finally(() => thisVal.disabled = false);
     }
 
+    function deleteCandidateStatus(thisVal) {
+        let data = {
+            action: 'deleteStatus',
+            candidateID: CANDIDATE_ID
+        }
+
+        thisVal.disabled = true;
+
+        api.post('/candidate.php', data).then(res => {
+            document.getElementById('closeStatusModal').click();
+            snackbar(res.message, 'success');
+        }).catch(err => {
+            snackbar(err.message, 'error');
+        }).finally(() => thisVal.disabled = false);
+    }
+
     function groupNotes(thisVal, roundID) {
-        data = {
+        let data = {
             action: 'createOrUpdateRoundNotes',
             candidateID: CANDIDATE_ID,
             roundID: roundID,

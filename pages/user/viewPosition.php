@@ -123,6 +123,7 @@ function determineNextRound($roundDao, $feedbackDao, $qualForRoundDao, $feedback
                 $status = $candidate->getCandidateStatus()?->getName();
                 $lastRoundQuery = '';
                 $disqualified = (isset($status) && $status != "Hired");
+                $finalDecision = isset($status);
                 $statusColor = ($status == null ? "" : ($status == "Hired" ? "text-success" : "text-danger")); // Set here to all 'in progress' statuses are black
                 
                 if($status == null) {
@@ -159,7 +160,7 @@ function determineNextRound($roundDao, $feedbackDao, $qualForRoundDao, $feedback
                         <p>".($candidate->getDateApplied()?->format('Y-m-d') && $candidate->getDateApplied()?->format('Y-m-d') != '-0001-11-30' ? 'Applied: '.$candidate->getDateApplied() ->format('Y-m-d') : '')."</p>
                     </div>
                     <div class='col-sm-2 my-auto'>";
-                if($position->getStatus() == 'Interviewing' || $position->getStatus() == 'Closed')
+                if(!$finalDecision && ($position->getStatus() == 'Interviewing' || $position->getStatus() == 'Closed'))
                     $output .= "<a href='user/reviewCandidate.php?id=".$candidate->getID()."$nextRoundQuery' class='btn $nextRoundBtnStyle float-right'>$nextRound</a>";
 
                 $output .= "

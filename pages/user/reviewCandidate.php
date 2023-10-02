@@ -46,10 +46,12 @@ allowIf($candidate, 'It looks like you tried to review a candidate that doesn\'t
 $position = $positionDao->getPosition($candidate->getPositionID());
 $rounds = $roundDao->getAllRoundsByPositionId($position->getID());
 $candidateFiles = $candidateFileDao->getAllFilesForCandidate($candidateID);
+$candidateStatus = $candidate->getCandidateStatus()?->getName();
 
 allowIf(checkRoleForPosition('Any', $position?->getID()), 'It looks like you\'re not on the committee for that position. Please speak to the committee\'s search chair if you believe you should be added.', true); // Implicitly verifies that position exists
 // Prevent unverified users from accessing the whole site
 allowIf($position->getStatus() == 'Interviewing' || $position->getStatus() == 'Closed' || verifyPermissions('admin'), "It looks like this position hasn't started interviewing yet. Please ask the committee's search chair to update the position's status.", true);
+allowIf(!isset($candidateStatus), 'It looks like this candidate\'s status is already final and reviews can no longer be submitted.', true);
 
 include_once PUBLIC_FILES."/modules/breadcrumb.php";
 renderBreadcrumb(["./pages/user/dashboard.php"=>"Dashboard", ("./pages/user/viewPosition.php?id=".$position->getID())=>$position->getTitle()], $title);

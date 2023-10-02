@@ -294,7 +294,7 @@ class CandidateDao {
                 ':statusID' => $result,
                 ':id' => $candidateID
             );
-            $this->conn->execute($sql, $params, true);
+            $this->conn->execute($sql, $params);
 
             return true;
         } catch (\Exception $e) {
@@ -341,6 +341,48 @@ class CandidateDao {
             return true;
         } catch (\Exception $e) {
             $this->logError('Failed to update candidate status: ' . $e->getMessage());
+
+            return false;
+        }
+    }
+
+    /**
+     * Removes a candidate status in the database and unlinks it from a candidate.
+     * 
+     * If an error occurs during the deletion, the function will return `false`.
+     * 
+     * @param string  The candidate to remove the status for
+     *
+     * @return boolean true if deletion succeeds, false otherwise
+     */
+    public function deleteCandidateStatus($candidateID) {
+        try {
+            $sql = 'SELECT `c_cs_id` FROM `hiring_Candidate`
+                WHERE `c_id` = :id;';
+            $params = array(
+                ':id' => $candidateID
+            );
+            $result = $this->conn->query($sql, $params);
+            $statusID = $result[0]['c_cs_id'];
+
+            $sql = 'UPDATE `hiring_Candidate`
+                SET `c_cs_id` = NULL
+                WHERE `c_id` = :id;';
+            $params = array(
+                ':id' => $candidateID
+            );
+            $this->conn->execute($sql, $params);
+
+            $sql = 'DELETE FROM `hiring_CandidateStatus` 
+                WHERE `cs_id` = :statusID';
+            $params = array (
+                ':statusID' => $statusID
+            );
+            $this->conn->execute($sql, $params);
+
+            return true;
+        } catch (\Exception $e) {
+            $this->logError('Failed to delete candidate status: ' . $e->getMessage());
 
             return false;
         }
