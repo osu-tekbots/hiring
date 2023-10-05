@@ -20,7 +20,7 @@ include_once PUBLIC_FILES."/modules/header.php";
     <h2 class="text-center">Add A New Position</h2>
     <div class="alert alert-info mx-5">
         <i class="fas fa-info-circle"></i>
-        This form is used to create a new position. You will be automatically set as the Committee Chair for this position. 
+        This form is used to create a new position. You will be automatically set as the Search Chair for this position. 
         After creating the position, the site admins will verify that it is legitimate. After your position is approved, 
         you will be given the opportunity to add qualifications, rounds, candidates, and committee members to the position.
     </div>

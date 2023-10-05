@@ -12,9 +12,6 @@ allowIf(verifyPermissions(['admin', 'user']), 'It looks like you\'re not signed 
 allowIf(!is_null($_REQUEST['id']), 'It looks like your request failed to specify a position to update.', true);
 allowIf(checkRoleForPosition('Search Chair', $_REQUEST['id']), 'It looks like you\'re not the Search Chair for that position. Please speak to the Search Chair about the changes you believe need to be made.', true);
 
-$title = 'Update Position';
-include_once PUBLIC_FILES."/modules/header.php";
-
 use DataAccess\CandidateDao;
 use DataAccess\CandidateFileDao;
 use DataAccess\PositionDao;
@@ -47,6 +44,9 @@ $candidates = $candidateDao->getCandidatesByPositionId($_REQUEST['id']);
 
 // Prevent unverified users from accessing page with file uploads
 allowIf($position->getStatus() != 'Requested' || verifyPermissions('admin'), "It looks like this position hasn't been approved yet. Please request approval from the site admins to edit this position.", true);
+
+$title = 'Update ' . $position->getTitle();
+include_once PUBLIC_FILES."/modules/header.php";
 
 include_once PUBLIC_FILES."/modules/breadcrumb.php";
 renderBreadcrumb(["./pages/user/dashboard.php"=>"Dashboard"], $title);
