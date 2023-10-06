@@ -9,7 +9,7 @@ if(!isset($_SESSION)) {
 // Make sure the user is logged in and allowed to be on this page
 include_once PUBLIC_FILES . '/lib/authorize.php';
 allowIf(verifyPermissions(['admin', 'user']), 'It looks like you\'re not signed in. Please sign in before updating positions.', true);
-allowIf(!is_null($_REQUEST['id']), 'It looks like your request failed to specify a position to update.', true);
+allowIf(isset($_REQUEST['id']) && !is_null($_REQUEST['id']), 'It looks like your request failed to specify a position to update.', true);
 allowIf(checkRoleForPosition('Search Chair', $_REQUEST['id']), 'It looks like you\'re not the Search Chair for that position. Please speak to the Search Chair about the changes you believe need to be made.', true);
 
 use DataAccess\CandidateDao;

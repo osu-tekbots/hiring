@@ -9,6 +9,8 @@
  * @return void
  */
 function allowIf($condition, $failure = 'index.php', $displayError = false) {
+    global $configManager;
+    
     if(!$condition) {
         if($displayError) {
             if(!isset($_SESSION)) {
@@ -17,7 +19,7 @@ function allowIf($condition, $failure = 'index.php', $displayError = false) {
             if($failure != 'index.php') {
                 $_SESSION['error'] = $failure;
             }
-            echo "<script>window.location.replace('error.php');</script>";
+            echo "<script>window.location.replace('".$configManager->getBaseUrl()."pages/error.php');</script>";
         } else {
             echo "<script>window.location.replace('$failure');</script>";
         }
