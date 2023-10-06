@@ -328,6 +328,51 @@ class CandidateActionHandler extends ActionHandler {
 		$this->respond(new Response(Response::OK, 'Group Note Updated'));
     }
 
+    public function handleSetRoundDecision() {
+        // Ensure the required parameters exist
+        $this->requireParam('candidateID');
+        $this->requireParam('roundID');
+        $this->requireParam('decision');
+        
+        $body = $this->requestBody;
+        
+        // Get Candidate from database
+        $candidate = $this->candidateDao->getCandidateById($body['candidateID']);
+        if(!$candidate) {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Candidate Not Found', $body));
+        }
+
+        // Check if the user is allowed to update an instance
+        $this->verifyUserRole('Search Chair', $candidate->getPositionID());
+
+        if($body['decision'] == '--')
+            $body['decision'] == NULL;
+
+        // Update or create the candidate round note -- also contains decision
+        $candidateRoundNote = $this->candidateRoundNoteDao->getCandidateNotesForRound($body['candidateID'], $body['roundID']);
+        $noteExists = true;
+        if(!$candidateRoundNote) {
+            $noteExists = false;
+            $candidateRoundNote = new CandidateRoundNote();
+            $candidateRoundNote->setCandidateID($body['candidateID']);
+            $candidateRoundNote->setRoundID($body['roundID']);
+        }
+        $candidateRoundNote->setDecision($body['decision']);
+
+        // Update the candidate round note or create a new one if the candidate doesn't have one for this round yet
+        if($noteExists) {
+            $ok = $this->candidateRoundNoteDao->updateCandidateRoundNote($candidateRoundNote);
+        } else {
+            $ok = $this->candidateRoundNoteDao->createCandidateRoundNote($candidateRoundNote);
+        }
+        
+        // Use Response object to send DAO action results 
+        if(!$ok) {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Round Status Not Updated', $body));
+        }
+		$this->respond(new Response(Response::OK, 'Round Status Updated'));
+    }
+
 	/**
      * Handles the HTTP request on the API resource. 
      * 
@@ -360,6 +405,9 @@ class CandidateActionHandler extends ActionHandler {
                 break;
             case 'createOrUpdateRoundNotes':
                 $this->handleCreateOrUpdateRoundNotes();
+                break;
+            case 'setCandidateRoundDecision':
+                $this->handleSetRoundDecision();
                 break;
             default:
                 $this->respond(new Response(Response::BAD_REQUEST, 'Invalid action on Candidate resource'));

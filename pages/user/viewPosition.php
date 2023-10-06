@@ -13,6 +13,7 @@ allowIf(checkRoleForPosition('Any', $_REQUEST['id']), 'It looks like you\'re not
 
 
 use DataAccess\CandidateDao;
+use DataAccess\CandidateRoundNoteDao;
 use DataAccess\PositionDao;
 use DataAccess\RoundDao;
 use DataAccess\FeedbackDao;
@@ -21,6 +22,7 @@ use DataAccess\FeedbackForQualDao;
 
 $positionDao = new PositionDao($dbConn, $logger);
 $candidateDao = new CandidateDao($dbConn, $logger);
+$candidateRoundNoteDao = new CandidateRoundNoteDao($dbConn, $logger);
 $roundDao = new RoundDao($dbConn, $logger);
 $feedbackDao = new FeedbackDao($dbConn, $logger);
 $qualForRoundDao = new QualificationForRoundDao($dbConn, $logger);
@@ -50,20 +52,15 @@ renderBreadcrumb(["./pages/user/dashboard.php"=>"Dashboard"], $position->getTitl
  * @return Model\Round|bool The last round that the user has finished filling out FeedbackForQuals for, or `false` if 
  *  they haven't finished any yet
  */
-function determineLastFinishedRound($roundDao, $feedbackDao, $qualForRoundDao, $feedbackForQualDao, $candidateID) {
+function determineLastFinishedRound($roundDao, $candidateRoundNoteDao, $candidateID) {
     $lastRound = false;
     $rounds = $roundDao->getAllRoundsByPositionId($_REQUEST['id']);
 
     foreach($rounds as $round) {
-        $feedback = $feedbackDao->getFeedbackForUser($_SESSION['userID'], $candidateID, $round->getID());
-        if(!$feedback) {
-            continue;
-        }
-        $totalQuals = $qualForRoundDao->getAllQualificationsForRound($round->getID());
-        $filledQuals = $feedbackForQualDao->getFeedbackForQualByFeedbackID($feedback->getID());
-        if(count($totalQuals) == count($filledQuals)) {
-            $lastRound = $round;
-        }
+        $decision = $candidateRoundNoteDao->getCandidateNotesForRound($candidateID, $round->getID());
+        if(!$decision | ($decision && !$decision->getDecision())) continue;
+
+        $lastRound = $round;
     }
 
     return $lastRound;
@@ -78,22 +75,16 @@ function determineLastFinishedRound($roundDao, $feedbackDao, $qualForRoundDao, $
  * @return Model\Round|bool The first round that the user has not finished filling out FeedbackForQuals for, or 
  *  `false` if they have finished all rounds already
  */
-function determineNextRound($roundDao, $feedbackDao, $qualForRoundDao, $feedbackForQualDao, $candidateID) {
+function determineNextRound($roundDao, $candidateRoundNoteDao, $candidateID) {
     $nextRound = false;
     $rounds = $roundDao->getAllRoundsByPositionId($_REQUEST['id']);
 
     foreach($rounds as $round) {
-        $feedback = $feedbackDao->getFeedbackForUser($_SESSION['userID'], $candidateID, $round->getID());
-        if(!$feedback) {
-            $nextRound = $round;
-            break;
-        }
-        $totalQuals = $qualForRoundDao->getAllQualificationsForRound($round->getID());
-        $filledQuals = $feedbackForQualDao->getFeedbackForQualByFeedbackID($feedback->getID());
-        if(count($totalQuals) != count($filledQuals)) {
-            $nextRound = $round;
-            break;
-        }
+        $decision = $candidateRoundNoteDao->getCandidateNotesForRound($candidateID, $round->getID());
+        if($decision && $decision->getDecision()) continue;
+        
+        $nextRound = $round;
+        break;
     }
 
     return $nextRound;
@@ -127,9 +118,9 @@ function determineNextRound($roundDao, $feedbackDao, $qualForRoundDao, $feedback
                 $statusColor = ($status == null ? "" : ($status == "Hired" ? "text-success" : "text-danger")); // Set here to all 'in progress' statuses are black
                 
                 if($status == null) {
-                    $lastRound = determineLastFinishedRound($roundDao, $feedbackDao, $qualForRoundDao, $feedbackForQualDao, $candidate->getID());
+                    $lastRound = determineLastFinishedRound($roundDao, $candidateRoundNoteDao, $candidate->getID());
                     if($lastRound === false) {
-                        $status = "No Reviews Completed";
+                        $status = "No Rounds Completed";
                     } else {
                         $status = "Completed ".$lastRound->getName();
                         $lastRoundQuery = '&round='.$lastRound->getID();
@@ -137,7 +128,7 @@ function determineNextRound($roundDao, $feedbackDao, $qualForRoundDao, $feedback
                 }
 
                 $nextRoundBtnStyle = "btn-primary";
-                $nextRound = determineNextRound($roundDao, $feedbackDao, $qualForRoundDao, $feedbackForQualDao, $candidate->getID());
+                $nextRound = determineNextRound($roundDao, $candidateRoundNoteDao, $candidate->getID());
                 $nextRoundQuery = '';
                 if($nextRound === false) {
                     $nextRound = "Update Reviews";
@@ -168,7 +159,7 @@ function determineNextRound($roundDao, $feedbackDao, $qualForRoundDao, $feedback
                     <div class='col-sm-2 my-auto'>";
 
                 if($position->getStatus() == 'Interviewing' || $position->getStatus() == 'Closed') {
-                    $output .= "<a href='user/viewCandidateSummary.php?id=".$candidate->getID()."$lastRoundQuery' class='btn btn-outline-primary float-right'>View All Reviews</a>";
+                    $output .= "<a href='user/viewCandidateSummary.php?id=".$candidate->getID()."$nextRoundQuery' class='btn btn-outline-primary float-right'>View All Reviews</a>";
                 }
 
                 $output .= "</div>

@@ -159,32 +159,12 @@ renderBreadcrumb(["./pages/user/dashboard.php"=>"Dashboard", ("./pages/user/view
         $output .= "</table>
             </div>";
         
-        // Group Notes
-        $roundNote = $candidateRoundNoteDao->getCandidateNotesForRound($candidate->getID(), $round->getID());
-        if($roundNote === false) {
-            $roundNote = ' ';
-        } else {
-            $roundNote = $roundNote->getNotes(); // Avoid issues with string vs object below
-        }
-        $output .= "
-            <div class='row p-2 mb-3 rounded'>
-                <div class='col mt-2'>
-                    <h6>Group Notes</h6>";
-        if(checkRoleForPosition('Search Chair', $position?->getID())) {
-            $output .= "<textarea class='form-control' onchange='groupNotes(this, \"".$round->getID()."\")'>$roundNote</textarea>";
-        } else {
-            $output .= "<p class='form-control' style='height:auto'>$roundNote</p>";
-        }
-        $output .= "
-                </div>
-            </div>";
-        
         // User notes & files
         $feedback = $feedbackDao->getFeedbackForUser($_SESSION['userID'], $candidateID, $round->getID());
         if($feedback !== false) {
             $feedbackFiles = $feedbackFileDao->getAllFilesForFeedback($feedback->getID());
             $output .= "
-                <div class='row p-2 mb-3 rounded'>
+                <div class='row p-2 rounded' style='padding-bottom: 0 !important'>
                     <div class='col-sm-8 mt-2'>
                         <h6>My Notes</h6>
                         <p class='form-control' style='height:auto'>".$feedback->getNotes()." </p>
@@ -201,6 +181,47 @@ renderBreadcrumb(["./pages/user/dashboard.php"=>"Dashboard", ("./pages/user/view
                     </div>
                 </div>";
         }
+        
+        // Group Notes
+        $roundNote = $candidateRoundNoteDao->getCandidateNotesForRound($candidate->getID(), $round->getID());
+        $roundDecision = NULL;
+        $decisionColor = '';
+        if($roundNote === false) {
+            $roundNote = ' ';
+        } else {
+            $roundDecision = $roundNote->getDecision();
+            if($roundDecision == 'Advanced')
+                $decisionColor = ' text-success';
+            else if ($roundDecision == 'Disqualified')
+                $decisionColor = ' text-danger';
+
+            $roundNote = $roundNote->getNotes(); // Avoid issues with string vs object below
+        }
+        $output .= "
+            <div class='row p-2 rounded' style='padding-top: 0 !important'>
+                <div class='col-sm-10 mt-2'>
+                    <h6>Group Notes</h6>";
+        if(checkRoleForPosition('Search Chair', $position?->getID())) {
+            $output .= "<textarea class='form-control' onchange='groupNotes(this, \"".$round->getID()."\")'>$roundNote</textarea>";
+        } else {
+            $output .= "<p class='form-control' style='height:auto'>$roundNote</p>";
+        }
+        $output .= "
+                </div>";
+        if(checkRoleForPosition('Search Chair', $position?->getID())) {
+            $output .= "
+                <div class='col-sm-2 mt-2'>
+                    <h6>Round Decision</h6>
+                    <select class='custom-select $decisionColor' oninput='candidateRoundDecision(this, \"".$round->getID()."\")'>
+                        <option>--</option>
+                        <option class='text-success'".($roundDecision == 'Advanced' ? ' selected' : '').">Advanced</option>
+                        <option class='text-danger'".($roundDecision == 'Disqualified' ? ' selected' : '').">Disqualified</option>
+                    </select>
+                </div>
+            ";
+        }
+        $output .= "
+            </div>";
             
         $output .= "</div></div>"; // End of this round
 
@@ -325,6 +346,36 @@ renderBreadcrumb(["./pages/user/dashboard.php"=>"Dashboard", ("./pages/user/view
         }).catch(err => {
             snackbar(err.message, 'error');
         }).finally(() => thisVal.disabled = false);
+    }
+
+    function candidateRoundDecision(thisVal, roundID) {
+        let decision = thisVal.value;
+
+        if(decision == 'Advanced') {
+            thisVal.classList.remove('text-danger');
+            thisVal.classList.add('text-success');
+        } else if(decision == 'Disqualified') {
+            thisVal.classList.add('text-danger');
+            thisVal.classList.remove('text-success');
+        } else {
+            thisVal.classList.remove('text-danger');
+            thisVal.classList.remove('text-success');
+        }
+
+        let data = {
+            action: "setCandidateRoundDecision",
+            candidateID: CANDIDATE_ID,
+            roundID: roundID,
+            decision: decision
+        }
+
+        thisVal.disabled = true;
+
+        api.post('/candidate.php', data).then(res => {
+            snackbar(res.message, 'success');
+        }).catch(err => {
+            snackbar(err.message, 'error');
+        }).finally(() => {thisVal.disabled = false;});
     }
 </script>
 

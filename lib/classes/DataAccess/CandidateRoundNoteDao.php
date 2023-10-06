@@ -100,10 +100,12 @@ class CandidateRoundNoteDao {
     public function updateCandidateRoundNote($candidateRoundNote) {
         try {
             $sql = 'UPDATE hiring_CandidateRoundNote
-                SET `crn_notes` = :notes
+                SET `crn_notes` = :notes,
+                    `crn_roundDecision` = :decision
                 WHERE `crn_id` = :crnID;';
             $params = array(
                 ':notes' => $candidateRoundNote->getNotes(),
+                ':decision' => $candidateRoundNote->getDecision(),
                 ':crnID' => $candidateRoundNote->getID()
             );
             $this->conn->execute($sql, $params);
@@ -127,17 +129,20 @@ class CandidateRoundNoteDao {
             $sql = 'INSERT INTO hiring_CandidateRoundNote (
                     `crn_c_id`, 
                     `crn_r_id`, 
-                    `crn_notes`
+                    `crn_notes`,
+                    `crn_roundDecision`
                 )
                 VALUES (
                     :cID,
                     :rID,
-                    :notes
+                    :notes,
+                    :decision
                 );';
             $params = array(
                 ':cID' => $candidateRoundNote->getCandidateID(),
                 ':rID' => $candidateRoundNote->getRoundID(),
-                ':notes' => $candidateRoundNote->getNotes()
+                ':notes' => $candidateRoundNote->getNotes(),
+                ':decision' => $candidateRoundNote->getDecision()
             );
             $result = $this->conn->execute($sql, $params, true);
 
@@ -160,6 +165,7 @@ class CandidateRoundNoteDao {
         $candidateRoundNote->setCandidateID($row['crn_c_id']);
         $candidateRoundNote->setRoundID($row['crn_r_id']);
         $candidateRoundNote->setNotes($row['crn_notes']);
+        $candidateRoundNote->setDecision($row['crn_roundDecision']);
         $candidateRoundNote->setDateUpdated($row['crn_dateUpdated']);
 
         return $candidateRoundNote;

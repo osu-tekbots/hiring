@@ -7,9 +7,9 @@ use Util\IdGenerator;
  * Data structure representing a CandidateRoundNote
  */
 class CandidateRoundNote {
-    
-	/** @var int */
-	private $id;
+        
+    /** @var int */
+    private $id;
 
     /** @var string */
     private $candidateID;
@@ -20,9 +20,12 @@ class CandidateRoundNote {
     /** @var string */
     private $notes;
 
+    /** @var string */
+    private $decision;
+
     /** @var \DateTime */
     private $dateUpdated;
-		
+        
     /**
      * Creates a new instance of a CandidateRoundNote.
      * 
@@ -34,52 +37,60 @@ class CandidateRoundNote {
             $this->setID($id);
             $this->setDateUpdated(new \DateTime());
         } else {
-			$this->setID($id);
+            $this->setID($id);
         }
     }
-    
+        
     /**
      * Getter and Setters
      */
     public function getID(){
-		return $this->id;
-	}
+        return $this->id;
+    }
 
-	public function setID($id){
-		$this->id = $id;
-	}
+    public function setID($id){
+        $this->id = $id;
+    }
 
     public function getCandidateID(){
-		return $this->candidateID;
-	}
+        return $this->candidateID;
+    }
 
-	public function setCandidateID($candidateID){
-		$this->candidateID = $candidateID;
-	}
+    public function setCandidateID($candidateID){
+        $this->candidateID = $candidateID;
+    }
 
     public function getRoundID(){
-		return $this->roundID;
-	}
+        return $this->roundID;
+    }
 
-	public function setRoundID($roundID){
-		$this->roundID = $roundID;
-	}
+    public function setRoundID($roundID){
+        $this->roundID = $roundID;
+    }
 
     public function getNotes(){
-		return $this->notes;
-	}
+        return $this->notes;
+    }
 
-	public function setNotes($notes){
-		$this->notes = $notes;
-	}
+    public function setNotes($notes){
+        $this->notes = $notes;
+    }
+
+    public function setDecision($decision) {
+        $this->decision = $decision;
+    }
+
+    public function getDecision() {
+        return $this->decision;
+    }
 
     public function getDateUpdated(){
-		return $this->dateUpdated;
-	}
+        return $this->dateUpdated;
+    }
 
-	public function setDateUpdated($dateUpdated){
-		$this->dateUpdated = $dateUpdated;
-	}
+    public function setDateUpdated($dateUpdated){
+        $this->dateUpdated = $dateUpdated;
+    }
 
 }
 ?>
