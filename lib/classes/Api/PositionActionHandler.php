@@ -308,7 +308,9 @@ class PositionActionHandler extends ActionHandler {
         $rounds = $this->roundDao->getAllRoundsByPositionId($body['id']);
         $members = $this->roleDao->getAllPositionMembers($body['id']);
 
-        // Generate the email data
+        $attachments = array();
+
+        // Generate the email data & add attachments as we go
         $message = '
             Position Information:<br>
             &emsp;Position Title: '.$position->getTitle().'<br>
@@ -321,6 +323,7 @@ class PositionActionHandler extends ActionHandler {
             <br>
             Candidates:<br>
         ';
+        // Candidate data
         foreach($candidates as $candidate) {
             $candidateStatus = $candidate->getCandidateStatus();
             $candidateFiles = $this->candidateFileDao->getAllFilesForCandidate($candidate->getID());
@@ -334,8 +337,12 @@ class PositionActionHandler extends ActionHandler {
                 ';
             foreach($candidateFiles as $candidateFile) {
                 $message .= '
-                    &emsp;&emsp;<a href="'.$this->configManager->getBaseURL().'uploads/candidate/'.$candidateFile->getFileName().'">'.$candidateFile->getPurpose().'</a> (Added on: '.$candidateFile->getDateCreated()->format('l, m/d/Y \a\t H:i:s T').')<br>
+                    &emsp;&emsp;'.$candidate->getLastName().'_'.$candidateFile->getPurpose().' (Added on: '.$candidateFile->getDateCreated()->format('l, m/d/Y \a\t H:i:s T').')<br>
                 ';
+                $attachments[] = array(
+                    'address' => PUBLIC_FILES.'/uploads/candidate/'.$candidateFile->getFileName(),
+                    'name' => $candidate->getLastName() . '_' . $candidateFile->getPurpose()
+                );
             }
             if($candidateStatus) {
                 $message .= '
@@ -389,6 +396,10 @@ class PositionActionHandler extends ActionHandler {
                         $message .= '<td style="border: 1px solid;">'.$feedback->getNotes()."\n";
                         foreach($feedbackFiles as $feedbackFile) {
                             $message .= '<br><a target="_blank" href="uploads/feedback/'.$feedbackFile->getFileName().'">'.$feedbackFile->getFileName().'</a>'."\n";
+                            $attachments[] = array(
+                                'address' => PUBLIC_FILES.'/uploads/feedback/'.$feedbackFile->getFileName(),
+                                'name' => $feedbackFile->getFileName()
+                            );
                         }
                         $message .= '</td>'."\n";
                     } else {
@@ -416,6 +427,7 @@ class PositionActionHandler extends ActionHandler {
             <br>
             Qualifications:<br>
         ';
+        // Qualification data
         foreach($qualifications as $qualification) {
             $message .= '
                 &emsp;Description: '.$qualification->getDescription().'<br>
@@ -433,6 +445,7 @@ class PositionActionHandler extends ActionHandler {
             <br>
             Rounds:<br>
         ';
+        // Round data
         foreach($rounds as $round) {
             $message .= '
                 &emsp;Name: '.$round->getName().'<br>
@@ -445,6 +458,7 @@ class PositionActionHandler extends ActionHandler {
             <br>
             Committee Members:<br>
         ';
+        // Member data
         foreach($members as $member) {
             $message .= '
                 &emsp;'.$member->getUser()->getFirstName().' '.$member->getUser()->getLastName().' ('.$member->getRole()->getName().')<br>
@@ -453,14 +467,12 @@ class PositionActionHandler extends ActionHandler {
         $message .= '
             <br>
             <hr>
-            <br>
-            <!-- Next thing goes here -->
         ';
         
 
-        $mailer = new Mailer($this->configManager->get('email.admin_address'), $this->configManager->get('email.admin_subject_tag'), $this->logger);
+        $mailer = new \Email\NewMailer($this->configManager->get('email.admin_address'), null, $this->logger);
 
-        $ok = $mailer->sendEmail($user->getEmail(), 'Search Committee Export', $message, true);
+        $ok = $mailer->sendEmail($user->getEmail(), 'Search Committee Export', $message, true, null, $attachments);
         
         // Use Response object to send email action results
         if(!$ok) {
