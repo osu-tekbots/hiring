@@ -86,6 +86,8 @@ if (verifyPermissions(['user', 'admin'])) {
     // User is signed in
     $buttons['Dashboard'] = 'pages/user/dashboard.php';
     
+    $buttons['Profile'] = 'pages/user/profile.php';
+    
     // Admin only
     if (verifyPermissions('admin')) {
         $buttons['Admin'] = 'pages/admin/dashboard.php';

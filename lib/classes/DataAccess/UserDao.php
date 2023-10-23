@@ -664,7 +664,9 @@ class UserDao {
         $user->setEmail($row['u_email']);
         $user->setPhone($row['u_phone']);
         $user->setDateCreated(new \DateTime(($row['u_dateCreated'] == '' ? 'now' : $row['u_dateCreated'])));
-        $user->setDateUpdated(new \DateTime(($row['u_dateUpdated'] == '' ? 'now' : $row['u_dateUpdated'])));
+        $user->setDateUpdated(new \DateTime(($row['u_dateUpdated'] == '' 
+            ? ($row['u_dateCreated'] == '' ? 'now' : $row['u_dateCreated'])
+            : $row['u_dateUpdated'])));
 
         return $user;
     }

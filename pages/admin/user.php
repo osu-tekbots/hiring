@@ -127,7 +127,7 @@ $userDao = new UserDao($dbConn, $logger);
      */
     function updateName(thisVal, id, part) {
         let data = {
-            action: 'updateName',
+            action: 'updateUser',
             id: id,
         }
         data[part+'Name'] = thisVal.value;

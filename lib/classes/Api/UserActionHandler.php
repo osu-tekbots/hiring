@@ -196,10 +196,11 @@ class UserActionHandler extends ActionHandler {
      * @param string id Must exist in the POST request body.
      * @param string firstName May exist in the POST request body.
      * @param string lastName May exist in the POST request body.
+     * @param string phone May exist in the POST request body.
      * 
      * @return \Api\Response HTTP response for whether the API call successfully completed
      */
-    public function handleUpdateName() {
+    public function handleUpdateUser() {
         // Ensure the required parameters exist
         $this->requireParam('id');
         
@@ -207,7 +208,6 @@ class UserActionHandler extends ActionHandler {
         
         if((isset($body['firstName']) && $body['firstName'] == '') || 
            (isset($body['lastName']) && $body['lastName'] == '')) {
-
             $this->respond(new Response(Response::BAD_REQUEST, 'Name Cannot Be Empty'));
         }
 
@@ -220,6 +220,8 @@ class UserActionHandler extends ActionHandler {
             $user->setFirstName($body['firstName']);
         if(isset($body['lastName']))
             $user->setLastName($body['lastName']);
+        if(isset($body['phone']))
+            $user->setPhone($body['phone']);
 
         $user->setDateUpdated(new \DateTime());
         
@@ -261,8 +263,8 @@ class UserActionHandler extends ActionHandler {
             case 'stopMasquerade':
                 $this->handleStopMasquerade();
                 break;
-            case 'updateName':
-                $this->handleUpdateName();
+            case 'updateUser':
+                $this->handleUpdateUser();
                 break;
 
             default:
