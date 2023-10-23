@@ -3,5 +3,6 @@
 private/
 .private/
 uploads/
+vendor/
 .vs/
 **/.DS_Store
