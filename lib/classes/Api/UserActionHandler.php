@@ -189,6 +189,49 @@ class UserActionHandler extends ActionHandler {
         }
         unset($_SESSION['masq']);
     }
+    
+    /**
+     * Adds a new User for search chairs' convinience.
+     * 
+     * @param string id Must exist in the POST request body.
+     * @param string firstName May exist in the POST request body.
+     * @param string lastName May exist in the POST request body.
+     * 
+     * @return \Api\Response HTTP response for whether the API call successfully completed
+     */
+    public function handleUpdateName() {
+        // Ensure the required parameters exist
+        $this->requireParam('id');
+        
+        $body = $this->requestBody;
+        
+        if((isset($body['firstName']) && $body['firstName'] == '') || 
+           (isset($body['lastName']) && $body['lastName'] == '')) {
+
+            $this->respond(new Response(Response::BAD_REQUEST, 'Name Cannot Be Empty'));
+        }
+
+        $user = $this->userDao->getUserByID($body['id']);
+        if(!$user) {
+            $this->respond(new Response(Response::BAD_REQUEST, 'User Not Found'));
+        }
+
+        if(isset($body['firstName']))
+            $user->setFirstName($body['firstName']);
+        if(isset($body['lastName']))
+            $user->setLastName($body['lastName']);
+
+        $user->setDateUpdated(new \DateTime());
+        
+        // Add the user to the database
+        $ok = $this->userDao->updateUser($user);
+        // Use Response object to send DAO action results 
+        if(!$ok) {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'User Not Updated'));
+        }
+        
+		$this->respond(new Response(Response::OK, 'User Updated'));
+    }
 	
     /**
      * Handles the HTTP request on the API resource. 
@@ -217,6 +260,9 @@ class UserActionHandler extends ActionHandler {
                 break;
             case 'stopMasquerade':
                 $this->handleStopMasquerade();
+                break;
+            case 'updateName':
+                $this->handleUpdateName();
                 break;
 
             default:

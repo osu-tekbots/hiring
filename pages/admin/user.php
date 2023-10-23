@@ -37,8 +37,9 @@ $userDao = new UserDao($dbConn, $logger);
             foreach($users as $user) {
                 echo "
                 <div class='row py-3' style='border: 1px solid black'>
-                    <div class='col my-auto'>
-                        <h4>".$user->getFirstName()." ".$user->getLastName()."</h4>
+                    <div class='col my-auto form-inline'>
+                        <h4><input class='form-control' value='".$user->getFirstName()."' onchange='updateName(this, \"".$user->getID()."\", \"first\");'>
+                        <input class='form-control' value='".$user->getLastName()."' onchange='updateName(this, \"".$user->getID()."\", \"last\");'></h4>
                     </div>
                     <div class='col-2 my-auto'>";
                 if($user->getAccessLevel() == 'User')
@@ -65,7 +66,7 @@ $userDao = new UserDao($dbConn, $logger);
 
 <script>
     function makeAdmin(id) {
-        data = {
+        let data = {
             action: 'changeAccessLevel',
             id: id,
             level: 'Admin'
@@ -86,7 +87,7 @@ $userDao = new UserDao($dbConn, $logger);
     }
     
     function makeUser(id) {
-        data = {
+        let data = {
             action: 'changeAccessLevel',
             id: id,
             level: 'User'
@@ -107,7 +108,7 @@ $userDao = new UserDao($dbConn, $logger);
     }
     
     function startMasquerade(id) {
-        data = {
+        let data = {
             action: 'startMasquerade',
             id: id
         }
@@ -119,6 +120,25 @@ $userDao = new UserDao($dbConn, $logger);
         }).catch(err => {
             snackbar(err.message, 'error');
         }).finally(() => document.getElementById('masq'+id).disabled = false);
+    }
+
+    /**
+     * @param string part  Which part of the name to update: either `first` or `last`
+     */
+    function updateName(thisVal, id, part) {
+        let data = {
+            action: 'updateName',
+            id: id,
+        }
+        data[part+'Name'] = thisVal.value;
+        
+        thisVal.disabled = true;
+
+        api.post('/user.php', data).then(res => {
+            snackbar(res.message, 'success');
+        }).catch(err => {
+            snackbar(err.message, 'error');
+        }).finally(() => thisVal.disabled = false);
     }
 </script>
 
