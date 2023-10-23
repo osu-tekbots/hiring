@@ -24,11 +24,12 @@ class EmailActionHandler extends ActionHandler {
      * @param \DataAccess\PositionDao $positionDao The class for accessing the Position database table
      * @param \Util\Logger $logger The class for logging execution details
      */
-	public function __construct($candidateDao, $positionDao, $logger)
+	public function __construct($candidateDao, $positionDao, $configManager, $logger)
     {
         parent::__construct($logger);
 		$this->candidateDao = $candidateDao;
 		$this->positionDao = $positionDao;
+        $this->configManager = $configManager;
     }
 
 

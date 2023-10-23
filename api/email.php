@@ -18,7 +18,7 @@ if(!session_id()) {
 
 $candidateDao = new CandidateDao($dbConn, $logger);
 $positionDao = new PositionDao($dbConn, $logger);
-$handler = new EmailActionHandler($candidateDao, $positionDao, $logger);
+$handler = new EmailActionHandler($candidateDao, $positionDao, $configManager, $logger);
 
 // Ensure the user is logged in
 if (verifyPermissions(['user', 'admin'])) {
