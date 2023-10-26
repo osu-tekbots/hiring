@@ -284,6 +284,16 @@ HTML;
         This form allows you, as the Search Chair, to modify this position. You will need to click 
         the green <kbd class="bg-success">Start Interviewing</kbd> button before your committee can begin submitting feedback.
     </div> 
+    <div class="alert alert-warning">
+        <i class="fas fa-exclamation-triangle"></i>
+        This site should not contain any Confidential Data (see 
+        <a target="_blank" href="https://uit.oregonstate.edu/infosec/infosec-guidebook/data-classification-data-element">this page</a>
+        for more details on data classification and 
+        <a target="_blank" href="https://uit.oregonstate.edu/infosec/infosec-guidebook">this page</a>
+        for details on data management). As the Search Chair for this position, you are responsible for 
+        ensuring all candidates' privacy and security. It is your responsibility to ensure that members of your 
+        committee do not save Confidential Data on this site (for example, in their notes).
+    </div> 
 
     <!-- General Position -->
     <div class="row border border-dark rounded my-3 p-2" oninput="setActive(this, true)">
