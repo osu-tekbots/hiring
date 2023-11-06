@@ -1,6 +1,8 @@
 <?php
 namespace Api;
 
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Model\User;
 use Model\Position;
 use DataAccess\PositionDao;
@@ -253,7 +255,7 @@ class PositionActionHandler extends ActionHandler {
 
         $body = $this->requestBody;
 
-        // Check if the user is allowed to approve an instance
+        // Check if the user is allowed to close the position
         $this->verifyUserRole('Search Chair', $body['id']);
         
         // Get the position & make sure it's at a valid state
@@ -286,13 +288,13 @@ class PositionActionHandler extends ActionHandler {
      * 
      * @return \Api\Response HTTP response for whether the API call successfully completed
      */
-    public function handleExportPosition() {
+    public function handleEmailPosition() {
         // Ensure the required parameters exist
         $this->requireParam('id');
 
         $body = $this->requestBody;
 
-        // Check if the user is allowed to approve an instance
+        // Check if the user is allowed to save all the data
         $this->verifyUserRole('Search Chair', $body['id']);
         
         // Get the position
@@ -481,6 +483,77 @@ class PositionActionHandler extends ActionHandler {
 		$this->respond(new Response(Response::OK, 'Data Emailed To You'));
     }
 
+    /**
+     * Generates a .xlsx sheet with the information needed for the HR Disposition Worksheet
+     * 
+     * @param string id Must exist in the POST request body.
+     * 
+     * @return \Api\Response HTTP response for whether the API call successfully completed
+     */
+    public function handleExportDisposition() {
+        // Ensure the required parameters exist
+        $this->requireParam('id');
+
+        $body = $this->requestBody;
+
+        // Check if the user is allowed to export the disposition info
+        $this->verifyUserRole('Search Chair', $body['id']);
+        $position = $this->positionDao->getPosition($body['id']);
+
+
+        // Get the spreadsheet to generate
+        $spreadsheet = IOFactory::load(PUBLIC_FILES . '/uploads/xlsx/Template-Disposition.xlsx');
+        $activeWorksheet = $spreadsheet->getActiveSheet();
+
+        // Get the info tied to the position
+        $candidates = $this->candidateDao->getCandidatesByPositionId($body['id']);
+
+        foreach($candidates as $index=>$candidate) {
+            $row = $index + 2;
+
+            $activeWorksheet->setCellValue('A'.$row, $candidate->getLastName());
+            $activeWorksheet->setCellValue('B'.$row, $candidate->getFirstName());
+            
+            $candidateStatus = $candidate->getCandidateStatus();
+            if($candidateStatus) {
+                $deciderRole = $this->roleDao->getUserRoleForPosition($candidateStatus->getUserID(), $body['id'])->getRole();
+                $deciderRoleName = $deciderRole->getName();
+                $sheetRoleName = '';
+                switch($deciderRoleName) {
+                    case('Search Chair'):
+                        $sheetRoleName = 'SC - Search chair/committee';
+                        break;
+                    default:
+                        $sheetRoleName = $deciderRoleName;
+                }
+
+                $activeWorksheet->setCellValue('D'.$row, $candidateStatus->getName());
+                $activeWorksheet->setCellValue('E'.$row, $candidateStatus->getSpecificDispositionReason());
+                $activeWorksheet->setCellValue('F'.$row, $sheetRoleName);
+                $activeWorksheet->setCellValue('G'.$row, $candidateStatus->getResponsiblePartyDescription());
+                $activeWorksheet->setCellValue('H'.$row, $candidateStatus->getHowNotified());    
+                $activeWorksheet->setCellValue('I'.$row, $candidateStatus->getComments());    
+            }   
+        }
+
+        $escapedTitle = str_replace("/", "-", $position->getTitle());
+        $filename = $escapedTitle.'-'.(new \DateTime())->format('m-d-H-i-s').'.xlsx';
+        // Save the spreadsheet
+        $writer = new Xlsx($spreadsheet);
+        /* Make the client's browser download the sheet */
+        $writer->save(PUBLIC_FILES . '/uploads/xlsx/'.$filename);
+        // ob_end_clean();
+        // header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        // header('Content-Disposition: attachment; filename="'. urlencode($escapedTitle).'"');
+        // exit($writer->save('php://output'));
+
+        /* Cyclical references can cause memory leaks unless cleared */
+        $spreadsheet->disconnectWorksheets();
+        unset($spreadsheet);
+
+        $this->respond(new Response(Response::OK, 'File Created', 'uploads/xlsx/'.$filename));
+    }
+
 	/**
      * Handles the HTTP request on the API resource. 
      * 
@@ -508,8 +581,11 @@ class PositionActionHandler extends ActionHandler {
             case 'startInterviewing':
                 $this->handleStartInterviewing();
                 break;
-            case 'exportPosition':
-                $this->handleExportPosition();
+            case 'emailPosition':
+                $this->handleEmailPosition();
+                break;
+            case 'exportPositionDisposition':
+                $this->handleExportDisposition();
                 break;
 
             default:

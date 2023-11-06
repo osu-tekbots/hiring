@@ -135,7 +135,7 @@ $positionDao = new PositionDao($dbConn, $logger);
 
     function exportPosition(thisVal, id) {
         let data = {
-            action: 'exportPosition',
+            action: 'emailPosition',
             id: id
         }
 

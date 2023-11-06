@@ -53,7 +53,7 @@ $positions = $positionDao->getPositionsForUser($_SESSION['userID']);
                     </div>
                     <div class='col-2 my-auto'>";
                 if(checkRoleForPosition('Search Chair', $position->getID())) {
-                    echo "<button type='button' class='btn btn-outline-info' onclick='exportPosition(this, \"".$position->getID()."\")'>Export Data</button>";
+                    echo "<button type='button' class='btn btn-outline-info' data-toggle='modal' data-target='#exportModal' onclick='updateModalData(\"".$position->getID()."\")'>Export Data</button>";
                 }
                 echo "</div>
                     <div class='col-2 my-auto'>";
@@ -73,10 +73,42 @@ $positions = $positionDao->getPositionsForUser($_SESSION['userID']);
     ?>
 </div>
 
+<!-- Export Modal -->
+<div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title w-100 text-center">Export Position</h5>
+        </div>
+        <div class="modal-body">
+            <p style="white-space: normal;">
+                To export all position data for compliance with laws around saving hiring notes, click 
+                <kbd>Email All Data</kbd>. This will send you an email with all information about each candidate, all 
+                information saved about each qualification and round, and all committee members' notes throughout the
+                search process.
+                <br><br>
+                To export data for the HR Disposition Worksheet, click <kbd>Save Disposition Sheet</kbd>. This will 
+                download a spreadsheet with the necessary data to copy and save on the HR worksheet.
+            </p>
+        </div>
+        <div class="modal-footer">
+            <button id="exportEmail" type="button" class="btn btn-primary" onclick="emailPosition(this, null)">Email All Data</button>
+            <button id="exportDisp" type="button" class="btn btn-primary" onclick="exportPositionDisposition(this, null)">Save Disposition Sheet</button>
+            <button id="closeExportModal" type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
+        </div>
+    </div>
+  </div>
+</div>
+
 <script>
-    function exportPosition(thisVal, id) {
+    function updateModalData(id) {
+        document.getElementById('exportEmail').setAttribute('onclick', `emailPosition(this, '${id}')`);
+        document.getElementById('exportDisp').setAttribute('onclick', `exportPositionDisposition(this, '${id}')`);
+    }
+
+    function emailPosition(thisVal, id) {
         let data = {
-            action: 'exportPosition',
+            action: 'emailPosition',
             id: id
         }
 
@@ -86,6 +118,26 @@ $positions = $positionDao->getPositionsForUser($_SESSION['userID']);
 
         api.post('/position.php', data).then(res => {
             snackbar(res.message, 'success');
+            document.getElementById('closeExportModal').click();
+        }).catch(err => {
+            snackbar(err.message, 'error');
+        }).finally(() => thisVal.disabled = false);
+    }
+
+    function exportPositionDisposition(thisVal, id) {
+        let data = {
+            action: 'exportPositionDisposition',
+            id: id
+        }
+
+        thisVal.disabled = true;
+
+        snackbar('Generating Export Email', 'info');
+
+        api.post('/position.php', data).then(res => {
+            snackbar(res.message, 'success');
+            document.getElementById('closeExportModal').click();
+            window.open(res.content);
         }).catch(err => {
             snackbar(err.message, 'error');
         }).finally(() => thisVal.disabled = false);

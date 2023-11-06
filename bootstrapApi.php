@@ -10,7 +10,8 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token');
 
-include PUBLIC_FILES . '/lib/autoload.php';
+include PUBLIC_FILES . '/lib/autoload.php';     /* Auto-load our custom classes */
+include PUBLIC_FILES . '/vendor/autoload.php';  /* Auto-load libraries from Composer */
 
 // Load configuration
 $configManager = new Util\ConfigManager(PUBLIC_FILES);
