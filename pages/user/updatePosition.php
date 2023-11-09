@@ -286,13 +286,13 @@ HTML;
     </div> 
     <div class="alert alert-warning">
         <i class="fas fa-exclamation-triangle"></i>
-        This site should not contain any Confidential Data (see 
+        During your search process, please be aware that this site should not have any Confidential Data (CD) uploaded 
+        to it. As the Search Chair for this position, you are responsible for ensuring all candidates' privacy and 
+        security. It is your responsibility to ensure that members of your committee do not save CD on this site (for 
+        example, in their notes). Find out what Confidential Data is in detail on
         <a target="_blank" href="https://uit.oregonstate.edu/infosec/infosec-guidebook/data-classification-data-element">this page</a>
-        for more details on data classification and 
-        <a target="_blank" href="https://uit.oregonstate.edu/infosec/infosec-guidebook">this page</a>
-        for details on data management). As the Search Chair for this position, you are responsible for 
-        ensuring all candidates' privacy and security. It is your responsibility to ensure that members of your 
-        committee do not save Confidential Data on this site (for example, in their notes).
+        and see more details on data management on
+        <a target="_blank" href="https://uit.oregonstate.edu/infosec/infosec-guidebook">this page</a>.
     </div> 
 
     <!-- General Position -->
