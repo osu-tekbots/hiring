@@ -61,11 +61,11 @@ renderBreadcrumb(["./pages/user/dashboard.php"=>"Dashboard", ("./pages/user/view
 
 <br><br><br>
 <div class="container" style="border: 2px solid black">
-<div class="row py-3" style="border-bottom: 2px solid black">
+    <div class="row py-3" style="border-bottom: 2px solid black">
         <div class="col-6">
             <h2 class="my-auto" style="text-align: center;"><?php echo $candidate->getFirstName().' '.$candidate->getLastName() ?></h2>
         </div>
-        <div class="col-4">
+        <div class="col-6">
             <h6>Email: <button id="emailCandidate" class="btn btn-link" type="button" data-toggle="modal" data-target="#emailModal"><?php echo $candidate->getEmail() ?></button></h6>
             <h6>Phone: <a href="tel:<?php echo $candidate->getPhoneNumber() ?>"><?php echo $candidate->getPhoneNumber() ?></a></h6>
             <!-- <h6>Location: <a target="_blank" href="https://www.google.com/maps?q=<?php echo $candidate->getLocation() ?>"><?php echo $candidate->getLocation() ?></a></h6> -->
@@ -77,12 +77,6 @@ renderBreadcrumb(["./pages/user/dashboard.php"=>"Dashboard", ("./pages/user/view
                     }
                     echo "</h6>";
                 }
-            ?>
-        </div>
-        <div class="col-sm-2">
-            <?php
-                if(checkRoleForPosition('Search Chair', $position?->getID()))
-                    echo '<button class="btn btn-outline-danger float-right" type="button" data-toggle="modal" data-target="#statusModal">Set Final Disposition</button>';
             ?>
         </div>
     </div>
@@ -233,7 +227,15 @@ renderBreadcrumb(["./pages/user/dashboard.php"=>"Dashboard", ("./pages/user/view
         echo $output;
     }
 
-    ?>    
+    ?>
+    <div class="row py-3" style="border-top: 2px solid black">
+        <div class="col">
+            <?php
+                if(checkRoleForPosition('Search Chair', $position?->getID()))
+                    echo '<button class="btn btn-outline-danger float-right" type="button" data-toggle="modal" data-target="#statusModal">Set Final Disposition</button>';
+            ?>
+        </div>
+    </div>
 </div>
 
 <!-- Status Modal -->
