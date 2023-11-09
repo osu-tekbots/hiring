@@ -49,6 +49,7 @@ $candidateFiles = $candidateFileDao->getAllFilesForCandidate($candidateID);
 $candidateStatus = $candidate->getCandidateStatus()?->getName();
 
 allowIf(checkRoleForPosition('Any', $position?->getID()), 'It looks like you\'re not on the committee for that position. Please speak to the committee\'s search chair if you believe you should be added.', true); // Implicitly verifies that position exists
+allowIf(!checkRoleForPosition('Inactive', $_REQUEST['id']) || verifyPermissions('admin'), 'It looks like you\'re no longer on the committee for that position. Please speak to the committee\'s search chair if you believe you should still have access.', true); // Admins are always true for first comparison
 // Prevent unverified users from accessing the whole site
 allowIf($position->getStatus() == 'Interviewing' || $position->getStatus() == 'Closed' || verifyPermissions('admin'), "It looks like this position hasn't started interviewing yet. Please ask the committee's search chair to update the position's status.", true);
 allowIf(!isset($candidateStatus), 'It looks like this candidate\'s status is already final and reviews can no longer be submitted.', true);

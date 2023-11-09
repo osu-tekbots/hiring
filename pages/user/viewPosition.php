@@ -10,6 +10,7 @@ include_once PUBLIC_FILES . '/lib/authorize.php';
 allowIf(verifyPermissions(['admin', 'user']), 'It looks like you\'re not signed in. Please sign in before viewing positions.', true);
 allowIf(!is_null($_REQUEST['id']), 'It looks like your request failed to specify a position to pull data for.', true);
 allowIf(checkRoleForPosition('Any', $_REQUEST['id']), 'It looks like you\'re not on the committee for that position. Please speak to the committee\'s search chair if you believe you should be added.', true); // Implicitly verifies that position exists
+allowIf(!checkRoleForPosition('Inactive', $_REQUEST['id']) || verifyPermissions('admin'), 'It looks like you\'re no longer on the committee for that position. Please speak to the committee\'s search chair if you believe you should still have access.', true); // Admins are always true for first comparison
 
 
 use DataAccess\CandidateDao;
