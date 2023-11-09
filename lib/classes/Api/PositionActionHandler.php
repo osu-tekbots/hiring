@@ -358,7 +358,10 @@ class PositionActionHandler extends ActionHandler {
             }
 
             foreach($rounds as $index=>$round) {
-                $message .= '&emsp;<table style="border: 1px solid; width: 80%; margin-left: 20px; border-collapse: collapse">
+                $roundQuals = $this->qualificationDao->getQualificationsForRound($round->getID());
+                $msgComponent = '';
+                $hasData = false;
+                $msgComponent .= '&emsp;<table style="border: 1px solid; width: 80%; margin-left: 20px; border-collapse: collapse">
                     <tr>
                         <th colspan="100%" style="border: 1px solid;">'.($index + 1).': '.$round->getName().'</th>
                     </tr>
@@ -366,58 +369,66 @@ class PositionActionHandler extends ActionHandler {
                         <th style="border: 1px solid;">Qualification</th>
                 ';
                 foreach($members as $member) {
-                    $message .= '<th style="border: 1px solid;">'.$member->getUser()->getFirstName().' '.$member->getUser()->getLastName().'</th>'."\n";
+                    $msgComponent .= '<th style="border: 1px solid;">'.$member->getUser()->getFirstName().' '.$member->getUser()->getLastName().'</th>'."\n";
                 }
-                $message .= '</tr>'."\n";
+                $msgComponent .= '</tr>'."\n";
 
                 // Output each qualification row in table
-                foreach($qualifications as $qualification) {
-                    $message .= '<tr">'."\n";
+                foreach($roundQuals as $qualification) {
+                    $msgComponent .= '<tr">'."\n";
 
-                    $message .= '<td style="border: 1px solid;">
+                    $msgComponent .= '<td style="border: 1px solid;">
                         <span>
                             '.$qualification->getDescription().'
                         </span></td>
                     ';
                     foreach($members as $member) {
                         $rating = $this->ffqDao->getQualStatusName($member->getUser()->getID(), $candidate->getID(), $round->getID(), $qualification->getID());
-                        $message .= '<td style="border: 1px solid;">'.($rating ? $rating : '--').'</td>'."\n";
+                        $msgComponent .= '<td style="border: 1px solid;">'.($rating ? $rating : '--').'</td>'."\n";
+                        if($rating) $hasData = true;
                     }
 
-                    $message .= '</tr>'."\n";
+                    $msgComponent .= '</tr>'."\n";
                 }
                 
                 // Output notes row in table
-                $message .= '<tr>
+                $msgComponent .= '<tr>
                                 <td style="border: 1px solid;">Notes</td>
                 ';
                 foreach($members as $member) {
                     $feedback = $this->feedbackDao->getFeedbackForUser($member->getUser()->getID(), $candidate->getID(), $round->getID());
                     if($feedback) {
                         $feedbackFiles = $this->feedbackFileDao->getAllFilesForFeedback($feedback->getID());
-                        $message .= '<td style="border: 1px solid;">'.$feedback->getNotes()."\n";
+                        $msgComponent .= '<td style="border: 1px solid;">'.$feedback->getNotes()."\n";
                         foreach($feedbackFiles as $feedbackFile) {
-                            $message .= '<br><a target="_blank" href="uploads/feedback/'.$feedbackFile->getFileName().'">'.$feedbackFile->getFileName().'</a>'."\n";
+                            $msgComponent .= '<br><a target="_blank" href="uploads/feedback/'.$feedbackFile->getFileName().'">'.$feedbackFile->getFileName().'</a>'."\n";
                             $attachments[] = array(
                                 'address' => PUBLIC_FILES.'/uploads/feedback/'.$feedbackFile->getFileName(),
                                 'name' => $feedbackFile->getFileName()
                             );
+                            $hasData = true;
                         }
-                        $message .= '</td>'."\n";
+                        $msgComponent .= '</td>'."\n";
                     } else {
-                        $message .= '<td style="border: 1px solid;"></td>'."\n";
+                        $msgComponent .= '<td style="border: 1px solid;"></td>'."\n";
                     }
                 }
-                $message .= '</tr>'."\n";
+                $msgComponent .= '</tr>'."\n";
 
                 // Output group notes row in table
                 $roundNote = $this->candidateRoundNoteDao->getCandidateNotesForRound($candidate->getID(), $round->getID());
-                $message .= '<tr>
+                $msgComponent .= '<tr>
                                 <td style="border: 1px solid;">Group Notes</td>
                                 <td colspan="100%" style="border: 1px solid;">'.($roundNote ? $roundNote->getNotes() : '').'</td>
-                </tr>'."\n";
+                            </tr>'."\n";
+                if($roundNote) $hasData = true;
 
-                $message .= '</table>'."\n";
+                $msgComponent .= '</table>'."\n";
+                
+                /* Only add the table if there's actual data in it */
+                if($hasData) {
+                    $message .= $msgComponent;
+                }
             }
 
             $message .= '
