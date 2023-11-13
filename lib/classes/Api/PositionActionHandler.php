@@ -224,7 +224,7 @@ class PositionActionHandler extends ActionHandler {
         if(!$position) {
             $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Position not found'));
         }
-        if($position->getStatus() != 'Open') {
+        if($position->getStatus() != 'Open' && $position->getStatus() != 'Completed') {
             $this->respond(new Response(Response::UNAUTHORIZED, 'Access Denied'));
         }
         
@@ -243,19 +243,19 @@ class PositionActionHandler extends ActionHandler {
     }
 
 	/**
-     * Changes the Position state to closed after a candidate has been hired.
+     * Changes the Position state to completed after a candidate has been hired.
      * 
      * @param string id Must exist in the POST request body.
      * 
      * @return \Api\Response HTTP response for whether the API call successfully completed
      */
-    public function handleClosePosition() {
+    public function handlePositionCompleted() {
         // Ensure the required parameters exist
         $this->requireParam('id');
 
         $body = $this->requestBody;
 
-        // Check if the user is allowed to close the position
+        // Check if the user is allowed to mark the position as completed
         $this->verifyUserRole('Search Chair', $body['id']);
         
         // Get the position & make sure it's at a valid state
@@ -268,7 +268,7 @@ class PositionActionHandler extends ActionHandler {
         }
         
         // Update the position
-        $position->setStatus('Closed');
+        $position->setStatus('Completed');
         $this->logger->info(var_export($position, true));
 
         // Save the updated version in the database
@@ -278,7 +278,7 @@ class PositionActionHandler extends ActionHandler {
         if(!$ok) {
             $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Position not updated'));
         }
-		$this->respond(new Response(Response::OK, 'Position marked as Closed'));
+		$this->respond(new Response(Response::OK, 'Position marked as Completed'));
     }
 
     /**
@@ -591,6 +591,9 @@ class PositionActionHandler extends ActionHandler {
                 break;
             case 'startInterviewing':
                 $this->handleStartInterviewing();
+                break;
+            case 'markCompleted':
+                $this->handlePositionCompleted();
                 break;
             case 'emailPosition':
                 $this->handleEmailPosition();

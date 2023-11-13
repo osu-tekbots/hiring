@@ -49,9 +49,10 @@ $candidateFiles = $candidateFileDao->getAllFilesForCandidate($candidateID);
 $candidateStatus = $candidate->getCandidateStatus()?->getName();
 
 allowIf(checkRoleForPosition('Any', $position?->getID()), 'It looks like you\'re not on the committee for that position. Please speak to the committee\'s search chair if you believe you should be added.', true); // Implicitly verifies that position exists
-allowIf(!checkRoleForPosition('Inactive', $_REQUEST['id']) || verifyPermissions('admin'), 'It looks like you\'re no longer on the committee for that position. Please speak to the committee\'s search chair if you believe you should still have access.', true); // Admins are always true for first comparison
+allowIf(!checkRoleForPosition('Inactive', $position->getID()) || verifyPermissions('admin'), 'It looks like you\'re no longer on the committee for that position. Please speak to the committee\'s search chair if you believe you should still have access.', true); // Admins are always true for first comparison
 // Prevent unverified users from accessing the whole site
-allowIf($position->getStatus() == 'Interviewing' || $position->getStatus() == 'Closed' || verifyPermissions('admin'), "It looks like this position hasn't started interviewing yet. Please ask the committee's search chair to update the position's status.", true);
+allowIf($position->getStatus() == 'Interviewing' || $position->getStatus() == 'Completed' || verifyPermissions('admin'), "It looks like this position hasn't started interviewing yet. Please ask the committee's search chair to update the position's status.", true);
+allowIf($position->getStatus() != "Completed", "It looks like that position is no longer interviewing. Please speak to the committee's search chair if you believe it should be reopened.", true);
 allowIf(!isset($candidateStatus), 'It looks like this candidate\'s status is already final and reviews can no longer be submitted.', true);
 
 include_once PUBLIC_FILES."/modules/breadcrumb.php";

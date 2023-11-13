@@ -38,9 +38,18 @@ $positions = $positionDao->getPositionsForUser($_SESSION['userID']);
         </div>
     </div>
     <?php
+        /* Have to count manually since completed positions are only shown to search chair */
+        $positionsDisplayed = 0;
+
         if(count($positions)) {
             foreach($positions as $position) {
                 $status = $position->getStatus();
+
+                if($status == "Completed" && !checkRoleForPosition('Search Chair', $position->getID()))
+                    continue;
+
+                $positionsDisplayed++;
+
                 $statusColor = ($status == "Open" || $status == "Interviewing" ? "text-success" : 
                     ($status == "Requested" ? "text-warning" : ""));
                 echo "
@@ -64,7 +73,9 @@ $positions = $positionDao->getPositionsForUser($_SESSION['userID']);
                 echo "</div>
                 </div>";
             }
-        } else {
+        }
+        
+        if($positionsDisplayed == 0) {
             echo "
             <div class='row py-3' style='border: 1px solid black'>
                 <h4 class='col text-center'>You are not on the committee for any positions.</h4>

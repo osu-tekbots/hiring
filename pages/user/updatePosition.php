@@ -321,6 +321,10 @@ HTML;
             <?php
                 if($position->getStatus() == 'Open')
                     echo '<button id="startInterviewingBtn" class="btn btn-outline-success float-right mx-2" type="button">Start Interviewing</button>';
+                if($position->getStatus() == 'Interviewing')
+                    echo '<button id="markCompleteBtn" class="btn btn-outline-danger float-right mx-2" type="button" data-toggle="modal" data-target="#completePositionModal">Mark as Complete</button>';
+                if($position->getStatus() == 'Completed')
+                echo '<button id="startInterviewingBtn" class="btn btn-outline-success float-right mx-2" type="button">Resume Interviewing</button>';
             ?>
         </div>
     </div>
@@ -618,11 +622,11 @@ HTML;
 <!-- New User Modal Trigger -->
 <button id="triggerNewUserModal" type="button" class="d-none btn btn-primary" data-toggle="modal" data-target="#newUserModal">Add New User</button>
 <!-- New User Modal -->
-<div class="modal fade" id="newUserModal" tabindex="-1" role="dialog" aria-labelledby="newUserModal" aria-hidden="true">
+<div class="modal fade" id="newUserModal" tabindex="-1" role="dialog" aria-labelledby="newUserLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title w-100 text-center" id="newUserModal">Add A New User</h5>
+                <h5 class="modal-title w-100 text-center" id="newUserLabel">Add A New User</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -651,6 +655,37 @@ HTML;
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" id="closeNewUserModal">Cancel</button>
                 <button type="button" class="btn btn-primary" onclick="addNewUser(this)">Add User</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Completed Position Modal -->
+<div class="modal fade" id="completePositionModal" tabindex="-1" role="dialog" aria-labelledby="completePositionLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title w-100 text-center" id="completePositionLabel">Mark Position as Complete</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body row m-1">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    Marking the position as "Completed" will close it in the Search Progress Tracker. Members of the 
+                    search committee will no longer be able to modify any details of the position, and it will be moved
+                    to a dormant state. The data will be preserved for 7 years to comply with the law, but you should 
+                    also export the position as an email (using the blue "Export Position" button on your dashboard) to
+                    save for your own records. 
+                    <br>
+                    <br>
+                    You can undo this status change if the hiring process for this position resumes.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="closeCompletePositionModal" class="btn btn-outline-secondary" data-dismiss="modal" id="closeCompletePositionModal">Cancel</button>
+                <button type="button" id="completePositionBtn" class="btn btn-danger">Position Completed</button>
             </div>
         </div>
     </div>
@@ -825,6 +860,26 @@ HTML;
                 snackbar(err.message, 'error');
             }).finally(() => e.target.disabled = false);
         });
+    }
+
+    // Suppress unneeded error if button doesn't exist
+    if(document.getElementById('completePositionBtn')) {
+        document.getElementById('completePositionBtn').addEventListener('click', e => {
+            let data = {
+                action: 'markCompleted',
+                id: POSITION_ID
+            };
+            
+            e.target.disabled = true;
+
+            api.post('/position.php', data).then(res => {
+                document.getElementById('closeCompletePositionModal').click();
+                document.getElementById('markCompleteBtn').remove();
+                snackbar(res.message, 'success');
+            }).catch(err => {
+                snackbar(err.message, 'error');
+            }).finally(() => e.target.disabled = false);
+        })
     }
 
     function updateQualification(thisVal, num, qualificationID) {

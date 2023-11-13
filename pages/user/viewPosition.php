@@ -37,6 +37,7 @@ $candidates = $candidateDao->getCandidatesByPositionId($_REQUEST['id']);
 
 // Prevent unverified users from accessing the whole site
 allowIf($position->getStatus() != 'Requested' || verifyPermissions('admin'), "It looks like this position hasn't been approved yet. Please request approval from the site admins to view this position.", true);
+allowIf($position->getStatus() != "Completed" || checkRoleForPosition('Search Chair', $_REQUEST['id']), "It looks like that position is no longer interviewing. Please speak to the committee's search chair if you believe it should be reopened.", true);
 
 $title = 'View Position';
 include_once PUBLIC_FILES . '/modules/header.php';
@@ -152,14 +153,14 @@ function determineNextRound($roundDao, $candidateRoundNoteDao, $candidateID) {
                         <p>".($candidate->getDateApplied()?->format('Y-m-d') && $candidate->getDateApplied()?->format('Y-m-d') != '-0001-11-30' ? 'Applied: '.$candidate->getDateApplied() ->format('Y-m-d') : '')."</p>
                     </div>
                     <div class='col-sm-2 my-auto'>";
-                if(!$finalDecision && ($position->getStatus() == 'Interviewing' || $position->getStatus() == 'Closed'))
+                if(!$finalDecision && ($position->getStatus() == 'Interviewing' || $position->getStatus() == 'Completed'))
                     $output .= "<a href='user/reviewCandidate.php?id=".$candidate->getID()."$nextRoundQuery' class='btn $nextRoundBtnStyle float-right'>$nextRound</a>";
 
                 $output .= "
                 </div>
                     <div class='col-sm-2 my-auto'>";
 
-                if($position->getStatus() == 'Interviewing' || $position->getStatus() == 'Closed') {
+                if($position->getStatus() == 'Interviewing' || $position->getStatus() == 'Completed') {
                     $output .= "<a href='user/viewCandidateSummary.php?id=".$candidate->getID()."$nextRoundQuery' class='btn btn-outline-primary float-right'>View All Reviews</a>";
                 }
 

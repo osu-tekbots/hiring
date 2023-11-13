@@ -50,9 +50,10 @@ $files = $candidateFileDao->getAllFilesForCandidate($candidateID);
 $users = $userDao->getUsersForPosition($position->getID());
 
 allowIf(checkRoleForPosition('Any', $position?->getID()), 'It looks like you\'re not on the committee for that position. Please speak to the committee\'s search chair if you believe you should be added.', true); // Implicitly verifies that position exists
-allowIf(!checkRoleForPosition('Inactive', $_REQUEST['id']) || verifyPermissions('admin'), 'It looks like you\'re no longer on the committee for that position. Please speak to the committee\'s search chair if you believe you should still have access.', true); // Admins are always true for first comparison
+allowIf(!checkRoleForPosition('Inactive', $position->getID()) || verifyPermissions('admin'), 'It looks like you\'re no longer on the committee for that position. Please speak to the committee\'s search chair if you believe you should still have access.', true); // Admins are always true for first comparison
+allowIf($position->getStatus() != "Completed" || checkRoleForPosition('Search Chair', $position->getID()), "It looks like that position is no longer interviewing. Please speak to the committee's search chair if you believe it should be reopened.", true);
 // Prevent unverified users from accessing the whole site
-allowIf($position->getStatus() == 'Interviewing' || $position->getStatus() == 'Closed' || verifyPermissions('admin'), "It looks like this position hasn't started interviewing yet. Please ask the committee's search chair to update the position's status.", true);
+allowIf($position->getStatus() == 'Interviewing' || $position->getStatus() == 'Completed' || verifyPermissions('admin'), "It looks like this position hasn't started interviewing yet. Please ask the committee's search chair to update the position's status.", true);
 
 include_once PUBLIC_FILES."/modules/breadcrumb.php";
 renderBreadcrumb(["./pages/user/dashboard.php"=>"Dashboard", ("./pages/user/viewPosition.php?id=".$position->getID())=>$position->getTitle()], $title);
@@ -96,7 +97,7 @@ renderBreadcrumb(["./pages/user/dashboard.php"=>"Dashboard", ("./pages/user/view
                     <button data-toggle='collapse' data-target='#round". $index+1 ."' type='button' class='btn btn-outline-dark float-right'><i class='fas fa-chevron-down'></i></button>
                 </div>
             
-                <div id='round". $index+1 ."' class='collapse container mt-2".(isset($_REQUEST['round'])&&$_REQUEST['round']==$round->getID() ? ' show' : '')."'>";
+                <div id='round". $index+1 ."' class='collapse container mt-2".(isset($_REQUEST['round'])&&$_REQUEST['round']==$round->getID()&&$position->getStatus()!="Completed" ? ' show' : '')."'>";
         if($round->getInterviewQuestionLink()) {
             $output .= "
                     <div class='row d-block p-2 mb-3 mx-1 rounded' style='background: #ccc;'>
