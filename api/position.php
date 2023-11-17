@@ -12,6 +12,7 @@ use DataAccess\CandidateDao;
 use DataAccess\CandidateFileDao;
 use DataAccess\CandidateRoundNoteDao;
 use DataAccess\QualificationDao;
+use DataAccess\QualificationForRoundDao;
 use DataAccess\RoundDao;
 use DataAccess\RoleDao;
 use DataAccess\FeedbackDao;
@@ -30,13 +31,14 @@ $candidateDao = new CandidateDao($dbConn, $logger);
 $candidateFileDao = new CandidateFileDao($dbConn, $logger);
 $candidateRoundNoteDao = new CandidateRoundNoteDao($dbConn, $logger);
 $qualificationDao = new QualificationDao($dbConn, $logger);
+$qualificationForRoundDao = new QualificationForRoundDao($dbConn, $logger);
 $roundDao = new RoundDao($dbConn, $logger);
 $roleDao = new RoleDao($dbConn, $logger);
 $feedbackDao = new FeedbackDao($dbConn, $logger);
 $ffqDao = new FeedbackForQualDao($dbConn, $logger);
 $feedbackFileDao = new FeedbackFileDao($dbConn, $logger);
 $userDao = new UserDao($dbConn, $logger);
-$handler = new PositionActionHandler($positionDao, $candidateDao, $candidateFileDao, $candidateRoundNoteDao, $qualificationDao, $roundDao, $roleDao, $feedbackDao, $ffqDao, $feedbackFileDao, $userDao, $configManager, $logger);
+$handler = new PositionActionHandler($positionDao, $candidateDao, $candidateFileDao, $candidateRoundNoteDao, $qualificationDao, $qualificationForRoundDao, $roundDao, $roleDao, $feedbackDao, $ffqDao, $feedbackFileDao, $userDao, $configManager, $logger);
 
 // Ensure the user is logged in
 if (verifyPermissions(['user', 'admin'])) {

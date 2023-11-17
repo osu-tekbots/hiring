@@ -27,6 +27,9 @@ class Position {
     /** @var string */
     private $status;
 
+    /** @var bool */
+    private $isExample;
+
     /**
      * Constructs a new instance of a position in the hiring system.
      * 
@@ -94,6 +97,14 @@ class Position {
 	public function setStatus($status){
 		$this->status = $status;
 	}
+    
+    public function getIsExample() {
+        return $this->isExample;
+    }
+
+    public function setIsExample($isExample) {
+        $this->isExample = $isExample;
+    }
 
 }
 ?>

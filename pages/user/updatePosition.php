@@ -278,7 +278,7 @@ HTML;
 ?>
 
 <div class="container py-4">
-    <h2 class="text-center">Update Position</h2>
+    <h2 class="text-center mb-4">Update Position</h2>
     <div class="alert alert-info">
         <i class="fas fa-info-circle"></i>
         This form allows you, as the Search Chair, to modify this position. You will need to click 
@@ -319,12 +319,15 @@ HTML;
         <div class="w-100 mt-1">
             <button id="updatePositionBtn" class="btn btn-primary float-right" type="button" disabled data-update>Saved</button>
             <?php
+                if($position->getIsExample())
+                    echo '<button id="deletePositionBtn" class="btn btn-danger float-right mx-2" type="button">Delete Example Position</button>';
+
                 if($position->getStatus() == 'Open')
                     echo '<button id="startInterviewingBtn" class="btn btn-outline-success float-right mx-2" type="button">Start Interviewing</button>';
                 if($position->getStatus() == 'Interviewing')
                     echo '<button id="markCompleteBtn" class="btn btn-outline-danger float-right mx-2" type="button" data-toggle="modal" data-target="#completePositionModal">Mark as Complete</button>';
                 if($position->getStatus() == 'Completed')
-                echo '<button id="startInterviewingBtn" class="btn btn-outline-success float-right mx-2" type="button">Resume Interviewing</button>';
+                    echo '<button id="startInterviewingBtn" class="btn btn-outline-success float-right mx-2" type="button">Resume Interviewing</button>';
             ?>
         </div>
     </div>
@@ -549,7 +552,7 @@ HTML;
         <div class="col-sm-2 d-block"><!-- Used to keep title centered --></div>
         <h3 class="col text-center w-100 pt-2">Search Committee</h3>
         <div class="col-sm-2">
-            <button type="button" id="addMember" class="btn btn-outline-primary float-right my-2">Add Member</button>
+            <button type="button" id="addMember" class="btn btn-outline-primary float-right my-2" <?php echo $position->getIsExample() ? "disabled" : "" ?>>Add Member</button>
         </div>
 
         <!-- May be good for clarity, but need to find way to seperate it out -->
@@ -562,30 +565,32 @@ HTML;
 
         <?php
             // Add all currently-existing members using the HTML template
-            foreach($members as $index=>$member) {
-                $output = $memberTemplate;
-                $output = str_replace("{{jsButton}}", "<button class='btn btn-primary float-right' onclick='updateMember(this, {{num}}, {{id}})' disabled data-update>Saved</button>", $output);
-                $output = str_replace("{{num}}", $index + 1, $output);
-                $output = str_replace("{{id}}", $member->getID(), $output);
-                $output = str_replace("{{disableUserSelect}}", "disabled", $output);
-                $output = str_replace("{{oninput}}", "oninput='setActive(this, true)'", $output);
-
-                $userOptions = "";
-                foreach($allUsers as $user) {
-                    $userOptions .= "<option value='".$user->getID()."' ".($user->getID() == $member->getUser()->getID() ? 'selected' : '').">".$user->getFirstName()." ".$user->getLastName()."</option>\n";
+            if($members !== false) {
+                foreach($members as $index=>$member) {
+                    $output = $memberTemplate;
+                    $output = str_replace("{{jsButton}}", "<button class='btn btn-primary float-right' onclick='updateMember(this, {{num}}, {{id}})' disabled data-update>Saved</button>", $output);
+                    $output = str_replace("{{num}}", $index + 1, $output);
+                    $output = str_replace("{{id}}", $member->getID(), $output);
+                    $output = str_replace("{{disableUserSelect}}", "disabled", $output);
+                    $output = str_replace("{{oninput}}", "oninput='setActive(this, true)'", $output);
+    
+                    $userOptions = "";
+                    foreach($allUsers as $user) {
+                        $userOptions .= "<option value='".$user->getID()."' ".($user->getID() == $member->getUser()->getID() ? 'selected' : '').">".$user->getFirstName()." ".$user->getLastName()."</option>\n";
+                    }
+                    $output = str_replace("{{userOptions}}", $userOptions, $output);
+                    
+                    $roleOptions = "";
+                    foreach($roles as $role) {
+                        $roleOptions .= "<option value='".$role->getID()."' ".($role->getID() == $member->getRole()->getID() ? 'selected' : '').">".$role->getName()."</option>\n";
+                    }
+                    $output = str_replace("{{roleOptions}}", $roleOptions, $output);
+                    
+    
+                    $output = preg_replace("/[{]{2}[a-zA-z]*[}]{2}/", "", $output); // Remove any unused replacements
+    
+                    echo $output;
                 }
-                $output = str_replace("{{userOptions}}", $userOptions, $output);
-                
-                $roleOptions = "";
-                foreach($roles as $role) {
-                    $roleOptions .= "<option value='".$role->getID()."' ".($role->getID() == $member->getRole()->getID() ? 'selected' : '').">".$role->getName()."</option>\n";
-                }
-                $output = str_replace("{{roleOptions}}", $roleOptions, $output);
-                
-
-                $output = preg_replace("/[{]{2}[a-zA-z]*[}]{2}/", "", $output); // Remove any unused replacements
-
-                echo $output;
             }
         ?>
 
@@ -675,9 +680,9 @@ HTML;
                     <i class="fas fa-info-circle"></i>
                     Marking the position as "Completed" will close it in the Search Progress Tracker. Members of the 
                     search committee will no longer be able to modify any details of the position, and it will be moved
-                    to a dormant state. The data will be preserved for 7 years to comply with the law, but you should 
-                    also export the position as an email (using the blue "Export Position" button on your dashboard) to
-                    save for your own records. 
+                    to a dormant state. The data will continue to be stored in the SPT. However, to comply with the law,
+                    you should also export the position as an email (using the blue "Export Position" button on your 
+                    dashboard) to save in your own records. 
                     <br>
                     <br>
                     You can undo this status change if the hiring process for this position resumes.
@@ -876,6 +881,25 @@ HTML;
                 document.getElementById('closeCompletePositionModal').click();
                 document.getElementById('markCompleteBtn').remove();
                 snackbar(res.message, 'success');
+            }).catch(err => {
+                snackbar(err.message, 'error');
+            }).finally(() => e.target.disabled = false);
+        })
+    }
+    
+    // Suppress unneeded error if button doesn't exist
+    if(document.getElementById('deletePositionBtn')) {
+        document.getElementById('deletePositionBtn').addEventListener('click', e => {
+            let data = {
+                action: 'deleteExamplePosition',
+                id: POSITION_ID
+            };
+            
+            e.target.disabled = true;
+
+            api.post('/position.php', data).then(res => {
+                snackbar(res.message, 'success');
+                window.location.replace('pages/user/dashboard.php');
             }).catch(err => {
                 snackbar(err.message, 'error');
             }).finally(() => e.target.disabled = false);

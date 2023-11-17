@@ -30,6 +30,22 @@ class QualificationForRoundDao {
         $this->echoOnError = $echoOnError;
     }
 
+    public function getAllQualForRoundsForPosition($positionID) {
+        try {
+            $sql = 'SELECT * FROM hiring_QualificationForRound 
+                INNER JOIN hiring_Qualification ON hiring_Qualification.q_id = hiring_QualificationForRound.qfr_q_id
+                WHERE q_p_id=:positionID;';
+            $params = array(':positionID' => $positionID);
+            $result = $this->conn->query($sql, $params);
+
+            return \array_map('self::ExtractQualificationForRoundFromRow', $result);
+        } catch (\Exception $e) {
+            $this->logError('Failed to fetch QualificationForRounds by position: ' . $e->getMessage());
+
+            return false;
+        }
+    }
+
     /**
      * Fetches all the QualificationForRounds for a round from the database.
      * 
@@ -183,6 +199,7 @@ class QualificationForRoundDao {
             return false;
         }
     }
+    
     /**
      * Creates a new QualificationForRound object by extracting the information from a row in the database.
      *

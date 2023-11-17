@@ -5,10 +5,12 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Model\User;
 use Model\Position;
+use Model\QualificationForRound;
 use DataAccess\PositionDao;
 use DataAccess\RoleDao;
 use Email\HiringMailer;
 use Email\Mailer;
+use Util\IdGenerator;
 
 /**
  * Defines the logic for how to handle API requests made to modify Position information.
@@ -29,6 +31,9 @@ class PositionActionHandler extends ActionHandler {
 
     /** @var \DataAccess\QualificationDao */
     private $qualificationDao;
+
+    /** @var \DataAccess\QualificationForRoundDao */
+    private $qualForRoundDao;
 
     /** @var \DataAccess\RoundDao */
     private $roundDao;
@@ -71,7 +76,7 @@ class PositionActionHandler extends ActionHandler {
      * @param \Util\ConfigManager $configManager The class for accessing information in `config.ini`
      * @param \Util\Logger $logger The class for logging execution details
      */
-	public function __construct($positionDao, $candidateDao, $candidateFileDao, $candidateRoundNoteDao, $qualificationDao, $roundDao, $roleDao, $feedbackDao, $ffqDao, $feedbackFileDao, $userDao, $configManager, $logger)
+	public function __construct($positionDao, $candidateDao, $candidateFileDao, $candidateRoundNoteDao, $qualificationDao, $qualForRoundDao, $roundDao, $roleDao, $feedbackDao, $ffqDao, $feedbackFileDao, $userDao, $configManager, $logger)
     {
         parent::__construct($logger);
 		$this->positionDao = $positionDao;
@@ -79,6 +84,7 @@ class PositionActionHandler extends ActionHandler {
         $this->candidateFileDao = $candidateFileDao;
         $this->candidateRoundNoteDao = $candidateRoundNoteDao;
         $this->qualificationDao = $qualificationDao;
+        $this->qualForRoundDao = $qualForRoundDao;
         $this->roundDao = $roundDao;
         $this->roleDao = $roleDao;
         $this->feedbackDao = $feedbackDao;
@@ -110,6 +116,7 @@ class PositionActionHandler extends ActionHandler {
         $position->setDateCreated(new \DateTime());
         $position->setCommitteeEmail($body['email']);
         $position->setStatus('Requested');
+        $position->setIsExample(false);
 
         // Store the position object in the database
 		$ok = $this->positionDao->createPosition($position, $_SESSION['userID']);
@@ -279,6 +286,174 @@ class PositionActionHandler extends ActionHandler {
             $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Position not updated'));
         }
 		$this->respond(new Response(Response::OK, 'Position marked as Completed'));
+    }
+
+    public function handleGetExample() {
+        $examplePosition = $this->positionDao->getPosition('examplePosition');
+        $exampleCands = $this->candidateDao->getCandidatesByPositionId($examplePosition->getID());
+        $exampleQuals = $this->qualificationDao->getQualificationsForPosition($examplePosition->getID());
+        $exampleRounds = $this->roundDao->getAllRoundsByPositionId($examplePosition->getID());
+        $exampleQualForRounds = $this->qualForRoundDao->getAllQualForRoundsForPosition($examplePosition->getID());
+
+        $newID = IdGenerator::generateSecureUniqueId();
+
+        $examplePosition->setID($newID);
+        $examplePosition->setIsExample(true);
+        $examplePosition->setDateCreated(new \DateTime());
+        
+        /* Create a new position with the same data */
+        $this->positionDao->createPosition($examplePosition, $_SESSION['userID']);
+
+        /* Set the current user as the new position's Search Chair */
+        $role = $this->roleDao->getRoleByName('Search Chair');
+        if(!$role) {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Search Chair role not found'));
+        }
+        $ok = $this->roleDao->addUserRoleForPosition($role->getID(), $_SESSION['userID'], $newID);
+        if(!$ok) {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Search Chair role not set'));
+        }
+
+        $qualificationIDs = [];
+        $roundIDs = [];
+
+        /* Duplicate candidates, qualifications, and rounds for the new position */
+        foreach($exampleCands as $candidate) {
+            $candidate->setPositionID($newID);
+            $candidate->setID(IdGenerator::generateSecureUniqueId());
+            $this->candidateDao->createCandidate($candidate);
+        }
+        foreach($exampleQuals as $qualification) {
+            $oldID = $qualification->getID();
+            $qualification->setPositionID($newID);
+            $qualification->setID(IdGenerator::generateSecureUniqueId());
+            $this->qualificationDao->createQualification($qualification);
+
+            $qualificationIDs[$oldID] = $qualification->getID();
+        }
+        foreach($exampleRounds as $round) {
+            $oldID = $round->getID();
+            $round->setPositionID($newID);
+            $round->setID(IdGenerator::generateSecureUniqueId());
+            $this->roundDao->createRound($round);
+
+            $roundIDs[$oldID] = $round->getID();
+        }
+
+        /* Link qualifications and rounds for the new position */
+        foreach($exampleQualForRounds as $qualForRound) {
+            $newQualForRound = new QualificationForRound($roundIDs[$qualForRound->getRoundID()], $qualificationIDs[$qualForRound->getQualificationID()]);
+            $this->qualForRoundDao->createQualificationForRound($newQualForRound);
+        }
+
+        if(!$newID) {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Example Position Not Created'));
+        }
+        $this->respond(new Response(Response::OK, 'Example Position Created', $newID));
+    }
+    
+    public function handleDeleteExample() {
+        $this->requireParam('id');
+
+        $body = $this->requestBody;
+
+        // Check if the user is allowed to delete the position
+        $this->verifyUserRole('Search Chair', $body['id']);
+
+        // Get the position
+        $position = $this->positionDao->getPosition($body['id']);
+        if(!$position) {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Position not found'));
+        }
+
+        // Verify that the position's an example position & can be deleted on a whim (doesn't legally need to persist)
+        if(!$position->getIsExample()) {
+            $this->respond(new Response(Response::UNAUTHORIZED, 'Access Denied'));
+        }
+
+        // Delete all candidates
+        $candidates = $this->candidateDao->getCandidatesByPositionId($body['id']);
+        foreach($candidates as $candidate) {
+            // Delete all files from the server
+            $files = $this->feedbackFileDao->getAllFilesForCandidate($candidate->getID());
+            foreach($files as $file) {
+                try {
+                    $ok = unlink($this->configManager->getPrivateFilesDirectory()."/uploads/feedback/".$file->getFileName());
+                    if(!$ok) {
+                        throw new \Exception('feedback unlink() failed');
+                    }
+                } catch (\Exception $e) {
+                    $this->logger->error('Failed to remove FeedbackFile from server: ' . $e->getMessage());
+                    $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Files Not Deleted'));
+                }
+            }
+            $files = $this->candidateFileDao->getAllFilesForCandidate($candidate->getID());
+            foreach($files as $file) {
+                try {
+                    $ok = unlink($this->configManager->getPrivateFilesDirectory()."/uploads/candidate/".$file->getFileName());
+                    if(!$ok) {
+                        throw new \Exception('candidate unlink() failed');
+                    }
+                } catch (\Exception $e) {
+                    $this->logger->error('Failed to remove CandidateFile from server: ' . $e->getMessage());
+                    $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Files Not Deleted'));
+                }
+            }
+    
+            // Delete the candidate and all associated data
+            $ok = $this->candidateDao->deleteCandidate($candidate->getID());
+            if(!$ok) {
+                $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to Delete a Candidate'));
+            }
+        }
+
+        // Delete all qualifications
+        $qualifications = $this->qualificationDao->getQualificationsForPosition($body['id']);
+        foreach($qualifications as $qualification) {            
+            // Check if the user is allowed to delete an instance
+            $this->verifyUserRole('Search Chair', $qualification->getPositionID());
+
+            // Delete everything tied to the qualification
+            $ok = $this->qualificationDao->deleteQualification($qualification->getID());
+            
+            // Use Response object to send DAO action results
+            if(!$ok) {
+                $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to Delete a Qualification'));
+            }
+        }
+
+        // Delete all rounds
+        $rounds = $this->roundDao->getAllRoundsByPositionId($body['id']);
+        foreach($rounds as $round) {
+            // Delete all files from the server
+            $files = $this->feedbackFileDao->getAllFilesForRound($round->getID());
+            foreach($files as $file) {
+                try {
+                    $ok = unlink($this->configManager->getPrivateFilesDirectory()."/uploads/feedback/".$file->getFileName());
+                    if(!$ok) {
+                        throw new \Exception('feedback unlink() failed');
+                    }
+                } catch (\Exception $e) {
+                    $this->logger->error('Failed to remove FeedbackFile from server: ' . $e->getMessage());
+                    $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'File Not Deleted'));
+                }
+            }
+    
+            // Delete everything associated with the round
+            $ok = $this->roundDao->deleteRound($round->getID());
+            
+            if(!$ok) {
+                $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to Delete a Round'));
+            }
+        }
+
+        // Delete the position itself
+        $ok = $this->positionDao->deletePosition($body['id']);
+        if(!$ok) {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Position Not Deleted'));
+        }
+
+        $this->respond(new Response(Response::OK, 'Example Position Deleted'));
     }
 
     /**
@@ -483,7 +658,7 @@ class PositionActionHandler extends ActionHandler {
         ';
         
 
-        $mailer = new \Email\NewMailer($this->configManager->get('email.admin_address'), null, $this->logger);
+        $mailer = new \Email\NewMailer($this->configManager->get('email.admin_address'), $this->configManager->get('email.admin_address'), null, $this->logger);
 
         $ok = $mailer->sendEmail($user->getEmail(), 'Search Committee Export', $message, true, null, $attachments);
         
@@ -594,6 +769,12 @@ class PositionActionHandler extends ActionHandler {
                 break;
             case 'markCompleted':
                 $this->handlePositionCompleted();
+                break;
+            case 'getExample':
+                $this->handleGetExample();
+                break;
+            case 'deleteExamplePosition':
+                $this->handleDeleteExample();
                 break;
             case 'emailPosition':
                 $this->handleEmailPosition();

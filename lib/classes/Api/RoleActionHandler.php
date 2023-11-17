@@ -65,6 +65,9 @@ class RoleActionHandler extends ActionHandler {
         if(!$position) {
             $this->respond(new Response(Response::BAD_REQUEST, 'Position Not Found'));
         }
+        if($position->getIsExample()) {
+            $this->respond(new Response(Response::UNAUTHORIZED, 'Access Denied'));
+        }
 
         // Check if the user is allowed to add an instance
         $this->verifyUserRole('Search Chair', $body['positionID']);

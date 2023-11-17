@@ -48,7 +48,8 @@ class PositionDao {
                     `p_postingLink`, 
                     `p_dateCreated`, 
                     `p_committeeEmail`, 
-                    `p_status`
+                    `p_status`,
+                    `p_isExample`
                 )
                 VALUES (
                     :id,
@@ -56,7 +57,8 @@ class PositionDao {
                     :postingLink,
                     :dateCreated,
                     :committeeEmail,
-                    :status
+                    :status,
+                    :isExample
                 );';
             $params = array(
                 ':id' => $position->getID(),
@@ -65,6 +67,7 @@ class PositionDao {
                 ':dateCreated' => $position->getDateCreated()->format('Y-m-d H:i:s'),
                 ':committeeEmail' => $position->getCommitteeEmail(),
                 ':status' => $position->getStatus(),
+                ':isExample' => $position->getIsExample()
             );
             $this->conn->execute($sql, $params);
 
@@ -125,12 +128,38 @@ class PositionDao {
      */
     public function getApprovedPositions() {
         try {
-            $sql = 'SELECT * FROM hiring_Position WHERE `p_status` <> "Requested" ORDER BY p_dateCreated DESC;';
+            $sql = 'SELECT * FROM hiring_Position 
+                WHERE `p_status` <> "Requested" 
+                    AND `p_isExample` = false
+                ORDER BY p_dateCreated DESC;';
             $result = $this->conn->query($sql);
 
             return \array_map('self::ExtractPositionFromRow', $result);
         } catch (\Exception $e) {
             $this->logError('Failed to fetch approved Positions: ' . $e->getMessage());
+
+            return false;
+        }
+    }
+
+    /**
+     * Fetches all example Positions from the database. Example positions allow users to test out the SPT
+     * without needing their position approved.
+     * 
+     * If an error occurs during the fetch, the function will return `false`.
+     *
+     * @return Position[]|boolean an array of Position objects if the fetch succeeds, false otherwise
+     */
+    public function getExamplePositions() {
+        try {
+            $sql = 'SELECT * FROM hiring_Position 
+                WHERE `p_isExample` = true
+                ORDER BY p_dateCreated DESC;';
+            $result = $this->conn->query($sql);
+
+            return \array_map('self::ExtractPositionFromRow', $result);
+        } catch (\Exception $e) {
+            $this->logError('Failed to fetch example Positions: ' . $e->getMessage());
 
             return false;
         }
@@ -233,6 +262,29 @@ class PositionDao {
         }
     }
 
+    public function deletePosition($positionID) {
+        try {
+            // Delete roles for the position first
+            $sql = 'DELETE FROM `hiring_RoleForPosition`
+                WHERE rfp_p_id=:id';
+            $params = array (
+                ':id' => $positionID
+            );
+            $this->conn->execute($sql, $params);
+
+            // Delete position last to avoid integrity constraint issues
+            $sql = 'DELETE FROM `hiring_Position`
+                WHERE p_id=:id';
+            $this->conn->execute($sql, $params);
+
+            return true;
+        } catch (\Exception $e) {
+            $this->logError('Failed to delete Position: ' . $e->getMessage());
+
+            return false;
+        }
+    }
+
     /**
      * Creates a new Position object by extracting the information from a row in the database.
      *
@@ -246,6 +298,7 @@ class PositionDao {
         $position->setDateCreated(new \DateTime(($row['p_dateCreated'] == '' ? 'now' : $row['p_dateCreated'])));
         $position->setCommitteeEmail($row['p_committeeEmail']);
         $position->setStatus($row['p_status']);
+        $position->setIsExample($row['p_isExample']);
 
         return $position;
     }
