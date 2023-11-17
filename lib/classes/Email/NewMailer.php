@@ -19,6 +19,9 @@ class NewMailer {
     private $from;
 
     /** @var string */
+    private $bounceAddress;
+
+    /** @var string */
     private $subjectTag;
 
     /** @var PHPMailer */
@@ -34,13 +37,15 @@ class NewMailer {
      * @param string|null $subjectTag an optional tag to prefix the email subject with
      * @param \Util\Logger|null $logger an optional logger to capture error messages from the mail() function
      */
-    public function __construct($from, $subjectTag = null, $logger = null) {
+    public function __construct($from, $bounceAddress, $subjectTag = null, $logger = null) {
         $this->from = $from;
+        $this->bounceAddress = $bounceAddress;
         $this->subjectTag = $subjectTag;
         $this->logger = $logger;
         //Create an instance; passing `true` enables exceptions
         $this->mail = new PHPMailer(true);
         $this->mail->setFrom($from);
+        $this->mail->Sender = $this->bounceAddress; // Set known-good address for bounces - in case a user enters a bad "from" address
     }
 
     /**
