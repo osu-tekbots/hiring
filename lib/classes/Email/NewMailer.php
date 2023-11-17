@@ -34,6 +34,7 @@ class NewMailer {
      * Creates a new mailer to send emails.
      *
      * @param string $from the from address for the email
+     * @param string $bounceAddress the email address to direct notices about emails that bounced to
      * @param string|null $subjectTag an optional tag to prefix the email subject with
      * @param \Util\Logger|null $logger an optional logger to capture error messages from the mail() function
      */

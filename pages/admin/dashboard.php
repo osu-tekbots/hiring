@@ -18,8 +18,10 @@ $active = 'Positions';
 include_once PUBLIC_FILES . '/modules/adminSidebar.php';
 
 use DataAccess\PositionDao;
+use DataAccess\RoleDao;
 
 $positionDao = new PositionDao($dbConn, $logger);
+$roleDao = new RoleDao($dbConn, $logger);
 ?>
 
 <div id="content-wrapper">
@@ -78,6 +80,13 @@ $positionDao = new PositionDao($dbConn, $logger);
 
         if(count($positions)) {
             foreach($positions as $position) {
+                $members = $roleDao->getAllPositionMembers($position->getID());
+                $searchChair = array("");
+                if($members && count($members)) {
+                    $searchChair = array_filter($members, fn($elmt) => $elmt->getRole()->getName() == "Search Chair");
+                    $searchChair = array_map(fn($elmt) => ($elmt->getUser()->getFirstName() . " " . $elmt->getUser()->getLastName()), $searchChair);
+                }
+
                 $status = $position->getStatus();
                 $statusColor = ($status == "Open" || $status == "Interviewing" ? "text-success" : 
                     ($status == "Requested" ? "" : "text-danger"));
@@ -88,6 +97,7 @@ $positionDao = new PositionDao($dbConn, $logger);
                     </div>
                     <div class='col-3 my-auto'>
                         <h4 id='status".$position->getID()."' class='$statusColor'>$status</h4>
+                        <h5>".implode(", ", $searchChair)."</h5>
                     </div>
                     <div class='col-2 my-auto'>
                         <button type='button' class='btn btn-outline-info' onclick='exportPosition(this, \"".$position->getID()."\")'>Export Data</button>
