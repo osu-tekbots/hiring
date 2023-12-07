@@ -16,6 +16,7 @@ include PUBLIC_FILES . '/vendor/autoload.php';  /* Auto-load libraries from Comp
 // Load configuration
 $configManager = new Util\ConfigManager(PUBLIC_FILES);
 
+// Create logger
 try {
     $logFileName = $configManager->getLogFilePath() . date('MY') . ".log";
     $logger = new Util\Logger($logFileName, $configManager->getLogLevel());
@@ -23,14 +24,18 @@ try {
     $logger = null;
 }
 
+// Add handlers for uncaught errors/exceptions
+include PUBLIC_FILES . '/lib/handleUncaught.php';
+
+// Connect to database
 try {
     $dbConn = DataAccess\DatabaseConnection::FromConfig($configManager->getDatabaseConfig());
 } catch (\Exception $e) {
-    $logger->info('Sending HTTP response: 500: Database connection failed');
     \header('Content-Type: application/json; charset=UTF-8');
     $code = 500;
     header("X-PHP-Response-Code: $code", true, $code);
     echo '{"code": 500, "message": "Database connection refused"}';
+    $logger->info('Sending HTTP response: 500: Database connection failed');
     exit(0);
 }
 

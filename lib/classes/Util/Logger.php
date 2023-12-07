@@ -118,7 +118,7 @@ class Logger {
      * @return void
      */
     private function log($level, $message) {
-        $str = $level . ' [' . date('Y/m/d h:i:s', time()) . '] ' . $message . "\n";
+        $str = $level . ' [' . date('Y/m/d h:i:s', time()) . '] (user: ' . $_SESSION['userID'] . ', source page: ' . substr($_SERVER['SCRIPT_FILENAME'], 31) . ') '. $message . "\n";
         fwrite($this->file, $str);
     }
 }

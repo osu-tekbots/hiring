@@ -16,18 +16,24 @@ include PUBLIC_FILES . '/vendor/autoload.php';  /* Auto-load libraries from Comp
 // Load configuration
 $configManager = new Util\ConfigManager(PUBLIC_FILES);
 
-try {
-    $dbConn = DataAccess\DatabaseConnection::FromConfig($configManager->getDatabaseConfig());
-} catch (\Exception $e) {
-    echo 'There is an irresolvable issue with our database connection right now. Please try again later.';
-    die();
-}
-
+// Create logger
 try {
     $logFileName = $configManager->getLogFilePath() . date('MY') . ".log";
     $logger = new Util\Logger($logFileName, $configManager->getLogLevel());
 } catch (\Exception $e) {
     $logger = null;
+}
+
+// Add handlers for uncaught errors/exceptions
+include PUBLIC_FILES . '/lib/handleUncaught.php';
+
+// Connect to database
+try {
+    $dbConn = DataAccess\DatabaseConnection::FromConfig($configManager->getDatabaseConfig());
+} catch (\Exception $e) {
+    echo 'There is an irresolvable issue with our database connection right now. Please try again later.';
+    $logger->info('Sending HTTP response: 500: Database connection failed');
+    exit(0);
 }
 
 // Set $_SESSION variables to be for this site
