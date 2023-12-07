@@ -115,7 +115,7 @@ function determineNextRound($roundDao, $candidateRoundNoteDao, $candidateID) {
             foreach($candidates as $candidate) {
                 $status = $candidate->getCandidateStatus()?->getName();
                 $lastRoundQuery = '';
-                $disqualified = (isset($status) && $status != "Hired");
+                $disqualified = (isset($status) && $status != "Hired"); // Set initially here before $status is overwritten
                 $finalDecision = isset($status);
                 $statusColor = ($status == null ? "" : ($status == "Hired" ? "text-success" : "text-danger")); // Set here to all 'in progress' statuses are black
                 
@@ -139,6 +139,11 @@ function determineNextRound($roundDao, $candidateRoundNoteDao, $candidateID) {
                     $nextRoundQuery = "&round=".$nextRound->getID();
                     $nextRound = "Complete ".$nextRound->getName();
                 }
+
+                $lastRoundStatus = "";
+                if($lastRound !== false)
+                    $lastRoundStatus = $candidateRoundNoteDao->getCandidateNotesForRound($candidate->getID(), $lastRound->getID())?->getDecision();
+                $disqualified = $disqualified || ($lastRoundStatus == "Disqualified"); // Update if the candidate has been marked "Disqualified" but Final Disposition is not yet set
                 
                 // NOTE: Below, date '-0001-11-30' seems random, but is the format result for the timestamp '0000-00-00 00:00:00' in the database
                 $output = "
