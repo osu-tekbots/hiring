@@ -423,7 +423,7 @@ class UserDao {
                 ':id' => $user->getID()
             );
             $this->conn->execute($sql, $params);
-            $this->logger->info(var_export($sql, true));
+            $this->logger->warn('Updating user information:');
             $this->logger->info(var_export($params, true));
 
             return true;
@@ -609,46 +609,6 @@ class UserDao {
             return false;
         }
     }
-
-    /**
-     * Updates an existing user in the database. 
-     * 
-     * This function only updates trivial user information, such as the type, first and last names, salutation, majors, 
-     * affiliations, and contact information.
-     *
-     * @param \Model\User $user the user to update
-     * @return boolean true if the query execution succeeds, false otherwise.
-     */
-    /* public function updateUser($user) {
-        try {
-            $sql = 'UPDATE user SET ';
-            $sql .= 'access_level_id = :type,';
-            $sql .= 'first_name = :fname, ';
-            $sql .= 'last_name = :lname, ';
-            $sql .= 'email = :email, ';
-			$sql .= 'onid = :onid, ';
-            $sql .= 'phone = :phone, ';
-            $sql .= 'date_updated = :dateu ';
-            $sql .= 'WHERE user_id = :id';
-            $params = array(
-                ':type' => $user->getAccessLevelID()->getId(),
-                ':fname' => $user->getFirstName(),
-                ':lname' => $user->getLastName(),
-                ':email' => $user->getEmail(),
-				':onid' => $user->getOnid(),
-                ':phone' => $user->getPhone(),
-                ':dateu' => QueryUtils::FormatDate($user->getDateUpdated()),
-                ':id' => $user->getUserID()
-            );
-            $this->conn->execute($sql, $params);
-
-            return true;
-        } catch (\Exception $e) {
-            $this->logError('Failed to update user: ' . $e->getMessage());
-
-            return false;
-        }
-    } */
 
     /**
      * Creates a new User object by extracting the information from a row in the database.
