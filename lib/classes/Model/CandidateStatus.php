@@ -73,11 +73,11 @@ class CandidateStatus {
     }
 
     public function getName() {
-        return $this->name;
+        return $this->statusName;
     }
 
     public function setName($statusName) {
-        $this->name = $statusName;
+        $this->statusName = $statusName;
     }
 
     public function getSpecificDispositionReason() {

@@ -522,9 +522,11 @@ class PositionActionHandler extends ActionHandler {
                 );
             }
             if($candidateStatus) {
+                $deciderUser = $this->userDao->getUserByID($candidateStatus->getUserID());
+                $deciderName = $deciderUser->getFirstName() . ' ' . $deciderUser->getLastName();
                 $message .= '
                     &emsp;Status: '.$candidateStatus->getName().'<br>
-                    &emsp;&emsp;Decided by: '.'TODO: Add role of decider '.'('.$candidateStatus->getResponsiblePartyDescription().')<br>
+                    &emsp;&emsp;Decided by: '.$deciderName.' '.'('.$candidateStatus->getResponsiblePartyDescription().')<br>
                     &emsp;&emsp;Specific Disposition Reason: '.$candidateStatus->getSpecificDispositionReason().'<br>
                     &emsp;&emsp;Comments: '.$candidateStatus->getComments().'<br>
                     &emsp;&emsp;Notified Via: '.$candidateStatus->getHowNotified().'<br>
