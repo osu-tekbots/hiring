@@ -114,6 +114,7 @@ function determineNextRound($roundDao, $candidateRoundNoteDao, $candidateID) {
         if(count($candidates)) {
             foreach($candidates as $candidate) {
                 $status = $candidate->getCandidateStatus()?->getName();
+                $lastRound = false;
                 $lastRoundQuery = '';
                 $disqualified = (isset($status) && $status != "Hired"); // Set initially here before $status is overwritten
                 $finalDecision = isset($status);
