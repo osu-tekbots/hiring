@@ -49,7 +49,7 @@ class Logger {
      */
     public function setLevel($level) {
         $i = array_search($level, $this->levels);
-        if (!$i) {
+        if ($i === false) {
             if ($this->level == null) {
                 $this->level = 1;
             }

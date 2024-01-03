@@ -105,7 +105,7 @@ class ActionHandler {
      * @return void
      */
     public function respond($response) {
-        $this->logger->info('Sending HTTP response: ' . $response->getCode() . ': ' . $response->getMessage());
+        $this->logger->trace('Sending HTTP response: ' . $response->getCode() . ': ' . $response->getMessage());
         \header('Content-Type: application/json; charset=UTF-8');
         $code = $response->getCode();
         header("X-PHP-Response-Code: $code", true, $code);
