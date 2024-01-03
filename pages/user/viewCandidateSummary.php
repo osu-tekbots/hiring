@@ -20,7 +20,7 @@ if(!isset($_SESSION)) {
 
 // Make sure the user is logged in and allowed to be on this page
 include_once PUBLIC_FILES . '/lib/authorize.php';
-allowIf(verifyPermissions(['admin', 'user']), 'It looks like you\'re not signed in. Please sign in before submitting feedback.', true);
+allowIf(verifyPermissions(['admin', 'user']), 'It looks like you\'re not logged in. Please log in before submitting feedback.', true);
 allowIf(!is_null($_REQUEST['id']), 'It looks like your request failed to specify a candidate to submit feedback for.', true);
 
 $title = 'Candidate Review Summary';

@@ -68,7 +68,7 @@ $css = array_merge(
 $buttons = array();
 
 if (verifyPermissions(['user', 'admin'])) {
-    // User is signed in
+    // User is logged in
     $buttons['Dashboard'] = 'pages/user/dashboard.php';
     
     $buttons['Profile'] = 'pages/user/profile.php';
@@ -80,7 +80,7 @@ if (verifyPermissions(['user', 'admin'])) {
 
     $buttons['Logout'] = 'pages/logout.php';
 } else {
-    // User is signed out
+    // User is logged out
     $buttons['Login'] = 'pages/login.php';
 }
 

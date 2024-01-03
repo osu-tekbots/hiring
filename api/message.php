@@ -25,7 +25,7 @@ $handler = new MessageActionHandler($messageDao, $hiringMailer, $logger);
 if (verifyPermissions(['user', 'admin'])) {
 	$handler->handleRequest();
 } else {
-    // Tell the user they're not signed in
+    // Tell the user they're not logged in
     $handler->respond(new Response(Response::UNAUTHORIZED, 'You do not have permission to access this resource. Do you need to re-login?'));
 }
 

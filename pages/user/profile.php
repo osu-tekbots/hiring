@@ -20,7 +20,7 @@ renderBreadcrumb(NULL, $title);
 $userDao = new UserDao($dbConn, $logger);
 
 $user = $userDao->getUserByID($_SESSION['userID']);
-allowIf($user, 'It looks like you\'re not signed in. Please sign in before updating your profile.', true);
+allowIf($user, 'It looks like you\'re not logged in. Please log in before updating your profile.', true);
 
 $userAuthMethods = $userDao->getAuthProvidersForUserByEmail($user->getEmail());
 $userAuthMethods = implode(', ', array_map('getName', $userAuthMethods));
