@@ -19,6 +19,8 @@ use DataAccess\FeedbackDao;
 use DataAccess\FeedbackForQualDao;
 use DataAccess\FeedbackFileDao;
 use DataAccess\UserDao;
+use DataAccess\MessageDao;
+use Email\HiringMailer;
 use Api\PositionActionHandler;
 use Api\Response;
 
@@ -38,7 +40,9 @@ $feedbackDao = new FeedbackDao($dbConn, $logger);
 $ffqDao = new FeedbackForQualDao($dbConn, $logger);
 $feedbackFileDao = new FeedbackFileDao($dbConn, $logger);
 $userDao = new UserDao($dbConn, $logger);
-$handler = new PositionActionHandler($positionDao, $candidateDao, $candidateFileDao, $candidateRoundNoteDao, $qualificationDao, $qualificationForRoundDao, $roundDao, $roleDao, $feedbackDao, $ffqDao, $feedbackFileDao, $userDao, $configManager, $logger);
+$messageDao = new MessageDao($dbConn, $logger);
+$hiringMailer = new HiringMailer($configManager->get('email.admin_address'), $configManager->get('email.admin_address'), $configManager->get('email.admin_subject_tag'), $logger);
+$handler = new PositionActionHandler($positionDao, $candidateDao, $candidateFileDao, $candidateRoundNoteDao, $qualificationDao, $qualificationForRoundDao, $roundDao, $roleDao, $feedbackDao, $ffqDao, $feedbackFileDao, $userDao, $messageDao, $hiringMailer, $configManager, $logger);
 
 // Ensure the user is logged in
 if (verifyPermissions(['user', 'admin'])) {

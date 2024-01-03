@@ -53,6 +53,12 @@ class PositionActionHandler extends ActionHandler {
     /** @var \DataAccess\UserDao */
     private $userDao;
 
+    /** @var \DataAccess\MessageDao */
+    private $messageDao;
+
+    /** @var \Email\HiringMailer */
+    private $hiringMailer;
+
     /** @var \Util\ConfigManager */
     private $configManager;
 	
@@ -76,9 +82,26 @@ class PositionActionHandler extends ActionHandler {
      * @param \Util\ConfigManager $configManager The class for accessing information in `config.ini`
      * @param \Util\Logger $logger The class for logging execution details
      */
-	public function __construct($positionDao, $candidateDao, $candidateFileDao, $candidateRoundNoteDao, $qualificationDao, $qualForRoundDao, $roundDao, $roleDao, $feedbackDao, $ffqDao, $feedbackFileDao, $userDao, $configManager, $logger)
-    {
-        parent::__construct($logger);
+	public function __construct(
+        \DataAccess\PositionDao              $positionDao, 
+        \DataAccess\CandidateDao             $candidateDao, 
+        \DataAccess\CandidateFileDao         $candidateFileDao, 
+        \DataAccess\CandidateRoundNoteDao    $candidateRoundNoteDao, 
+        \DataAccess\QualificationDao         $qualificationDao, 
+        \DataAccess\QualificationForRoundDao $qualForRoundDao, 
+        \DataAccess\RoundDao                 $roundDao, 
+        \DataAccess\RoleDao                  $roleDao, 
+        \DataAccess\FeedbackDao              $feedbackDao, 
+        \DataAccess\FeedbackForQualDao       $ffqDao, 
+        \DataAccess\FeedbackFileDao          $feedbackFileDao, 
+        \DataAccess\UserDao                  $userDao, 
+        \DataAccess\MessageDao               $messageDao,
+        \Email\HiringMailer                  $hiringMailer,
+        \Util\ConfigManager                  $configManager, 
+        \Util\Logger                         $logger
+    ) {
+        parent::__construct($logger); 
+
 		$this->positionDao = $positionDao;
         $this->candidateDao = $candidateDao;
         $this->candidateFileDao = $candidateFileDao;
@@ -91,6 +114,8 @@ class PositionActionHandler extends ActionHandler {
         $this->ffqDao = $ffqDao;
         $this->feedbackFileDao = $feedbackFileDao;
         $this->userDao = $userDao;
+        $this->messageDao = $messageDao;
+        $this->hiringMailer = $hiringMailer;
         $this->configManager = $configManager;
     }
 
@@ -198,7 +223,7 @@ class PositionActionHandler extends ActionHandler {
             $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Position not found'));
         }
         $position->setStatus('Open');
-        $this->logger->info(var_export($position, true));
+        $this->logger->info('Position '.$position->getID().' approved');
 
         // Store the updated version in the database
 		$ok = $this->positionDao->updatePosition($position);
@@ -207,6 +232,22 @@ class PositionActionHandler extends ActionHandler {
         if(!$ok) {
             $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Position not approved'));
         }
+
+        // Send an email to the Search Chair so they know their position is approved
+        $message = $this->messageDao->getMessageByID(4);
+        $searchChairRole = $this->roleDao->getRoleByName('Search Chair');
+        $searchChairs = $this->roleDao->getUsersByPositionRole($position->getID(), $searchChairRole);
+        if(!$searchChairs) {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Search Chair not found'));
+        }
+        foreach($searchChairs as $searchChair) {
+            $ok = $this->hiringMailer->sendPositionApprovedEmail($searchChair->getUser(), $message, 'https://eecs.engineering.oregonstate.edu/education/hiring/user/updatePosition.php?id='.$position->getID());
+            
+            if(!$ok) {
+                $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to email Search Chair'));
+            }
+        }
+
 		$this->respond(new Response(Response::OK, 'Position approved'));
     }
 

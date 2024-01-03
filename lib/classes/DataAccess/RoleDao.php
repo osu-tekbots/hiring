@@ -235,6 +235,34 @@ class RoleDao {
         }
     }
 
+    public function getUsersByPositionRole($positionID, $role) {
+        try {
+            $sql = 'SELECT * FROM `hiring_RoleForPosition` 
+                    INNER JOIN `hiring_Users` ON `hiring_RoleForPosition`.`rfp_u_id`=`hiring_Users`.`u_id`
+                    INNER JOIN `hiring_Position` ON `hiring_RoleForPosition`.`rfp_p_id`=`hiring_Position`.`p_id`
+                    INNER JOIN `hiring_Role` ON `hiring_RoleForPosition`.`rfp_r_id`=`hiring_Role`.`r_id`
+                WHERE `hiring_RoleForPosition`.`rfp_p_id`=:positionID
+                    AND `hiring_RoleForPosition`.`rfp_r_id`=:roleID
+                ORDER BY `hiring_RoleForPosition`.`rfp_r_id` ASC;
+                ';
+            $params = array(
+                ':positionID'=>$positionID,
+                ':roleID'=>$role->getID()
+            );
+            $result = $this->conn->query($sql, $params);
+
+            if(!count($result)) {
+                return false;
+            }
+            
+            return \array_map('self::ExtractRoleForPositionFromRow', $result);
+        } catch (\Exception $e) {
+            $this->logError('Failed to fetch members by position role: ' . $e->getMessage());
+
+            return false;
+        }
+    }
+
     /**
      * Creates a new Role object by extracting the information from a row in the database.
      *
