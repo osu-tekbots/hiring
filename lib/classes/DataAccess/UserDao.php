@@ -318,8 +318,6 @@ class UserDao {
      */
     public function checkLocalResetAttempt($emailAddress, $code) {
         try {
-            $expire_minutes = 45;
-
             $sql =  "SELECT * FROM hiring_LocalAuth
                 WHERE la_id = (
                     SELECT `hiring_UserAuth`.`ua_providerId` FROM `hiring_UserAuth`

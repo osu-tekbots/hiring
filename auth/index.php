@@ -29,33 +29,6 @@ if ($provider) {
                 renderErrorMessage();
             }
             break;
-    
-        // case 'google':
-        //     include_once PUBLIC_FILES . '/auth/google.php';
-    
-        //     $ok = authenticateWithGoogle();
-        //     if (!$ok) {
-        //         renderErrorMessage();
-        //     }
-        //     break;
-    
-        // case 'microsoft':
-        //     include_once PUBLIC_FILES . '/auth/microsoft.php';
-    
-        //     $ok = authenticateWithMicrosoft();
-        //     if (!$ok) {
-        //         renderErrorMessage();
-        //     }
-        //     break;
-    
-        // case 'github':
-        //     include_once PUBLIC_FILES . '/auth/github.php';
-    
-        //     $ok = authenticateWithGitHub();
-        //     if (!$ok) {
-        //         renderErrorMessage();
-        //     }
-        //     break;
 
         case 'local':
             include_once PUBLIC_FILES . '/auth/local.php';

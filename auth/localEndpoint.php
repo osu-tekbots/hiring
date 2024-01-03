@@ -46,7 +46,7 @@ switch($_POST['action']) {
         break;
     
     default:
-        // displayError('Your request to the local user API is invalid.');
+        displayError('Your request to the local user API is invalid.');
 
 }
 

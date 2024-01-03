@@ -29,20 +29,12 @@ if (!isset($js)) {
     $js = array();
 }
 $js = array_merge( 
-    // Scripts to use on all pages -- commented out ones came from copying this file from TekBots and are likely unused on this site
     array(
         'assets/js/jquery-3.3.1.min.js',
         'assets/js/popper.min.js',
         'assets/js/bootstrap.min.js',
-        // '../tekbotSuite/tekbot/assets/js/moment.min.js',
-        // '../tekbotSuite/tekbot/assets/js/tempusdominus-bootstrap-4.min.js',
         'assets/js/jquery-ui.js',
-        // '../tekbotSuite/tekbot/assets/js/platform.js',
-        // '../tekbotSuite/tekbot/assets/js/slick.min.js',
-        // '../tekbotSuite/tekbot/assets/js/jquery.canvasjs.min.js',
-        // '../tekbotSuite/tekbot/assets/js/image-picker.min.js',
         'assets/js/api.js',
-        // '../tekbotSuite/tekbot/assets/js/splitting.min.js',
         'assets/js/snackbar.js',
         'assets/js/error.js'
     ), $js
@@ -55,22 +47,15 @@ if (!isset($css)) {
 }
 $css = array_merge(
     array(
-        // Stylesheets to use on all pages -- commented out ones came from copying this file from TekBots and are likely unused on this site
         array(
             'href' => 'https://use.fontawesome.com/releases/v5.7.1/css/all.css',
             'integrity' => 'sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr',
             'crossorigin' => 'anonymous'
         ),
         'assets/css/bootstrap.min.css',
-        // '../tekbotSuite/tekbot/assets/css/tempusdominus-bootstrap-4.min.css',
-        // '../tekbotSuite/tekbot/assets/css/slick.css',
-        // '../tekbotSuite/tekbot/assets/css/slick-theme.css',
         'assets/css/jquery-ui.css',
-        // '../tekbotSuite/tekbot/assets/css/image-picker.css',
         'assets/css/capstone.css',
         'assets/css/snackbar.css',
-        // '../tekbotSuite/tekbot/assets/css/splitting.css',
-        // '../tekbotSuite/tekbot/assets/css/splitting-cells.css',
         array(
             'media' => 'screen and (max-width:768px)', 
             'href' => 'assets/css/capstoneMobile.css'
