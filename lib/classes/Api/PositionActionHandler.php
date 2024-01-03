@@ -186,6 +186,9 @@ class PositionActionHandler extends ActionHandler {
 
         // Get and update the position
         $position = $this->positionDao->getPosition($body['id']);
+        if(!$position) {
+            $this->respond(new Response(Response::BAD_REQUEST, 'Position not found'));
+        }
         $position->setTitle($body['title']);
         $position->setPostingLink($body['postingLink']);
         $position->setCommitteeEmail($body['email']);
@@ -393,6 +396,13 @@ class PositionActionHandler extends ActionHandler {
         $this->respond(new Response(Response::OK, 'Example Position Created', $newID));
     }
     
+    /**
+     * Verifies that the position is an example and deletes it
+     * 
+     * @param string id Must exist in the POST request body.
+     * 
+     * @return \Api\Response HTTP response for whether the API call successfully completed
+     */
     public function handleDeleteExample() {
         $this->requireParam('id');
 

@@ -6,3 +6,4 @@ uploads/
 vendor/
 .vs/
 **/.DS_Store
+crontab.txt

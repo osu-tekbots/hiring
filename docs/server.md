@@ -1,3 +1,4 @@
+## Configuring Site Constants
 Server configuration is inside of `config.ini` at the root of the repository. This file is **NOT** to be
 checked into source control. The file should have the following contents:
 
@@ -26,6 +27,7 @@ level = ; trace|info|warn|error
 config_file = ; database.ini, or another name pointing to the database configuration file (see above for contents)
 ```
 
+## Setting .htaccess
 The `.htaccess` file has also been removed from the repository to further simplify configuration and is being ignored
 by Git. When used, place the `.htaccess` file at the root of the repository with the following configuration:
 
@@ -60,3 +62,23 @@ RewriteRule ^(.*)$ pages/$1
 Notice the `<CHANGEME>` text above. This should be changed to be the root URI of the website hosting the application.
 For example, if the website is hosted at `http://eecs.oregonstate.edu/education/capstone/`, then you would replace
 `<CHANGEME>` with `/education/capstone/`. **The trailing and leading slashes are required**.
+
+## Initializing Cronjobs
+Finally, this project includes a cronjob for deleting old test positions (and eventually, old positions). To set this up, create a `crontab.txt` file in the repository root with the following contents:
+```crontab
+EMAIL=""
+24 0 * * */14 /bin/wget -O /dev/null -o /dev/null <CHANGEME>/scripts/deleteExamples.php
+
+```
+Notice the `<CHANGEME>` text above. This should be changed to the root URL of the website hosting the application.
+For example, if the website is hosted at `https://eecs.engineering.oregonstate.edu/education/hiring`, then you would replace `<CHANGME>` with `https://eecs.engineering.oregonstate.edu/education/hiring`.
+
+Additionally, this cronjob is set to execute every other week at 12:24 AM. If you choosed to modify this time, you may find [this tool](https://crontab.guru) helpful for double-checking the timing you settle on.
+
+Please note that there are only two lines of text (`24 0 ... deleteExamples.php` is all one line) and that the file ends with a blank line.
+
+After the file is created, open the terminal and enter the following shell command to start the cronjob:
+
+```bash
+crontab crontab.txt
+```
