@@ -11,7 +11,7 @@ echo "Starting pre-commit..."
 
 echo "Making sure permissions for files and directories are public"
 
-find . -not -path "./.git/*" -not -path "./uploads/*" -not -path "./scripts/*" -not -path "./.private/*" -not -path "./docs/*" | while read f;
+find . -not -path "./.git/*" -not -path "./uploads/*" -not -path "./scripts/*" -not -path "./.private/*" -not -path "./docs/*" -not -path "*/composer*" -not -path "./vendor/*" | while read f;
 do
     if [ "$f" = "." ] || [ "$f" = "./.git" ] || [ "$f" = "./uploads" ] || [ "$f" = "./scripts" ] || [ "$f" = "./.private" ] || [ "$f" = "./docs" ]; then
         continue
