@@ -8,10 +8,12 @@ class HiringMailer extends Mailer {
      * Constructs a new instance of a mailer specifically for hiring website-related emails
      *
      * @param string $from the from address for emails
+     * @param string $bounceAddress the email address to direct notices about emails that bounced to
      * @param string|null $subjectTag an optional subject tag to prefix the provided subject tag with
+     * @param \Util\Logger|null $logger an optional logger to capture error messages from the mail() function
      */
-    public function __construct($from, $subjectTag = null, $logger = null) {
-        parent::__construct($from, $subjectTag, $logger);
+    public function __construct($from, $bounceAddress, $subjectTag = null, $logger = null) {
+        parent::__construct($from, $bounceAddress, $subjectTag, $logger);
     }
 
     /**
@@ -54,6 +56,27 @@ class HiringMailer extends Mailer {
 		$replacements['name'] = Security::HtmlEntitiesEncode($user->getFirstName() . " " . $user->getLastName());
 		$replacements['link'] = $link;
         $replacements['resetCode'] = $code;
+		
+		$subject = $message->fillTemplateSubject($replacements);
+		$body = $message->fillTemplateBody($replacements);
+
+        return $this->sendEmail($user->getEmail(), $subject, $body, true);
+    }
+
+    /**
+     * Sends an email to the specified user to inform them that their position has been approved.
+     * 
+     * @param \Model\User $user The user to send the email to
+     * @param \Model\Message $message The message template to fill out and send the user
+     * @param string $link The link to the edit position page
+     * 
+     * @return bool Whether the email successfully sent
+     */
+    public function sendPositionApprovedEmail($user, $message, $link) {
+        $replacements = Array();
+		
+		$replacements['name'] = Security::HtmlEntitiesEncode($user->getFirstName() . " " . $user->getLastName());
+		$replacements['link'] = $link;
 		
 		$subject = $message->fillTemplateSubject($replacements);
 		$body = $message->fillTemplateBody($replacements);

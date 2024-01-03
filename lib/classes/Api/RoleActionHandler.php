@@ -33,13 +33,14 @@ class RoleActionHandler extends ActionHandler {
      * @param \DataAccess\RoleDao $roleDao The class for accessing the Role database table
      * @param \Util\Logger $logger The class for logging execution details
      */
-	public function __construct($positionDao, $roleDao, $userDao, $messageDao, $logger)
+	public function __construct($positionDao, $roleDao, $userDao, $messageDao, $configManager, $logger)
     {
         parent::__construct($logger);
         $this->positionDao = $positionDao;
 		$this->roleDao = $roleDao;
 		$this->userDao = $userDao;
 		$this->messageDao = $messageDao;
+        $this->configManager = $configManager;
     }
 
     /**
@@ -93,7 +94,7 @@ class RoleActionHandler extends ActionHandler {
         }
 
         // Email the new member to tell them they've been added
-        $hiringMailer = new HiringMailer($position->getCommitteeEmail(), null, $this->logger);
+        $hiringMailer = new HiringMailer($position->getCommitteeEmail(), $this->configManager->get('email.admin_address'), null, $this->logger);
         $message = $this->messageDao->getMessageByID(1);
         $ok = $hiringMailer->sendAddedToCommitteeEmail($user, $message, $position, $role->getName());
         if(!$ok) {

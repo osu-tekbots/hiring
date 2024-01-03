@@ -109,6 +109,12 @@ class MessageActionHandler extends ActionHandler {
                 $this->fillModel($position);
                 $ok = $this->hiringMailer->sendAddedToCommitteeEmail($user, $message, $position, $this->testString);
                 break;
+            case 2:
+                $ok = $this->hiringMailer->sendLocalPasswordEmail($user, $message, "www.example.com", "123");
+                break;
+            case 3:
+                $ok = $this->hiringMailer->sendLocalPasswordEmail($user, $message, "www.example.com", "123");
+                break;
             default:
                 $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Message not Found'));
         }

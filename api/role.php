@@ -22,7 +22,7 @@ $positionDao = new PositionDao($dbConn, $logger);
 $roleDao = new RoleDao($dbConn, $logger);
 $userDao = new UserDao($dbConn, $logger);
 $messageDao = new MessageDao($dbConn, $logger);
-$handler = new RoleActionHandler($positionDao, $roleDao, $userDao, $messageDao, $logger);
+$handler = new RoleActionHandler($positionDao, $roleDao, $userDao, $messageDao, $configManager, $logger);
 
 // Ensure the user is logged in
 if (verifyPermissions(['user', 'admin'])) {
