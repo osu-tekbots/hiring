@@ -63,7 +63,6 @@ function getName($authMethod) {
                     <br>
                     <div class="col-sm-11">
                         <button class="btn btn-large btn-block btn-primary" id="saveProfileBtn" type="button" onclick="updateUser(this);">Save</button>
-                        <div id="successText" class="successText" style="display:none;">Success!</div>
                     </div>
                 </div>
             </div>
@@ -75,7 +74,7 @@ function getName($authMethod) {
             </div>
             <div class="panel-body">
                 <div class="form-group">
-                    <label class="col control-label" for="phoneText">Phone Number</label>
+                    <label class="col control-label" for="phoneText">Phone Number <i>(optional)</i></label>
                     <div class="col">
                         <input class="form-control" id="phoneText" name="phone" value="<?php echo $user->getPhone(); ?>">
                     </div>
