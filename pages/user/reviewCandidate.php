@@ -158,11 +158,11 @@ renderBreadcrumb(["./pages/user/dashboard.php"=>"Dashboard", ("./pages/user/view
         $output .= "
             <div class='row p-2 mb-3 rounded'>
                 <div class='col-sm-8 mt-2'>
-                    <h6>My Notes</h6>
+                    <h6>My Notes <i class='fas fa-question-circle ml-1'></i></h6>
                     <textarea class='form-control' rows='5' placeholder='Notes for this round' onchange='updateNotes(this, \"".$feedback->getID()."\")'>".$feedback->getNotes()."</textarea>
                 </div>
                 <div class='col-sm-4 mt-2'>
-                    <h6>My Uploads</h6>
+                    <h6>My Uploads <i class='fas fa-question-circle ml-1'></i></h6>
                     <div class='custom-file'>
                         <label for='uploadFileInput".$feedback->getID()."' class='custom-file-label'>Upload New Feedback File</label>
 				        <input type='file' id='uploadFileInput".$feedback->getID()."' class='custom-file-input' name='uploadFileInput".$feedback->getID()."' onchange='uploadFeedbackFile(this, \"".$feedback->getID()."\");' accept='.jpeg,.jpg,.png,.bmp,.JPG,.JPEG,.PNG,.BMP,.heic,.HEIC,.pdf,.PDF,.docx,.DOCX' multiple>

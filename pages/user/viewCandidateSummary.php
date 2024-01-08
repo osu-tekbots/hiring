@@ -109,7 +109,7 @@ renderBreadcrumb(["./pages/user/dashboard.php"=>"Dashboard", ("./pages/user/view
 
         // Start output for qualification evaluation table
         $output .= "
-            <div class='row px-3' style='overflow: scroll'>
+            <div class='row px-3' style='overflow: auto'>
                 <h6 class='ml-2'>Group Evaluations</h6>
                 <table style='border: 1px solid black; min-width: calc(100% - 4px); margin-left: 2px;'>
                     <tr class='border border-dark'>
@@ -198,7 +198,7 @@ renderBreadcrumb(["./pages/user/dashboard.php"=>"Dashboard", ("./pages/user/view
         $output .= "
             <div class='row p-2 rounded' style='padding-top: 0 !important'>
                 <div class='col-sm-10 mt-2'>
-                    <h6>Group Notes</h6>";
+                    <h6>Group Notes <i class='fas fa-question-circle ml-1'></i></h6>";
         if(checkRoleForPosition('Search Chair', $position?->getID())) {
             $output .= "<textarea class='form-control' onchange='groupNotes(this, \"".$round->getID()."\")'>$roundNote</textarea>";
         } else {
@@ -209,7 +209,7 @@ renderBreadcrumb(["./pages/user/dashboard.php"=>"Dashboard", ("./pages/user/view
         if(checkRoleForPosition('Search Chair', $position?->getID())) {
             $output .= "
                 <div class='col-sm-2 mt-2'>
-                    <h6>Round Decision</h6>
+                    <h6>Round Decision <i class='fas fa-question-circle ml-1'></i></h6>
                     <select class='custom-select $decisionColor' oninput='candidateRoundDecision(this, \"".$round->getID()."\")'>
                         <option>--</option>
                         <option class='text-success'".($roundDecision == 'Advanced' ? ' selected' : '').">Advanced</option>

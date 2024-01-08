@@ -67,22 +67,22 @@ $candidateTemplate = <<<HTML
                 <!-- Name -->
                 <div class="row m-1">
                     <div class="col input-group p-1">
-                        <div class="input-group-prepend"><label for="candidateFirstName{{num}}" class="input-group-text">First Name</label></div>
+                        <div class="input-group-prepend"><label for="candidateFirstName{{num}}" class="input-group-text">First Name <i class="fas fa-question-circle ml-2"></i></label></div>
                         <input class="form-control" id="candidateFirstName{{num}}" name="candidateFirstName{{num}}" value="{{firstname}}">
                     </div>
                     <div class="col input-group p-1">
-                        <div class="input-group-prepend"><label for="candidateLastName{{num}}" class="input-group-text">Last Name</label></div>
+                        <div class="input-group-prepend"><label for="candidateLastName{{num}}" class="input-group-text">Last Name <i class="fas fa-question-circle ml-2"></i></label></div>
                         <input class="form-control" id="candidateLastName{{num}}" name="candidateLastName{{num}}" value="{{lastname}}">
                     </div>
                 </div>
                 <!-- Contact Info -->
                 <div class="row m-1">
                     <div class="col input-group p-1">
-                        <div class="input-group-prepend"><label for="candidateEmail{{num}}" class="input-group-text">Email</label></div>
+                        <div class="input-group-prepend"><label for="candidateEmail{{num}}" class="input-group-text">Email <i class="fas fa-question-circle ml-2"></i></label></div>
                         <input class="form-control" id="candidateEmail{{num}}" name="candidateEmail{{num}}" value="{{email}}">
                     </div>
                     <div class="col input-group p-1">
-                        <div class="input-group-prepend"><label for="candidatePhone{{num}}" class="input-group-text">Phone</label></div>
+                        <div class="input-group-prepend"><label for="candidatePhone{{num}}" class="input-group-text">Phone <i class="fas fa-question-circle ml-2"></i></label></div>
                         <input class="form-control" id="candidatePhone{{num}}" name="candidatePhone{{num}}" value="{{phone}}">
                     </div>
                 </div>
@@ -90,12 +90,12 @@ $candidateTemplate = <<<HTML
                 <div class="row m-1">
                     <!-- Location -->
                     <div class="col input-group p-1">
-                        <div class="input-group-prepend"><label for="candidateLocation{{num}}" class="input-group-text">Location</label></div>
+                        <div class="input-group-prepend"><label for="candidateLocation{{num}}" class="input-group-text">Location <i class="fas fa-question-circle ml-2"></i></label></div>
                         <input class="form-control" id="candidateLocation{{num}}" name="candidateLocation{{num}}" value="{{location}}">
                     </div>
                     <!-- Applied Date -->
                     <div class="col input-group p-1">
-                        <div class="input-group-prepend"><label for="candidateAppliedDate{{num}}" class="input-group-text">Date Applied</label></div>
+                        <div class="input-group-prepend"><label for="candidateAppliedDate{{num}}" class="input-group-text">Date Applied <i class="fas fa-question-circle ml-2"></i></label></div>
                         <input type="date" class="form-control" id="candidateAppliedDate{{num}}" name="candidateAppliedDate{{num}}" value="{{appliedDate}}">
                     </div>
                 </div>
@@ -113,7 +113,7 @@ $candidateTemplate = <<<HTML
             <div class="row m-1" oninput="this.getElementsByTagName('button')[0].disabled = false;">
                 <!-- File Purpose -->
                 <div class="col input-group p-1">
-                    <div class="input-group-prepend"><label for="candidateFilePurpose{{num}}" class="input-group-text">New File Purpose</label></div>
+                    <div class="input-group-prepend"><label for="candidateFilePurpose{{num}}" class="input-group-text">New File Purpose <i class="fas fa-question-circle ml-2"></i></label></div>
                     <input class="form-control" id="candidateFilePurpose{{num}}" name="candidateFilePurpose{{num}}" value="{{filename}}" placeholder="Resume, CV, etc.">
                 </div>
                 <!-- File Upload -->
@@ -151,17 +151,17 @@ $qualificationTemplate = <<<HTML
         <div id="qualification{{num}}" class='collapse pt-1' oninput="setActive(this, true)">
             <!-- Description -->
             <div class="input-group p-1">
-                <div class="input-group-prepend"><label for="qualDescription{{num}}" class="input-group-text">Description</label></div>
+                <div class="input-group-prepend"><label for="qualDescription{{num}}" class="input-group-text">Description <i class="fas fa-question-circle ml-2"></i></label></div>
                 <textarea class="form-control" id="qualDescription{{num}}" name="qualDescription{{num}}">{{description}}</textarea>
             </div>
             <!-- Screening Criteria -->
             <div class="input-group p-1">
-                <div class="input-group-prepend"><label for="screeningCriteria{{num}}" class="input-group-text">Screening Criteria</label></div>
+                <div class="input-group-prepend"><label for="screeningCriteria{{num}}" class="input-group-text">Screening Criteria <i class="fas fa-question-circle ml-2"></i></label></div>
                 <textarea class="form-control" id="screeningCriteria{{num}}" name="screeningCriteria{{num}}">{{screeningCriteria}}</textarea>
             </div>
             <!-- Strength Indicators -->
             <div class="input-group p-1">
-                <div class="input-group-prepend"><label for="strengthIndicators{{num}}" class="input-group-text">Strength Indicators</label></div>
+                <div class="input-group-prepend"><label for="strengthIndicators{{num}}" class="input-group-text">Strength Indicators <i class="fas fa-question-circle ml-2"></i></label></div>
                 <textarea class="form-control" id="strengthIndicators{{num}}" name="strengthIndicators{{num}}">{{strengthIndicators}}</textarea>
             </div>
 
@@ -169,7 +169,7 @@ $qualificationTemplate = <<<HTML
             <div class="row m-1">
                 <!-- Level -->
                 <div class="col-md input-group p-1">
-                    <div class="input-group-prepend"><label for="level{{num}}" class="input-group-text">Level</label></div>
+                    <div class="input-group-prepend"><label for="level{{num}}" class="input-group-text">Level <i class="fas fa-question-circle ml-2"></i></label></div>
                     <select class="custom-select" id="level{{num}}" name="level{{num}}">
                         <option {{levelPreferred}}>Preferred</option>
                         <option {{levelMinimum}}>Minimum</option>
@@ -177,7 +177,7 @@ $qualificationTemplate = <<<HTML
                 </div>
                 <!-- Priority -->
                 <div class="col-md input-group p-1">
-                    <div class="input-group-prepend"><label for="priority{{num}}" class="input-group-text">Priority</label></div>
+                    <div class="input-group-prepend"><label for="priority{{num}}" class="input-group-text">Priority <i class="fas fa-question-circle ml-2"></i></label></div>
                     <select class="custom-select" id="priority{{num}}" name="priority{{num}}">
                         <option {{priorityLow}}>Low</option>
                         <option {{priorityMed}}>Medium</option>
@@ -186,7 +186,7 @@ $qualificationTemplate = <<<HTML
                 </div>
                 <!-- Transferable -->
                 <div class="col-md input-group p-1">
-                    <div class="input-group-prepend"><label for="transferable{{num}}" class="input-group-text">Transferable?</label></div>
+                    <div class="input-group-prepend"><label for="transferable{{num}}" class="input-group-text">Transferable <i class="fas fa-question-circle ml-2"></i></label></div>
                     <select class="custom-select" id="transferable{{num}}" name="transferable{{num}}">
                         <option {{transferableFalse}}>No</option>
                         <option {{transferableTrue}}>Yes</option>
@@ -218,7 +218,7 @@ $roundTemplate = <<<HTML
         <div id="roundCollapse{{num}}" class='collapse pt-1' oninput="setActive(this, true)">
             <!-- Name -->
             <div class="input-group p-1">
-                <div class="input-group-prepend"><label for="rndName{{num}}" class="input-group-text">Name</label></div>
+                <div class="input-group-prepend"><label for="rndName{{num}}" class="input-group-text">Name <i class="fas fa-question-circle ml-2"></i></label></div>
                 <input class="form-control" id="rndName{{num}}" name="rndName{{num}}" value="{{name}}">
             </div>
             <!-- Interview Questions Link -->
@@ -230,13 +230,13 @@ $roundTemplate = <<<HTML
             <div class="row m-1">
                 
                 <div class="col-md input-group p-1">
-                    <div class="input-group-prepend"><label for="rndLink{{num}}" class="input-group-text">Interview Questions Link</label></div>
+                    <div class="input-group-prepend"><label for="rndLink{{num}}" class="input-group-text">Interview Questions Link <i class="fas fa-question-circle ml-2"></i></label></div>
                     <input class="form-control" id="rndLink{{num}}" name="rndLink{{num}}" value="{{link}}">
                 </div>
                 <p class="col-md-1 text-center w-100 my-auto">OR</p>
                 <div class="col-md input-group p-1">
                     <div class="custom-file">
-                        <div class="input-group-prepend"><label for="rndFile{{num}}" class="input-group-text">Interview Questions File Upload</label></div>
+                        <div class="input-group-prepend"><label for="rndFile{{num}}" class="input-group-text">Interview Questions File Upload <i class="fas fa-question-circle ml-2"></i></label></div>
                         <input class="custom-file-input" type="file" id="rndFile{{num}}" name="rndFile{{num}}" accept=".jpeg,.jpg,.png,.bmp,.JPG,.JPEG,.PNG,.BMP,.heic,.HEIC,.pdf,.PDF,.docx,.DOCX">
                     </div>
                     <!-- Interview Questions Files -->
@@ -301,17 +301,17 @@ HTML;
 
         <!-- Position Title -->
         <div class="input-group p-1">
-            <div class="input-group-prepend"><label for="title" class="input-group-text">Position Title</label></div>
+            <div class="input-group-prepend"><label for="title" class="input-group-text">Position Title <i class="fas fa-question-circle ml-2"></i></label></div>
             <input class="form-control" id="title" name="title" value="<?php echo $position->getTitle() ?>" >
         </div>
         <!-- Posting Link -->
         <div class="input-group p-1">
-            <div class="input-group-prepend"><label for="postingLink" class="input-group-text">Link to Internal Posting Site</label></div>
+            <div class="input-group-prepend"><label for="postingLink" class="input-group-text">Link to Internal Posting Site <i class="fas fa-question-circle ml-2"></i></label></div>
             <input class="form-control" id="postingLink" name="postingLink" value="<?php echo $position->getPostingLink() ?>" >
         </div>
         <!-- Email Address -->
         <div class="input-group p-1">
-            <div class="input-group-prepend"><label for="email" class="input-group-text">Committee Email Address</label></div>
+            <div class="input-group-prepend"><label for="email" class="input-group-text">Committee Email Address <i class="fas fa-question-circle ml-2"></i></label></div>
             <input class="form-control" id="email" name="email" value="<?php echo $position->getCommitteeEmail() ?>" >
         </div>
         

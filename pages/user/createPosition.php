@@ -14,6 +14,9 @@ $title = 'Create Position';
 
 include_once PUBLIC_FILES."/modules/header.php";
 
+include_once PUBLIC_FILES."/modules/breadcrumb.php";
+renderBreadcrumb(["./pages/user/dashboard.php"=>"Dashboard"], $title);
+
 ?>
 
 <div class="container py-4">
@@ -30,17 +33,17 @@ include_once PUBLIC_FILES."/modules/header.php";
 
         <!-- Position Title -->
         <div class="input-group p-1">
-            <div class="input-group-prepend"><label for="title" class="input-group-text">Position Title</label></div>
+            <div class="input-group-prepend"><label for="title" class="input-group-text">Position Title <i class="fas fa-question-circle ml-2"></i></label></div>
             <input class="form-control" id="title" name="title">
         </div>
         <!-- Posting Link -->
         <div class="input-group p-1">
-            <div class="input-group-prepend"><label for="postingLink" class="input-group-text">Link to Internal Posting Site</label></div>
+            <div class="input-group-prepend"><label for="postingLink" class="input-group-text">Link to Internal Posting Site <i class="fas fa-question-circle ml-2"></i></label></div>
             <input class="form-control" id="postingLink" name="postingLink">
         </div>
         <!-- Email Address -->
         <div class="input-group p-1">
-            <div class="input-group-prepend"><label for="email" class="input-group-text">Committee Email Address</label></div>
+            <div class="input-group-prepend"><label for="email" class="input-group-text">Committee Email Address <i class="fas fa-question-circle ml-2"></i></label></div>
             <input class="form-control" id="email" name="email">
         </div>
 
