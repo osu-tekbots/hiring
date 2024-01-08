@@ -206,9 +206,18 @@ class UserActionHandler extends ActionHandler {
         
         $body = $this->requestBody;
         
-        if((isset($body['firstName']) && $body['firstName'] == '') || 
-           (isset($body['lastName']) && $body['lastName'] == '')) {
+        if(!isset($body['firstName']) && !isset($body['lastName']) 
+            && !isset($body['email']) && !isset($body['phone'])
+        ) {
+            $this->respond(new Response(Response::BAD_REQUEST, 'Must specify a field to update'));
+        }
+        if((isset($body['firstName']) && $body['firstName'] == '')
+            || (isset($body['lastName']) && $body['lastName'] == '')
+        ) {
             $this->respond(new Response(Response::BAD_REQUEST, 'Name Cannot Be Empty'));
+        }
+        if(isset($body['email']) && $body['email'] == '') {
+            $this->respond(new Response(Response::BAD_REQUEST, 'Email Cannot Be Empty'));
         }
 
         $user = $this->userDao->getUserByID($body['id']);
@@ -220,6 +229,8 @@ class UserActionHandler extends ActionHandler {
             $user->setFirstName($body['firstName']);
         if(isset($body['lastName']))
             $user->setLastName($body['lastName']);
+        if(isset($body['email']) && $this->verifyUserRole('Admin', NULL))
+            $user->setEmail($body['email']);
         if(isset($body['phone']))
             $user->setPhone($body['phone']);
 

@@ -38,8 +38,11 @@ $userDao = new UserDao($dbConn, $logger);
                 echo "
                 <div class='row py-3' style='border: 1px solid black'>
                     <div class='col my-auto form-inline'>
-                        <h4><input class='form-control' value='".$user->getFirstName()."' onchange='updateName(this, \"".$user->getID()."\", \"first\");'>
-                        <input class='form-control' value='".$user->getLastName()."' onchange='updateName(this, \"".$user->getID()."\", \"last\");'></h4>
+                        <h4 class='m-0 p-0'>
+                            <input class='form-control' value='".$user->getFirstName()."' onchange='updateName(this, \"".$user->getID()."\", \"first\");'>
+                            <input class='form-control' value='".$user->getLastName()."' onchange='updateName(this, \"".$user->getID()."\", \"last\");'>
+                            <input class='form-control' value='".$user->getEmail()."' onchange='updateEmail(this, \"".$user->getID()."\")'>
+                        </h4>
                     </div>
                     <div class='col-2 my-auto'>";
                 if($user->getAccessLevel() == 'User')
@@ -131,6 +134,22 @@ $userDao = new UserDao($dbConn, $logger);
             id: id,
         }
         data[part+'Name'] = thisVal.value;
+        
+        thisVal.disabled = true;
+
+        api.post('/user.php', data).then(res => {
+            snackbar(res.message, 'success');
+        }).catch(err => {
+            snackbar(err.message, 'error');
+        }).finally(() => thisVal.disabled = false);
+    }
+    
+    function updateEmail(thisVal, id) {
+        let data = {
+            action: 'updateUser',
+            id: id,
+            email: thisVal.value
+        }
         
         thisVal.disabled = true;
 
