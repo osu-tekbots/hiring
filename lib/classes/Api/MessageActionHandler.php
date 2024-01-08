@@ -104,19 +104,22 @@ class MessageActionHandler extends ActionHandler {
         $ok = false;
 
         switch($body['id']) {
-            case 1: // Added to committee
+            case 1: // User to committee
                 $position = new Position();
                 $this->fillModel($position);
                 $ok = $this->hiringMailer->sendAddedToCommitteeEmail($user, $message, $position, $this->testString);
                 break;
-            case 2:
+            case 2: // Created local account
                 $ok = $this->hiringMailer->sendLocalPasswordEmail($user, $message, "www.example.com", "123");
                 break;
-            case 3:
+            case 3: // Resetting local account password
                 $ok = $this->hiringMailer->sendLocalPasswordEmail($user, $message, "www.example.com", "123");
                 break;
-            case 4:
+            case 4: // Admin approved Position
                 $ok = $this->hiringMailer->sendPositionApprovedEmail($user, $message, "www.example.com");
+                break;
+            case 5: // Reminder to complete feedback
+                $ok = $this->hiringMailer->sendFeedbackReminderEmail($user, $message, "Jane Doe", "Bob Smith", "CEO");
                 break;
             default:
                 $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Message not Found'));

@@ -34,10 +34,7 @@ class HiringMailer extends Mailer {
         $replacements['position'] = $position->getTitle();
         $replacements['positionID'] = $position->getID();
 		
-		$subject = $message->fillTemplateSubject($replacements);
-		$body = $message->fillTemplateBody($replacements);
-
-        return $this->sendEmail($user->getEmail(), $subject, $body, true);
+		return $this->sendTemplateEmail($user->getEmail(), $message, $replacements);
     }
 
     /**
@@ -57,10 +54,7 @@ class HiringMailer extends Mailer {
 		$replacements['link'] = $link;
         $replacements['resetCode'] = $code;
 		
-		$subject = $message->fillTemplateSubject($replacements);
-		$body = $message->fillTemplateBody($replacements);
-
-        return $this->sendEmail($user->getEmail(), $subject, $body, true);
+		return $this->sendTemplateEmail($user->getEmail(), $message, $replacements);
     }
 
     /**
@@ -77,10 +71,25 @@ class HiringMailer extends Mailer {
 		
 		$replacements['name'] = Security::HtmlEntitiesEncode($user->getFirstName() . " " . $user->getLastName());
 		$replacements['link'] = $link;
+
+        return $this->sendTemplateEmail($user->getEmail(), $message, $replacements);
+    }
+    
+    public function sendFeedbackReminderEmail($member, $message, $searchChairName, $candidateName, $positionName) {
+        $replacements = Array();
 		
+		$replacements['name'] = Security::HtmlEntitiesEncode($member->getFirstName() . " " . $member->getLastName());
+		$replacements['searchChair'] = Security::HtmlEntitiesEncode($searchChairName);
+		$replacements['candidate'] = Security::HtmlEntitiesEncode($candidateName);
+		$replacements['positionName'] = Security::HtmlEntitiesEncode($positionName);
+
+        return $this->sendTemplateEmail($member->getEmail(), $message, $replacements);
+    }
+
+    public function sendTemplateEmail($address, $message, $replacements) {
 		$subject = $message->fillTemplateSubject($replacements);
 		$body = $message->fillTemplateBody($replacements);
 
-        return $this->sendEmail($user->getEmail(), $subject, $body, true);
+        return $this->sendEmail($address, $subject, $body, true);
     }
 }

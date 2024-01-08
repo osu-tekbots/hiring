@@ -46,12 +46,12 @@ include_once PUBLIC_FILES."/modules/breadcrumb.php";
 renderBreadcrumb(["./pages/user/dashboard.php"=>"Dashboard"], $position->getTitle());
 
 /**
- * Determines the last round that the current user has finished submitting FeedbackForQuals for the given candidate for. 
+ * Determines the last round that the committee has completed for the given candidate. 
  * Used to determine the status to display.
  * 
- * @param string $candidateID The candidate to check if there's FeedbackForQuals for
+ * @param string $candidateID The candidate to check the status of
  * 
- * @return Model\Round|bool The last round that the user has finished filling out FeedbackForQuals for, or `false` if 
+ * @return Model\Round|bool The last round that the committee completed a review for, or `false` if 
  *  they haven't finished any yet
  */
 function determineLastFinishedRound($roundDao, $candidateRoundNoteDao, $candidateID) {
@@ -69,12 +69,12 @@ function determineLastFinishedRound($roundDao, $candidateRoundNoteDao, $candidat
 }
 
 /**
- * Determines the first round that the current user has not finished submitting FeedbackForQuals for the given candidate for. 
+ * Determines the first round that the committee has not completed for the given candidate. 
  * Used to determine the review button text to display.
  * 
- * @param string $candidateID The candidate to check if there's FeedbackForQuals for
+ * @param string $candidateID The candidate to check the status of
  * 
- * @return Model\Round|bool The first round that the user has not finished filling out FeedbackForQuals for, or 
+ * @return Model\Round|bool The first round that the committee has not completed a review for, or 
  *  `false` if they have finished all rounds already
  */
 function determineNextRound($roundDao, $candidateRoundNoteDao, $candidateID) {

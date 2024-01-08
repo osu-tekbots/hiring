@@ -332,6 +332,11 @@ class PositionActionHandler extends ActionHandler {
 		$this->respond(new Response(Response::OK, 'Position marked as Completed'));
     }
 
+    /**
+     * Duplicates the example position for the user to learn the tool's capabilities
+     * 
+     * @return \Api\Response HTTP response for whether the API call successfully completed
+     */
     public function handleGetExample() {
         $examplePosition = $this->positionDao->getPosition('examplePosition');
         $exampleCands = $this->candidateDao->getCandidatesByPositionId($examplePosition->getID());
@@ -793,6 +798,95 @@ class PositionActionHandler extends ActionHandler {
         $this->respond(new Response(Response::OK, 'File Created', 'uploads/xlsx/'.$filename));
     }
 
+    /**
+     * Sends an email to committee members that haven't started providing feedback for the 
+     * given round
+     * 
+     * @param string roundID Must exist in the POST request body.
+     * @param string candidateID Must exist in the POST request body.
+     * 
+     * @return \Api\Response HTTP response for whether the API call successfully completed
+     */
+    public function handleRemindCommittee() {
+        // Ensure the required parameters exist
+        $this->requireParam('roundID');
+        $this->requireParam('candidateID');
+        
+        $body = $this->requestBody;
+
+        // Get round from database
+        $round = $this->roundDao->getRound($body['roundID']);
+        if(!$round) {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Round Not Found'));
+        }
+
+        // Check if the user is allowed to send a reminder
+        $this->verifyUserRole('Search Chair', $round->getPositionID());
+
+        // Get the committee members to remind
+        $members = $this->roleDao->getAllPositionMembers($round->getPositionID());
+
+        // Check who needs a reminder
+        $membersToRemind = [];
+        foreach($members as $member) {
+            $feedback = $this->feedbackDao->getFeedbackForUser($_SESSION['userID'], $body['candidateID'], $round->getID());
+
+            if(!$feedback) {
+                $membersToRemind[] = $member;
+            } else {
+                $filledQuals = $this->ffqDao->getFeedbackForQualByFeedbackID($feedback->getID());
+                if(!$filledQuals)
+                    $membersToRemind[] = $member;
+                // Enable this to check if the member has also completed ALL feedback, instead of just started
+                /* $totalQuals = $qualForRoundDao->getAllQualificationsForRound($round->getID());
+                if(count($totalQuals) != count($filledQuals)) {
+                    $membersToRemind[] = $member;
+                */
+            }
+            
+        }
+
+        // Send different response if no-one to remind
+        if(!count($membersToRemind)) {
+            $this->respond(new Response(Response::BAD_REQUEST, 'All members have provided feedback'));
+        }
+        
+        // Get message to send
+        $message = $this->messageDao->getMessageByID(5);
+        if(!$message) {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Message not found'));
+        }
+
+        // Get details for the email
+        $searchChair = $this->userDao->getUserByID($_SESSION['userID']);
+        $candidate = $this->candidateDao->getCandidateById($body['candidateID']);
+        $position = $this->positionDao->getPosition($round->getPositionID());
+        if(!$searchChair) {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Search Chair not found'));
+        }
+        if(!$candidate) {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Candidate not found'));
+        }
+        if(!$position) {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Position not found'));
+        }
+        $searchChairName = $searchChair->getFirstName().' '.$searchChair->getLastName();
+        $candidateName = $candidate->getFirstName().' '.$candidate->getLastName();
+        $positionName = $position->getTitle();
+
+        // Send the emails
+        $emailsSent = 0;
+        foreach($membersToRemind as $member) {
+            $ok = $this->hiringMailer->sendFeedbackReminderEmail($member->getUser(), $message, $searchChairName, $candidateName, $positionName);
+            if(!$ok) {
+                $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, "Email send failure: $emailsSent sent"));
+            }
+            $emailsSent++;
+        }
+        
+        $this->respond(new Response(Response::OK, "$emailsSent emails sent"));
+    }
+
 	/**
      * Handles the HTTP request on the API resource. 
      * 
@@ -835,7 +929,9 @@ class PositionActionHandler extends ActionHandler {
             case 'exportPositionDisposition':
                 $this->handleExportDisposition();
                 break;
-
+            case 'remindCommittee':
+                $this->handleRemindCommittee();
+                break;
             default:
                 $this->respond(new Response(Response::BAD_REQUEST, 'Invalid action on Position resource'));
         }

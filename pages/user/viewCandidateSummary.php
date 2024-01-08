@@ -93,9 +93,11 @@ renderBreadcrumb(["./pages/user/dashboard.php"=>"Dashboard", ("./pages/user/view
                 <div class='col-sm py-1 my-auto' style='vertial-align: middle'>
                     <h4>".($index+1).": ".$round->getName()."</h4>
                 </div>
-                <div class='col-sm-2 py-1 my-auto'>
-                    <button data-toggle='collapse' data-target='#round". $index+1 ."' type='button' class='btn btn-outline-dark float-right'><i class='fas fa-chevron-down'></i></button>
-                </div>
+                <div class='col-sm-4 py-1 my-auto'>
+                    <button data-toggle='collapse' data-target='#round". $index+1 ."' type='button' class='btn btn-outline-dark float-right'><i class='fas fa-chevron-down'></i></button>";
+        if(checkRoleForPosition('Search Chair', $position?->getID()))
+            $output .= "<button type='button' class='btn btn-outline-primary float-right mx-2' onclick='sendReminder(this, \"".$round->getID()."\")'>Remind Committee</button>";
+        $output .= "</div>
             
                 <div id='round". $index+1 ."' class='collapse container mt-2".(isset($_REQUEST['round'])&&$_REQUEST['round']==$round->getID()&&$position->getStatus()!="Completed" ? ' show' : '')."'>";
         if($round->getInterviewQuestionLink()) {
@@ -380,6 +382,22 @@ renderBreadcrumb(["./pages/user/dashboard.php"=>"Dashboard", ("./pages/user/view
         }).catch(err => {
             snackbar(err.message, 'error');
         }).finally(() => {thisVal.disabled = false;});
+    }
+
+    function sendReminder(thisVal, roundID) {
+        let data = {
+            action: 'remindCommittee',
+            candidateID: CANDIDATE_ID,
+            roundID: roundID
+        }
+
+        thisVal.disabled = true;
+
+        api.post('/position.php', data).then(res => {
+            snackbar(res.message, 'success');
+        }).catch(err => {
+            snackbar(err.message, 'error');
+        }).finally(() => thisVal.disabled = false);
     }
 </script>
 
