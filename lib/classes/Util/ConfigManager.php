@@ -15,6 +15,7 @@ class ConfigManager {
     private $shouldDisplayErrors = null;
     private $displayErrorSeverity = null;
     private $databaseConfig = null;
+    private $popoverConfig = null;
 
     public function __construct($configDir) {
         $this->configDir = $configDir;
@@ -42,6 +43,12 @@ class ConfigManager {
             if (!\is_null($dbConfigFile)) {
                 $dbConfigPath = $this->join($privateDir, $dbConfigFile);
                 $this->databaseConfig = $this->loadIni($dbConfigPath);
+            }
+
+            $popoverConfigFile = $this->get('popovers.config_file');
+            if(!\is_null($popoverConfigFile)) {
+                $popoverConfigPath = $this->join($privateDir, $popoverConfigFile);
+                $this->popoverConfig = $this->loadIni($popoverConfigPath);
             }
         }
     }
@@ -201,6 +208,26 @@ class ConfigManager {
 
     public function getAdminEmailTag() {
         return $this->get('email.admin_subject_tag');
+    }
+
+    public function getPopover($name) {
+        $parts = explode('.', $name);
+
+        $result = null;
+        if (isset($this->popoverConfig[$parts[0]])) {
+            $result = $this->popoverConfig[$parts[0]];
+        } else {
+            return null;
+        }
+        for ($i = 1; $i < \count($parts); $i++) {
+            if (isset($result[$parts[$i]])) {
+                $result = $result[$parts[$i]];
+            } else {
+                return null;
+            }
+        }
+
+        return $result;
     }
 
     /**

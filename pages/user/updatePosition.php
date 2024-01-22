@@ -67,22 +67,22 @@ $candidateTemplate = <<<HTML
                 <!-- Name -->
                 <div class="row m-1">
                     <div class="col input-group p-1">
-                        <div class="input-group-prepend"><label for="candidateFirstName{{num}}" class="input-group-text">First Name <i class="fas fa-question-circle ml-2"></i></label></div>
+                        <div class="input-group-prepend"><label for="candidateFirstName{{num}}" class="input-group-text">First Name <i class="fas fa-question-circle ml-2 pointer" data-toggle="popover" data-content="{{candidate.first_name}}"></i></label></div>
                         <input class="form-control" id="candidateFirstName{{num}}" name="candidateFirstName{{num}}" value="{{firstname}}">
                     </div>
                     <div class="col input-group p-1">
-                        <div class="input-group-prepend"><label for="candidateLastName{{num}}" class="input-group-text">Last Name <i class="fas fa-question-circle ml-2"></i></label></div>
+                        <div class="input-group-prepend"><label for="candidateLastName{{num}}" class="input-group-text">Last Name <i class="fas fa-question-circle ml-2 pointer" data-toggle="popover" data-content="{{candidate.last_name}}"></i></label></div>
                         <input class="form-control" id="candidateLastName{{num}}" name="candidateLastName{{num}}" value="{{lastname}}">
                     </div>
                 </div>
                 <!-- Contact Info -->
                 <div class="row m-1">
                     <div class="col input-group p-1">
-                        <div class="input-group-prepend"><label for="candidateEmail{{num}}" class="input-group-text">Email <i class="fas fa-question-circle ml-2"></i></label></div>
+                        <div class="input-group-prepend"><label for="candidateEmail{{num}}" class="input-group-text">Email <i class="fas fa-question-circle ml-2 pointer" data-toggle="popover" data-content="{{candidate.email}}"></i></label></div>
                         <input class="form-control" id="candidateEmail{{num}}" name="candidateEmail{{num}}" value="{{email}}">
                     </div>
                     <div class="col input-group p-1">
-                        <div class="input-group-prepend"><label for="candidatePhone{{num}}" class="input-group-text">Phone <i class="fas fa-question-circle ml-2"></i></label></div>
+                        <div class="input-group-prepend"><label for="candidatePhone{{num}}" class="input-group-text">Phone <i class="fas fa-question-circle ml-2 pointer" data-toggle="popover" data-content="{{candidate.phone}}"></i></label></div>
                         <input class="form-control" id="candidatePhone{{num}}" name="candidatePhone{{num}}" value="{{phone}}">
                     </div>
                 </div>
@@ -90,12 +90,12 @@ $candidateTemplate = <<<HTML
                 <div class="row m-1">
                     <!-- Location -->
                     <div class="col input-group p-1">
-                        <div class="input-group-prepend"><label for="candidateLocation{{num}}" class="input-group-text">Location <i class="fas fa-question-circle ml-2"></i></label></div>
+                        <div class="input-group-prepend"><label for="candidateLocation{{num}}" class="input-group-text">Location <i class="fas fa-question-circle ml-2 pointer" data-toggle="popover" data-content="{{candidate.location}}"></i></label></div>
                         <input class="form-control" id="candidateLocation{{num}}" name="candidateLocation{{num}}" value="{{location}}">
                     </div>
                     <!-- Applied Date -->
                     <div class="col input-group p-1">
-                        <div class="input-group-prepend"><label for="candidateAppliedDate{{num}}" class="input-group-text">Date Applied <i class="fas fa-question-circle ml-2"></i></label></div>
+                        <div class="input-group-prepend"><label for="candidateAppliedDate{{num}}" class="input-group-text">Date Applied <i class="fas fa-question-circle ml-2 pointer" data-toggle="popover" data-content="{{candidate.app_date}}"></i></label></div>
                         <input type="date" class="form-control" id="candidateAppliedDate{{num}}" name="candidateAppliedDate{{num}}" value="{{appliedDate}}">
                     </div>
                 </div>
@@ -113,7 +113,7 @@ $candidateTemplate = <<<HTML
             <div class="row m-1" oninput="this.getElementsByTagName('button')[0].disabled = false;">
                 <!-- File Purpose -->
                 <div class="col input-group p-1">
-                    <div class="input-group-prepend"><label for="candidateFilePurpose{{num}}" class="input-group-text">New File Purpose <i class="fas fa-question-circle ml-2"></i></label></div>
+                    <div class="input-group-prepend"><label for="candidateFilePurpose{{num}}" class="input-group-text">New File Purpose <i class="fas fa-question-circle ml-2 pointer" data-toggle="popover" data-content="{{candidate.upload_purpose}}"></i></label></div>
                     <input class="form-control" id="candidateFilePurpose{{num}}" name="candidateFilePurpose{{num}}" value="{{filename}}" placeholder="Resume, CV, etc.">
                 </div>
                 <!-- File Upload -->
@@ -151,17 +151,17 @@ $qualificationTemplate = <<<HTML
         <div id="qualification{{num}}" class='collapse pt-1' oninput="setActive(this, true)">
             <!-- Description -->
             <div class="input-group p-1">
-                <div class="input-group-prepend"><label for="qualDescription{{num}}" class="input-group-text">Description <i class="fas fa-question-circle ml-2"></i></label></div>
+                <div class="input-group-prepend"><label for="qualDescription{{num}}" class="input-group-text">Description <i class="fas fa-question-circle ml-2 pointer" data-toggle="popover" data-content="{{qualification.description}}"></i></label></div>
                 <textarea class="form-control" id="qualDescription{{num}}" name="qualDescription{{num}}">{{description}}</textarea>
             </div>
             <!-- Screening Criteria -->
             <div class="input-group p-1">
-                <div class="input-group-prepend"><label for="screeningCriteria{{num}}" class="input-group-text">Screening Criteria <i class="fas fa-question-circle ml-2"></i></label></div>
+                <div class="input-group-prepend"><label for="screeningCriteria{{num}}" class="input-group-text">Screening Criteria <i class="fas fa-question-circle ml-2 pointer" data-toggle="popover" data-content="{{qualification.screening_criteria}}"></i></label></div>
                 <textarea class="form-control" id="screeningCriteria{{num}}" name="screeningCriteria{{num}}">{{screeningCriteria}}</textarea>
             </div>
             <!-- Strength Indicators -->
             <div class="input-group p-1">
-                <div class="input-group-prepend"><label for="strengthIndicators{{num}}" class="input-group-text">Strength Indicators <i class="fas fa-question-circle ml-2"></i></label></div>
+                <div class="input-group-prepend"><label for="strengthIndicators{{num}}" class="input-group-text">Strength Indicators <i class="fas fa-question-circle ml-2 pointer" data-toggle="popover" data-content="{{qualification.strength_indicators}}"></i></label></div>
                 <textarea class="form-control" id="strengthIndicators{{num}}" name="strengthIndicators{{num}}">{{strengthIndicators}}</textarea>
             </div>
 
@@ -169,7 +169,7 @@ $qualificationTemplate = <<<HTML
             <div class="row m-1">
                 <!-- Level -->
                 <div class="col-md input-group p-1">
-                    <div class="input-group-prepend"><label for="level{{num}}" class="input-group-text">Level <i class="fas fa-question-circle ml-2"></i></label></div>
+                    <div class="input-group-prepend"><label for="level{{num}}" class="input-group-text">Level <i class="fas fa-question-circle ml-2 pointer" data-toggle="popover" data-content="{{qualification.level}}"></i></label></div>
                     <select class="custom-select" id="level{{num}}" name="level{{num}}">
                         <option {{levelPreferred}}>Preferred</option>
                         <option {{levelMinimum}}>Minimum</option>
@@ -177,7 +177,7 @@ $qualificationTemplate = <<<HTML
                 </div>
                 <!-- Priority -->
                 <div class="col-md input-group p-1">
-                    <div class="input-group-prepend"><label for="priority{{num}}" class="input-group-text">Priority <i class="fas fa-question-circle ml-2"></i></label></div>
+                    <div class="input-group-prepend"><label for="priority{{num}}" class="input-group-text">Priority <i class="fas fa-question-circle ml-2 pointer" data-toggle="popover" data-content="{{qualification.priority}}"></i></label></div>
                     <select class="custom-select" id="priority{{num}}" name="priority{{num}}">
                         <option {{priorityLow}}>Low</option>
                         <option {{priorityMed}}>Medium</option>
@@ -186,7 +186,7 @@ $qualificationTemplate = <<<HTML
                 </div>
                 <!-- Transferable -->
                 <div class="col-md input-group p-1">
-                    <div class="input-group-prepend"><label for="transferable{{num}}" class="input-group-text">Transferable <i class="fas fa-question-circle ml-2"></i></label></div>
+                    <div class="input-group-prepend"><label for="transferable{{num}}" class="input-group-text">Transferable <i class="fas fa-question-circle ml-2 pointer" data-toggle="popover" data-content="{{qualification.transferable}}"></i></label></div>
                     <select class="custom-select" id="transferable{{num}}" name="transferable{{num}}">
                         <option {{transferableFalse}}>No</option>
                         <option {{transferableTrue}}>Yes</option>
@@ -211,36 +211,36 @@ $roundTemplate = <<<HTML
         <div class="row m-1">
             <div class="col-2"></div>
             <div class="col"><h4 class="text-center w-100 pt-1" style="height: 30px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{num}}: <span id="roundName{{num}}">{{name}}</span></h4></div>
-            <div class="col-2 pr-1"><button data-toggle='collapse' data-target='#roundCollapse{{num}}' type='button' class='btn btn-outline-dark float-right'><i class='fas fa-chevron-down'></i></button></div>
+            <div class="col-2 pr-1"><button data-toggle="collapse" data-target="#roundCollapse{{num}}" type="button" class="btn btn-outline-dark float-right"><i class="fas fa-chevron-down"></i></button></div>
         </div>
 
         <!-- Body -->
-        <div id="roundCollapse{{num}}" class='collapse pt-1' oninput="setActive(this, true)">
+        <div id="roundCollapse{{num}}" class="collapse pt-1" oninput="setActive(this, true)">
             <!-- Name -->
             <div class="input-group p-1">
-                <div class="input-group-prepend"><label for="rndName{{num}}" class="input-group-text">Name <i class="fas fa-question-circle ml-2"></i></label></div>
+                <div class="input-group-prepend"><label for="rndName{{num}}" class="input-group-text">Name <i class="fas fa-question-circle ml-2 pointer" data-toggle="popover" data-content="{{round.name}}"></i></label></div>
                 <input class="form-control" id="rndName{{num}}" name="rndName{{num}}" value="{{name}}">
             </div>
-            <!-- Interview Questions Link -->
+            <!-- Interview Questions -->
             <BR>
             <div class="alert alert-info d-flex align-items-center justify-content-center py-1 mb-1 mx-2">
                 <i class="fas fa-info-circle"></i>
-                <p class="ml-2 mb-0">Please insert a link to the external interview question page <b>OR</b> upload a file of the interview question.</p>
+                <p class="ml-2 mb-0">Please insert a link to the external interview questions page <b>OR</b> upload a file with the interview questions for automatic conversion.</p>
             </div>
             <div class="row m-1">
                 
+                <!-- Interview Questions Link -->
                 <div class="col-md input-group p-1">
-                    <div class="input-group-prepend"><label for="rndLink{{num}}" class="input-group-text">Interview Questions Link <i class="fas fa-question-circle ml-2"></i></label></div>
+                    <div class="input-group-prepend"><label for="rndLink{{num}}" class="input-group-text">Interview Questions Link <i class="fas fa-question-circle ml-2 pointer" data-toggle="popover" data-content="{{round.questions_link}}"></i></label></div>
                     <input class="form-control" id="rndLink{{num}}" name="rndLink{{num}}" value="{{link}}">
                 </div>
                 <p class="col-md-1 text-center w-100 my-auto">OR</p>
+                <!-- Interview Questions File -->
                 <div class="col-md input-group p-1">
                     <div class="custom-file">
-                        <div class="input-group-prepend"><label for="rndFile{{num}}" class="input-group-text">Interview Questions File Upload <i class="fas fa-question-circle ml-2"></i></label></div>
-                        <input class="custom-file-input" type="file" id="rndFile{{num}}" name="rndFile{{num}}" accept=".jpeg,.jpg,.png,.bmp,.JPG,.JPEG,.PNG,.BMP,.heic,.HEIC,.pdf,.PDF,.docx,.DOCX">
+                        <label for="rndFile{{num}}" class="custom-file-label">Upload Interview Questions <!-- <i class="fas fa-question-circle ml-2 pointer" data-toggle="popover" data-content="{{round.questions_upload}}"></i> --></label>
+                        <input class="custom-file-input" type="file" id="rndFile{{num}}" name="rndFile{{num}}" onchange="updateUploadFileName(this)" accept=".jpeg,.jpg,.png,.bmp,.JPG,.JPEG,.PNG,.BMP,.heic,.HEIC,.pdf,.PDF,.docx,.DOCX">
                     </div>
-                    <!-- Interview Questions Files -->
-                    <div id="interviewQuestionsFilesDiv" class="col py-1 px-3"></div>
                 </div>
             </div>
 
@@ -301,17 +301,17 @@ HTML;
 
         <!-- Position Title -->
         <div class="input-group p-1">
-            <div class="input-group-prepend"><label for="title" class="input-group-text">Position Title <i class="fas fa-question-circle ml-2"></i></label></div>
+            <div class="input-group-prepend"><label for="title" class="input-group-text">Position Title <i class="fas fa-question-circle ml-2 pointer" data-toggle="popover" data-content="<?php echo $configManager->getPopover('Position.Title') ?>"></i></label></div>
             <input class="form-control" id="title" name="title" value="<?php echo $position->getTitle() ?>" >
         </div>
         <!-- Posting Link -->
         <div class="input-group p-1">
-            <div class="input-group-prepend"><label for="postingLink" class="input-group-text">Link to Internal Posting Site <i class="fas fa-question-circle ml-2"></i></label></div>
+            <div class="input-group-prepend"><label for="postingLink" class="input-group-text">Link to Internal Posting Site <i class="fas fa-question-circle ml-2 pointer" data-toggle="popover" data-content="<?php echo $configManager->getPopover('Position.PostingLink') ?>"></i></label></div>
             <input class="form-control" id="postingLink" name="postingLink" value="<?php echo $position->getPostingLink() ?>" >
         </div>
         <!-- Email Address -->
         <div class="input-group p-1">
-            <div class="input-group-prepend"><label for="email" class="input-group-text">Committee Email Address <i class="fas fa-question-circle ml-2"></i></label></div>
+            <div class="input-group-prepend"><label for="email" class="input-group-text">Committee Email Address <i class="fas fa-question-circle ml-2 pointer" data-toggle="popover" data-content="<?php echo $configManager->getPopover('Position.CommitteeEmail') ?>"></i></label></div>
             <input class="form-control" id="email" name="email" value="<?php echo $position->getCommitteeEmail() ?>" >
         </div>
         
@@ -375,6 +375,14 @@ HTML;
                 $output = str_replace("{{phone}}", $c->getPhoneNumber() ?? "", $output);
                 $output = str_replace("{{location}}", $c->getLocation() ?? "", $output);
                 $output = str_replace("{{appliedDate}}", $c->getDateApplied()?->format('Y-m-d') ?? "", $output);
+                
+                $output = str_replace("{{candidate.first_name}}", $configManager->getPopover('Candidate.FirstName'), $output);
+                $output = str_replace("{{candidate.last_name}}", $configManager->getPopover('Candidate.LastName'), $output);
+                $output = str_replace("{{candidate.email}}", $configManager->getPopover('Candidate.Email'), $output);
+                $output = str_replace("{{candidate.phone}}", $configManager->getPopover('Candidate.Phone'), $output);
+                $output = str_replace("{{candidate.location}}", $configManager->getPopover('Candidate.Location'), $output);
+                $output = str_replace("{{candidate.app_date}}", $configManager->getPopover('Candidate.AppDate'), $output);
+                $output = str_replace("{{candidate.upload_purpose}}", $configManager->getPopover('Candidate.UploadPurpose'), $output);
 
                 $output = preg_replace("/[{]{2}[a-zA-z]*[}]{2}/", "", $output); // Remove any unused replacements
 
@@ -386,6 +394,14 @@ HTML;
         <template id="candidateForm">
             <?php 
                 $output = $candidateTemplate;
+                
+                $output = str_replace("{{candidate.first_name}}", $configManager->getPopover('Candidate.FirstName'), $output);
+                $output = str_replace("{{candidate.last_name}}", $configManager->getPopover('Candidate.LastName'), $output);
+                $output = str_replace("{{candidate.email}}", $configManager->getPopover('Candidate.Email'), $output);
+                $output = str_replace("{{candidate.phone}}", $configManager->getPopover('Candidate.Phone'), $output);
+                $output = str_replace("{{candidate.location}}", $configManager->getPopover('Candidate.Location'), $output);
+                $output = str_replace("{{candidate.app_date}}", $configManager->getPopover('Candidate.AppDate'), $output);
+                $output = str_replace("{{candidate.upload_purpose}}", $configManager->getPopover('Candidate.UploadPurpose'), $output);
 
                 $output = preg_replace("/[{]{2}(?!id[}]{2})(?!num[}]{2})[a-zA-z]*[}]{2}/", "", $output); // Remove any other replacements that aren't {{id}} or {{num}}
 
@@ -414,6 +430,13 @@ HTML;
                 $output = str_replace("{{screeningCriteria}}", $qualification->getScreeningCriteria() ?? "", $output);
                 $output = str_replace("{{strengthIndicators}}", $qualification->getStrengthIndicators() ?? "", $output);
                 
+                $output = str_replace("{{qualification.description}}", $configManager->getPopover('Qualification.Description'), $output);
+                $output = str_replace("{{qualification.screening_criteria}}", $configManager->getPopover('Qualification.ScreeningCriteria'), $output);
+                $output = str_replace("{{qualification.strength_indicators}}", $configManager->getPopover('Qualification.StrengthIndicators'), $output);
+                $output = str_replace("{{qualification.level}}", $configManager->getPopover('Qualification.Level'), $output);
+                $output = str_replace("{{qualification.priority}}", $configManager->getPopover('Qualification.Priority'), $output);
+                $output = str_replace("{{qualification.transferable}}", $configManager->getPopover('Qualification.Transferable'), $output);
+
                 // $output = str_replace("{{roundNum}}", $roundNum[$index], $output); // What was this? -Nate
                 
                 // Mark current options as selected
@@ -458,7 +481,13 @@ HTML;
                 $output = $qualificationTemplate;
                 $output = str_replace("{{levelPreferred}}", "selected", $output);
                 $output = str_replace("{{priorityLow}}", "selected", $output);
-                $output = str_replace("{{transferableFalse}}", "selected", $output);
+
+                $output = str_replace("{{transferableFalse}}", "selected", $output);$output = str_replace("{{qualification.description}}", $configManager->getPopover('Qualification.Description'), $output);
+                $output = str_replace("{{qualification.screening_criteria}}", $configManager->getPopover('Qualification.ScreeningCriteria'), $output);
+                $output = str_replace("{{qualification.strength_indicators}}", $configManager->getPopover('Qualification.StrengthIndicators'), $output);
+                $output = str_replace("{{qualification.level}}", $configManager->getPopover('Qualification.Level'), $output);
+                $output = str_replace("{{qualification.priority}}", $configManager->getPopover('Qualification.Priority'), $output);
+                $output = str_replace("{{qualification.transferable}}", $configManager->getPopover('Qualification.Transferable'), $output);
 
                 // Fill in options for linked rounds
                 $roundOptions = "";
@@ -490,6 +519,10 @@ HTML;
                 $output = str_replace("{{name}}", $round->getName() ?? "", $output);
                 $output = str_replace("{{link}}", $round->getInterviewQuestionLink() ?? "", $output);
 
+                $output = str_replace("{{round.name}}", $configManager->getPopover('Round.Name'), $output);
+                $output = str_replace("{{round.questions_link}}", $configManager->getPopover('Round.QuestionsLink'), $output);
+                $output = str_replace("{{round.questions_upload}}", $configManager->getPopover('Round.QuestionsUpload'), $output);
+
                 $output = preg_replace("/[{]{2}[a-zA-z]*[}]{2}/", "", $output); // Remove any unused replacements
 
                 echo $output;
@@ -501,6 +534,11 @@ HTML;
                 //Update HTML template for JS to create new rounds
 
                 $output = $roundTemplate;
+
+                $output = str_replace("{{round.name}}", $configManager->getPopover('Round.Name'), $output);
+                $output = str_replace("{{round.questions_link}}", $configManager->getPopover('Round.QuestionsLink'), $output);
+                $output = str_replace("{{round.questions_upload}}", $configManager->getPopover('Round.QuestionsUpload'), $output);
+
                 $output = preg_replace("/[{]{2}(?!id[}]{2})(?!num[}]{2})[a-zA-z]*[}]{2}/", "", $output); // Remove any other replacements that aren't {{id}} or {{num}}
 
                 echo $output; 
@@ -698,6 +736,11 @@ HTML;
 
 <script>
     const POSITION_ID = (new URL(window.location.href)).searchParams.get('id');
+    
+    // Set up popovers
+    $(document).ready(function(){
+        $('[data-toggle="popover"]').popover();
+    });
 
     // Function for making buttons active/unactive based on input
     function setActive(element, value) {
@@ -726,6 +769,9 @@ HTML;
         // Get location to insert
         var elements = insertElmt.children;
         elements.item(3).insertAdjacentHTML('beforebegin', cloneText);
+
+        // Activate popovers
+        $('[data-toggle="popover"]').popover(); 
 
         return numOfItems + 1;
     }

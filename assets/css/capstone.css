@@ -946,3 +946,7 @@ CSS FOR laserCutting.php animation
   from, 30% { clip-path: polygon(-20% 0%, -15% 0%, -15% 100%, -20% 100%) }
   70%, to { clip-path: polygon(115% 0%, 120% 0%, 120% 100%, 115% 100%) }
 }
+
+.pointer {
+  cursor: pointer;
+}

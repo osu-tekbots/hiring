@@ -198,7 +198,7 @@ renderBreadcrumb(["./pages/user/dashboard.php"=>"Dashboard", ("./pages/user/view
         $output .= "
             <div class='row p-2 rounded' style='padding-top: 0 !important'>
                 <div class='col-sm-10 mt-2'>
-                    <h6>Group Notes <i class='fas fa-question-circle ml-1'></i></h6>";
+                    <h6>Group Notes <i class='fas fa-question-circle ml-1 pointer' data-toggle='popover' data-content='".$configManager->getPopover('Review.GroupNotes')."'></i></h6>";
         if(checkRoleForPosition('Search Chair', $position?->getID())) {
             $output .= "<textarea class='form-control' onchange='groupNotes(this, \"".$round->getID()."\")'>$roundNote</textarea>";
         } else {
@@ -209,7 +209,7 @@ renderBreadcrumb(["./pages/user/dashboard.php"=>"Dashboard", ("./pages/user/view
         if(checkRoleForPosition('Search Chair', $position?->getID())) {
             $output .= "
                 <div class='col-sm-2 mt-2'>
-                    <h6>Round Decision <i class='fas fa-question-circle ml-1'></i></h6>
+                    <h6>Round Decision <i class='fas fa-question-circle ml-1 pointer' data-toggle='popover' data-content='".$configManager->getPopover('Review.RoundDecision')."'></i></h6>
                     <select class='custom-select $decisionColor' oninput='candidateRoundDecision(this, \"".$round->getID()."\")'>
                         <option>--</option>
                         <option class='text-success'".($roundDecision == 'Advanced' ? ' selected' : '').">Advanced</option>
@@ -292,6 +292,12 @@ renderBreadcrumb(["./pages/user/dashboard.php"=>"Dashboard", ("./pages/user/view
 
 <script>
     const CANDIDATE_ID = (new URL(window.location.href)).searchParams.get('id');
+
+    // Set up popovers
+    $(document).ready(function(){
+        $('[data-toggle="popover"]').popover(); 
+    });
+
 
     function candidateStatus(thisVal) {
         let status = document.getElementById('disposition').value;

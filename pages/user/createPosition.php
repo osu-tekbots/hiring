@@ -33,17 +33,17 @@ renderBreadcrumb(["./pages/user/dashboard.php"=>"Dashboard"], $title);
 
         <!-- Position Title -->
         <div class="input-group p-1">
-            <div class="input-group-prepend"><label for="title" class="input-group-text">Position Title <i class="fas fa-question-circle ml-2"></i></label></div>
+            <div class="input-group-prepend"><label for="title" class="input-group-text">Position Title <i class="fas fa-question-circle ml-2 pointer" data-toggle="popover" data-content="<?php echo $configManager->getPopover('Position.Title') ?>"></i></label></div>
             <input class="form-control" id="title" name="title">
         </div>
         <!-- Posting Link -->
         <div class="input-group p-1">
-            <div class="input-group-prepend"><label for="postingLink" class="input-group-text">Link to Internal Posting Site <i class="fas fa-question-circle ml-2"></i></label></div>
+            <div class="input-group-prepend"><label for="postingLink" class="input-group-text">Link to Internal Posting Site <i class="fas fa-question-circle ml-2 pointer" data-toggle="popover" data-content="<?php echo $configManager->getPopover('Position.PostingLink') ?>"></i></label></div>
             <input class="form-control" id="postingLink" name="postingLink">
         </div>
         <!-- Email Address -->
         <div class="input-group p-1">
-            <div class="input-group-prepend"><label for="email" class="input-group-text">Committee Email Address <i class="fas fa-question-circle ml-2"></i></label></div>
+            <div class="input-group-prepend"><label for="email" class="input-group-text">Committee Email Address <i class="fas fa-question-circle ml-2 pointer" data-toggle="popover" data-content="<?php echo $configManager->getPopover('Position.CommitteeEmail') ?>"></i></label></div>
             <input class="form-control" id="email" name="email">
         </div>
 
@@ -55,6 +55,11 @@ renderBreadcrumb(["./pages/user/dashboard.php"=>"Dashboard"], $title);
 </div>
 
 <script>
+    // Set up popovers
+    $(document).ready(function(){
+        $('[data-toggle="popover"]').popover(); 
+    });
+
     document.getElementById('createBtn').addEventListener('click', e => {
         let data = {
             action: 'createPosition',

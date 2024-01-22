@@ -1,4 +1,5 @@
 *.ini
+!popovers.ini
 .htaccess
 private/
 .private/
