@@ -195,6 +195,14 @@ class ConfigManager {
         return $this->get('logger.level');
     }
 
+    public function getAdminEmail() {
+        return $this->get('email.admin_address');
+    }
+
+    public function getAdminEmailTag() {
+        return $this->get('email.admin_subject_tag');
+    }
+
     /**
      * Fetches the configuration associated with the provided key.
      * 

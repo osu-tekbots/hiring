@@ -59,7 +59,7 @@ class EmailActionHandler extends ActionHandler {
         $position = $this->positionDao->getPosition($candidate->getPositionID());
 
         // Create corresponding mailer
-        $mailer = new Mailer($position->getCommitteeEmail(), $this->configManager->get('email.admin_address'), NULL, $this->logger);
+        $mailer = new Mailer($position->getCommitteeEmail(), $this->configManager->getAdminEmail(), NULL, $this->logger);
 
         //  Send the email
 		$ok = $mailer->sendEmail($candidate->getEmail(), $body['subject'], $body['body'], NULL, $position->getCommitteeEmail());
@@ -84,7 +84,7 @@ class EmailActionHandler extends ActionHandler {
         $body = $this->requestBody;
 
         // Create mailer
-        $mailer = new Mailer($this->configManager->get('email.admin_address'), $this->configManager->get('email.admin_address'), $this->configManager->get('email.admin_address'), $this->configManager->get('email.admin_subject_tag'), $this->logger);
+        $mailer = new Mailer($this->configManager->getAdminEmail(), $this->configManager->getAdminEmail(), $this->configManager->getAdminEmail(), $this->configManager->getAdminEmailTag(), $this->logger);
 
         //  Send the email
 		$ok = $mailer->sendEmail('bairdn@oregonstate.edu', 'Uncaught Error', str_replace("\n", "<br>", $body['body']), true);

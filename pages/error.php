@@ -11,7 +11,7 @@ if(!isset($_SESSION)) {
 }
 
 $baseUrl = $configManager->getBaseUrl();
-$adminEmail = $configManager->get('email.admin_address');
+$adminEmail = $configManager->getAdminEmail();
 
 // Get the error message. If there isn't one, redirect to the home page
 if(isset($_SESSION['error'])) {

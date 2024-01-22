@@ -716,7 +716,7 @@ class PositionActionHandler extends ActionHandler {
         ';
         
 
-        $mailer = new \Email\NewMailer($this->configManager->get('email.admin_address'), $this->configManager->get('email.admin_address'), null, $this->logger);
+        $mailer = new \Email\NewMailer($this->configManager->getAdminEmail(), $this->configManager->getAdminEmail(), null, $this->logger);
 
         $ok = $mailer->sendEmail($user->getEmail(), 'Search Committee Export', $message, true, null, $attachments);
         

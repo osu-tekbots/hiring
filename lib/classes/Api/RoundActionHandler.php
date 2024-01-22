@@ -153,7 +153,7 @@ class RoundActionHandler extends ActionHandler {
 		$this->respond(new Response(Response::OK, 'Round Deleted'));
     }
 
-	 /**
+	/**
      * Handles the HTTP request on the API resource. 
      * 
      * This effectively will invoke the correct action based on the `action` parameter value in the request body. If

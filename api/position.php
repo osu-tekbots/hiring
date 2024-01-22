@@ -41,7 +41,7 @@ $ffqDao = new FeedbackForQualDao($dbConn, $logger);
 $feedbackFileDao = new FeedbackFileDao($dbConn, $logger);
 $userDao = new UserDao($dbConn, $logger);
 $messageDao = new MessageDao($dbConn, $logger);
-$hiringMailer = new HiringMailer($configManager->get('email.admin_address'), $configManager->get('email.admin_address'), $configManager->get('email.admin_subject_tag'), $logger);
+$hiringMailer = new HiringMailer($configManager->getAdminEmail(), $configManager->getAdminEmail(), $configManager->getAdminEmailTag(), $logger);
 $handler = new PositionActionHandler($positionDao, $candidateDao, $candidateFileDao, $candidateRoundNoteDao, $qualificationDao, $qualificationForRoundDao, $roundDao, $roleDao, $feedbackDao, $ffqDao, $feedbackFileDao, $userDao, $messageDao, $hiringMailer, $configManager, $logger);
 
 // Ensure the user is logged in
