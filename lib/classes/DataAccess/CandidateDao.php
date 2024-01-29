@@ -89,16 +89,28 @@ class CandidateDao {
      * If an error occurs during the fetch, the function will return `false`.
      * 
      * @param string $positionId The position ID to fetch candidates for
+     * @param string $sortColumn The column to sort candidates by. Options:
+     *                              * 'name'
+     *                              * 'appDate'
      *
      * @return Candidate[]|boolean an array of Candidate objects if the fetch succeeds, false otherwise
      */
-    public function getCandidatesByPositionId($positionId) {
+    public function getCandidatesByPositionId($positionId, $sortColumn = 'name') {
         try {
             $sql = 'SELECT * FROM hiring_Candidate 
                 LEFT JOIN hiring_CandidateStatus ON hiring_Candidate.c_cs_id = hiring_CandidateStatus.cs_id
                 LEFT JOIN hiring_CandidateStatusEnum ON hiring_CandidateStatus.cs_cse_id = hiring_CandidateStatusEnum.cse_id
                 WHERE c_p_id=:positionid
-                ORDER BY `hiring_Candidate`.c_fName ASC;';
+                ';
+            
+            if($sortColumn == 'name')
+                $sql .= 'ORDER BY `hiring_Candidate`.c_fName ASC;';
+            else if($sortColumn == 'appDate')
+                $sql .= 'ORDER BY `hiring_Candidate`.c_dateApplied ASC;';
+            else
+                throw new Exception("Unknown sort column $sortColumn");
+                
+                
             $params = array (':positionid' => $positionId);
             $result = $this->conn->query($sql, $params);
 

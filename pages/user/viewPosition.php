@@ -21,6 +21,8 @@ use DataAccess\FeedbackDao;
 use DataAccess\QualificationForRoundDao;
 use DataAccess\FeedbackForQualDao;
 
+define('SORT_METHOD', isset($_REQUEST['sort']) ? $_REQUEST['sort'] : 'name');   // Default to sorting by name; have to pick something to avoid undefined errors
+
 $positionDao = new PositionDao($dbConn, $logger);
 $candidateDao = new CandidateDao($dbConn, $logger);
 $candidateRoundNoteDao = new CandidateRoundNoteDao($dbConn, $logger);
@@ -33,7 +35,7 @@ $position = $positionDao->getPosition($_REQUEST['id']);
 
 allowIf($position, 'It looks like you tried to view a position that doesn\'t exist.', true);
 
-$candidates = $candidateDao->getCandidatesByPositionId($_REQUEST['id']);
+$candidates = $candidateDao->getCandidatesByPositionId($_REQUEST['id'], SORT_METHOD);
 
 // Prevent unverified users from accessing the whole site
 allowIf($position->getStatus() != 'Requested' || verifyPermissions('admin'), "It looks like this position hasn't been approved yet. Please request approval from the site admins to view this position.", true);
@@ -96,9 +98,17 @@ function determineNextRound($roundDao, $candidateRoundNoteDao, $candidateID) {
 <br><br><br>
 <div class="container" style="border: 2px solid black">
     <div class="row py-3" style="border: 1px solid black">
-        <div class="col-2"></div>
-        <div class="col"><h2 class="my-auto w-100 text-center">Candidates</h2></div>
-        <div class="col-2">
+        <div class="col-3">
+            <div class="form-check d-inline-block">
+                <button class="btn btn-outline-info" onclick="swapSort();">Sort By <?php 
+                    echo SORT_METHOD == 'appDate' ? 'Name' : 'Date Applied';
+                ?></button>
+            </div>
+        </div>
+        <div class="col">
+            <h2 class="my-auto w-100 text-center">Candidates</h2>
+        </div>
+        <div class="col-3">
             <?php
                 if($position->getStatus() == 'Open' && checkRoleForPosition('Search Chair', $_REQUEST['id'])) {
                     echo "<button id='startInterviewingBtn' type='button' class='btn btn-outline-success float-right mb-2'>Start Interviewing</button>";
@@ -156,7 +166,7 @@ function determineNextRound($roundDao, $candidateRoundNoteDao, $candidateID) {
                         <h5 class='$statusColor'>$status</h5>
                     </div>
                     <div class='col-sm-2 my-auto'>
-                        <p>".($candidate->getDateApplied()?->format('Y-m-d') && $candidate->getDateApplied()?->format('Y-m-d') != '-0001-11-30' ? 'Applied: '.$candidate->getDateApplied() ->format('Y-m-d') : '')."</p>
+                        <p>".($candidate->getDateApplied()?->format('Y-m-d') && $candidate->getDateApplied()?->format('Y-m-d') != '-0001-11-30' ? 'Applied: '.$candidate->getDateApplied() ->format('m-d-Y') : '')."</p>
                     </div>
                     <div class='col-sm-2 my-auto'>";
                 if(!$finalDecision && ($position->getStatus() == 'Interviewing' || $position->getStatus() == 'Completed'))
@@ -221,6 +231,17 @@ function determineNextRound($roundDao, $candidateRoundNoteDao, $candidateID) {
             }
         }
     });
+
+    function swapSort() {
+        const currentMethod = (new URL(window.location.href)).searchParams.get('sort');
+        const newMethod = (currentMethod == 'appDate') ? 'name' : 'appDate';
+
+        const basePath = location.protocol + '//' + location.host + location.pathname;
+        
+        const path = basePath + '?' + 'id=' + POSITION_ID + '&sort=' + newMethod;
+
+        window.location.replace(path); 
+    }
 </script>
 
 <?php
