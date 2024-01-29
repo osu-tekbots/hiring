@@ -191,7 +191,7 @@ class UserActionHandler extends ActionHandler {
     }
     
     /**
-     * Adds a new User for search chairs' convinience.
+     * Updates a user's information.
      * 
      * @param string id Must exist in the POST request body.
      * @param string firstName May exist in the POST request body.
@@ -245,6 +245,41 @@ class UserActionHandler extends ActionHandler {
         
 		$this->respond(new Response(Response::OK, 'User Updated'));
     }
+    
+    /**
+     * Updates a User's ONID.
+     * 
+     * @param string id Must exist in the POST request body.
+     * @param string onid Must exist in the POST request body.
+     * 
+     * @return \Api\Response HTTP response for whether the API call successfully completed
+     */
+    public function handleUpdateOnid() {
+        // Ensure the required parameters exist
+        $this->requireParam('id');
+        $this->requireParam('onid');
+        
+        $body = $this->requestBody;
+
+        $user = $this->userDao->getUserByID($body['id']);
+        if(!$user) {
+            $this->respond(new Response(Response::BAD_REQUEST, 'User Not Found'));
+        }
+
+        $onidProvider = $this->userDao->getAuthProviderByName('onid');
+        if(!$onidProvider) {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Internal Server Error'));
+        }
+        
+        // Add the user to the database
+        $ok = $this->userDao->updateProviderUserID($user->getID(), $body['onid'], $onidProvider);
+        // Use Response object to send DAO action results 
+        if(!$ok) {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'User Not Updated'));
+        }
+        
+		$this->respond(new Response(Response::OK, 'User Updated'));
+    }
 	
     /**
      * Handles the HTTP request on the API resource. 
@@ -276,6 +311,9 @@ class UserActionHandler extends ActionHandler {
                 break;
             case 'updateUser':
                 $this->handleUpdateUser();
+                break;
+            case 'updateONID':
+                $this->handleUpdateONID();
                 break;
 
             default:

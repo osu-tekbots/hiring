@@ -432,6 +432,37 @@ class UserDao {
         }
     }
 
+    /**
+     * Updates a single user's local ID from the database.
+     *
+     * @param string $userID  the ID of the user to update the local ID for
+     * @param string $newID   the new local ID
+     * @param Model\Provider $provider  the provider to update the ID for
+     * 
+     * @return boolean  Whether the update succeeds
+     */
+    public function updateProviderUserID($userID, $newID, $provider) {
+        try {
+            $sql = 'UPDATE `hiring_UserAuth` 
+                SET hiring_UserAuth.ua_providerId = :newID
+                WHERE hiring_UserAuth.ua_uap_id = :providerID
+                    AND hiring_UserAuth.ua_u_id = :userID
+            ';
+            $params = array(
+                ':newID' => $newID,
+                ':providerID' => $provider->getID(),
+                ':userID' => $userID
+            );
+            $this->conn->execute($sql, $params);
+            
+            return true;
+        } catch (\Exception $e) {
+            $this->logError('Failed to update a single user\'s provider ID: ' . $e->getMessage());
+
+            return false;
+        }
+    }
+
     
     /**
      * Adds a new user authentication token to the database.

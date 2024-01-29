@@ -20,6 +20,8 @@ include_once PUBLIC_FILES . '/modules/adminSidebar.php';
 use DataAccess\UserDao;
 
 $userDao = new UserDao($dbConn, $logger);
+
+$onidProvider = $userDao->getAuthProviderByName('onid');
 ?>
 
 <div id="content-wrapper">
@@ -35,13 +37,28 @@ $userDao = new UserDao($dbConn, $logger);
 
         if(count($users)) {
             foreach($users as $user) {
+                $authID = $userDao->getProviderUserID($user->getID(), $onidProvider);
+
                 echo "
                 <div class='row py-3' style='border: 1px solid black'>
                     <div class='col my-auto form-inline'>
                         <h4 class='m-0 p-0'>
-                            <input class='form-control' value='".$user->getFirstName()."' onchange='updateName(this, \"".$user->getID()."\", \"first\");'>
-                            <input class='form-control' value='".$user->getLastName()."' onchange='updateName(this, \"".$user->getID()."\", \"last\");'>
-                            <input class='form-control' value='".$user->getEmail()."' onchange='updateEmail(this, \"".$user->getID()."\")'>
+                            <div class='form-row'>
+                                <div class='col-5 input-group p-1'>
+                                    <div class='input-group-prepend'><label class='input-group-text'>Name</label></div>
+                                    <input class='form-control' value='".$user->getFirstName()."' onchange='updateName(this, \"".$user->getID()."\", \"first\");'>
+                                    <input class='form-control' value='".$user->getLastName()."' onchange='updateName(this, \"".$user->getID()."\", \"last\");'>
+                                </div>
+                                <div class='col-4 input-group p-1'>
+                                    <div class='input-group-prepend'><label class='input-group-text'>Email</label></div>
+                                    <input class='form-control' value='".$user->getEmail()."' onchange='updateEmail(this, \"".$user->getID()."\")'>
+                                </div>";
+                if($authID)
+                    echo        "<div class='col-3 input-group p-1'>
+                                    <div class='input-group-prepend'><label class='input-group-text'>ONID</label></div>
+                                    <input class='form-control' value='".$authID."' onchange='updateOnid(this, \"".$user->getID()."\")'>
+                                </div>";
+                echo "      </div>
                         </h4>
                     </div>
                     <div class='col-2 my-auto'>";
@@ -149,6 +166,22 @@ $userDao = new UserDao($dbConn, $logger);
             action: 'updateUser',
             id: id,
             email: thisVal.value
+        }
+        
+        thisVal.disabled = true;
+
+        api.post('/user.php', data).then(res => {
+            snackbar(res.message, 'success');
+        }).catch(err => {
+            snackbar(err.message, 'error');
+        }).finally(() => thisVal.disabled = false);
+    }
+    
+    function updateOnid(thisVal, id) {
+        let data = {
+            action: 'updateONID',
+            id: id,
+            onid: thisVal.value
         }
         
         thisVal.disabled = true;
