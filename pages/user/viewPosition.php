@@ -76,14 +76,15 @@ function determineLastFinishedRound($roundDao, $candidateRoundNoteDao, $candidat
  * 
  * @param string $candidateID The candidate to check the status of
  * 
- * @return Model\Round|bool The first round that the committee has not completed a review for, or 
+ * @return [int, Model\Round|bool] An array representing the first round that the committee has not completed a review 
+ *  for. The first element is the number for the round and the second element is either the round information or 
  *  `false` if they have finished all rounds already
  */
 function determineNextRound($roundDao, $candidateRoundNoteDao, $candidateID) {
     $nextRound = false;
     $rounds = $roundDao->getAllRoundsByPositionId($_REQUEST['id']);
 
-    foreach($rounds as $round) {
+    foreach($rounds as $i => $round) {
         $decision = $candidateRoundNoteDao->getCandidateNotesForRound($candidateID, $round->getID());
         if($decision && $decision->getDecision()) continue;
         
@@ -91,7 +92,39 @@ function determineNextRound($roundDao, $candidateRoundNoteDao, $candidateID) {
         break;
     }
 
-    return $nextRound;
+    return [$i, $nextRound];
+}
+
+/**
+ * Determines the first round that the current user has not finished submitting FeedbackForQuals for the given candidate for. 
+ * Used to determine the review button text to display.
+ * 
+ * @param string $candidateID The candidate to check if there's FeedbackForQuals for
+ * 
+ * @return [int, Model\Round|bool] An array representing the first round that the user has not finished filling out 
+ *  FeedbackForQuals for. The first element is the number for the round and the second element is either the round information
+ *  or `false` if they have finished all rounds already
+ */
+function determineUserNextRound($roundDao, $feedbackDao, $qualForRoundDao, $feedbackForQualDao, $candidateID) {
+    $nextRound = false;
+    $rounds = $roundDao->getAllRoundsByPositionId($_REQUEST['id']);
+
+    foreach($rounds as $i => $round) {
+        $feedback = $feedbackDao->getFeedbackForUser($_SESSION['userID'], $candidateID, $round->getID());
+        if(!$feedback) {
+            $nextRound = $round;
+            break;
+        }
+        
+        $totalQuals = $qualForRoundDao->getAllQualificationsForRound($round->getID());
+        $filledQuals = $feedbackForQualDao->getFeedbackForQualByFeedbackID($feedback->getID());
+        if(count($totalQuals) != count($filledQuals)) {
+            $nextRound = $round;
+            break;
+        }
+    }
+
+    return [$i, $nextRound];
 }
 ?>
 
@@ -140,15 +173,28 @@ function determineNextRound($roundDao, $candidateRoundNoteDao, $candidateID) {
                     }
                 }
 
+                $committeeNextRound = determineNextRound($roundDao, $candidateRoundNoteDao, $candidate->getID());
+                $userNextRound = determineUserNextRound($roundDao, $feedbackDao, $qualForRoundDao, $feedbackForQualDao, $candidate->getID());
                 $nextRoundBtnStyle = "btn-primary";
-                $nextRound = determineNextRound($roundDao, $candidateRoundNoteDao, $candidate->getID());
                 $nextRoundQuery = '';
-                if($nextRound === false) {
+                if($committeeNextRound[1] === false) {
+                    /* No rounds left to review */
                     $nextRound = "Update Reviews";
                     $nextRoundBtnStyle = "btn-warning";
+                } else if ($committeeNextRound[1] == $userNextRound[1]) {
+                    /* User still needs to finish the round the committee is on */
+                    $nextRoundQuery = "&round=".$committeeNextRound[1]->getID();
+                    $nextRound = "Begin ".$committeeNextRound[1]->getName();
+                } else if ($committeeNextRound[0] < $userNextRound[0] || $userNextRound[1] === false) {
+                    /* User has completed the round the committee is on */
+                    /* (`false` check is needed if committe is on last round & user has completed all rounds) */
+                    $nextRoundQuery = "&round=".$committeeNextRound[1]->getId();
+                    $nextRound = "Modify ".$committeeNextRound[1]->getName();
+                    $nextRoundBtnStyle = "btn-outline-primary";
                 } else {
-                    $nextRoundQuery = "&round=".$nextRound->getID();
-                    $nextRound = "Complete ".$nextRound->getName();
+                    /* User hasn't completed all rounds the committee has */
+                    $nextRoundQuery = "&round=".$committeeNextRound[1]->getID();
+                    $nextRound = "Begin ".$committeeNextRound[1]->getName();
                 }
 
                 $lastRoundStatus = "";
