@@ -115,7 +115,7 @@ function determineNextRound($roundDao, $candidateRoundNoteDao, $candidateID) {
                 }
             ?>
             <div class="form-check d-inline-block">
-                <input type="checkbox" class="form-check-input" id="hideDisqualified">
+                <input type="checkbox" class="form-check-input" id="hideDisqualified" checked="checked">
                 <label class="form-check-label" for="hideDisqualified">Hide Disqualified Candidates</label>
             </div>
         </div>
@@ -158,7 +158,7 @@ function determineNextRound($roundDao, $candidateRoundNoteDao, $candidateID) {
                 
                 // NOTE: Below, date '-0001-11-30' seems random, but is the format result for the timestamp '0000-00-00 00:00:00' in the database
                 $output = "
-                <div class='row py-3 candidate' style='border: 1px solid black' ".($disqualified ? "data-disqual" : "").">
+                <div class='row py-3 candidate ".($disqualified ? "d-none" : "")."' style='border: 1px solid black' ".($disqualified ? "data-disqual" : "").">
                     <div class='col-sm-2 my-auto' style='vertial-align: middle'>
                         <h4>".$candidate->getFirstName()." ".$candidate->getLastName()."</h4>
                     </div>
