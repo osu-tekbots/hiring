@@ -157,29 +157,6 @@ renderBreadcrumb(["./pages/user/dashboard.php"=>"Dashboard", ("./pages/user/view
         $output .= "</table>
             </div>";
         
-        // User notes & files
-        $feedback = $feedbackDao->getFeedbackForUser($_SESSION['userID'], $candidateID, $round->getID());
-        if($feedback !== false) {
-            $feedbackFiles = $feedbackFileDao->getAllFilesForFeedback($feedback->getID());
-            $output .= "
-                <div class='row p-2 rounded' style='padding-bottom: 0 !important'>
-                    <div class='col-sm-8 mt-2'>
-                        <h6>My Notes</h6>
-                        <p class='form-control' style='height:auto'>".$feedback->getNotes()." </p>
-                    </div>
-                    <div class='col-sm-4 mt-2'>
-                        <h6>My Uploads</h6>
-                        <ul id='feedbackFiles".$feedback->getID()."'>";
-            if($feedbackFiles) {
-                foreach($feedbackFiles as $feedbackFile) {
-                    $output .= "<li><a target='_blank' href='uploads/feedback/".$feedbackFile->getFileName()."'>".$feedbackFile->getFileName()."</a></li>\n";
-                }
-            }
-            $output .= "</ul>
-                    </div>
-                </div>";
-        }
-        
         // Group Notes
         $roundNote = $candidateRoundNoteDao->getCandidateNotesForRound($candidate->getID(), $round->getID());
         $roundDecision = NULL;
@@ -196,7 +173,7 @@ renderBreadcrumb(["./pages/user/dashboard.php"=>"Dashboard", ("./pages/user/view
             $roundNote = $roundNote->getNotes(); // Avoid issues with string vs object below
         }
         $output .= "
-            <div class='row p-2 rounded' style='padding-top: 0 !important'>
+            <div class='row p-2 rounded mt-2' style='padding-top: 0 !important'>
                 <div class='col-sm-10 mt-2'>
                     <h6>Group Notes <i class='fas fa-question-circle ml-1 pointer' data-toggle='popover' data-content='".$configManager->getPopover('Review.GroupNotes')."'></i></h6>";
         if(checkRoleForPosition('Search Chair', $position?->getID())) {
