@@ -218,18 +218,24 @@ class CandidateDao {
      */
     public function deleteCandidate($candidateID) {
         try {
+            // Get candidate status ID to delete later
+            $sql = 'SELECT c_cs_id FROM hiring_Candidate
+                WHERE c_id=:id';
+            $params = array (
+                ':id' => $candidateID
+            );
+            $status = $this->conn->query($sql, $params);
+
             // Delete everything possible
             $sql = 'DELETE 
                         `hiring_CandidateNotes`,
                         `hiring_CandidateRoundNote`,
-                        `hiring_CandidateStatus`, 
                         `hiring_CandidateFiles`, 
                         `hiring_FeedbackFiles`, 
                         `hiring_FeedbackForQual`
                     FROM `hiring_Candidate`
                 LEFT JOIN `hiring_CandidateNotes` ON `hiring_CandidateNotes`.`cn_c_id` = `hiring_Candidate`.`c_id`
                 LEFT JOIN `hiring_CandidateRoundNote` ON `hiring_CandidateRoundNote`.`crn_c_id` = `hiring_Candidate`.`c_id`
-                LEFT JOIN `hiring_CandidateStatus` ON `hiring_Candidate`.`c_cs_id` = `hiring_CandidateStatus`.`cs_id`
                 LEFT JOIN `hiring_CandidateFiles` ON `hiring_CandidateFiles`.`cf_c_id` = `hiring_Candidate`.`c_id`
                 LEFT JOIN `hiring_Feedback` ON `hiring_Feedback`.`f_c_id` = `hiring_Candidate`.`c_id`
                 LEFT JOIN `hiring_FeedbackFiles` ON `hiring_FeedbackFiles`.`ff_f_id` = `hiring_Feedback`.`f_id`
@@ -245,10 +251,21 @@ class CandidateDao {
                 WHERE f_c_id=:id';
             $this->conn->execute($sql, $params);
 
-            // Delete candidate last to avoid deletion order issues
+            // Delete candidate next to avoid deletion order issues
             $sql = 'DELETE FROM `hiring_Candidate`
                 WHERE c_id=:id';
             $this->conn->execute($sql, $params);
+
+            // Delete candidateStatus last to avoid deletion order issues
+            if($status) {
+                $sql = 'DELETE FROM `hiring_CandidateStatus`
+                    WHERE `hiring_CandidateStatus`.`cs_id`=:statusID
+                ';
+                $params = array (
+                    ':statusID' => $status[0]['c_cs_id']
+                );
+                $this->conn->execute($sql, $params);
+            }
 
             return true;
         } catch (\Exception $e) {
