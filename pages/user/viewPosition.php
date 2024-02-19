@@ -215,7 +215,7 @@ function determineUserNextRound($roundDao, $feedbackDao, $qualForRoundDao, $feed
                 $output = "
                 <div class='row py-3 candidate ".($disqualified ? "d-none" : "")."' style='border: 1px solid black' ".($disqualified ? "data-disqual" : "").">
                     <div class='col-sm-2 my-auto' style='vertial-align: middle'>
-                        <h4>".$candidate->getFirstName()." ".$candidate->getLastName()."</h4>
+                        <h4 id='emailCandidate' class='btn-link' style='user-select: auto; -webkit-user-select: auto; -moz-user-select: auto; -ms-user-select: auto; cursor: default;' role='button' data-toggle='modal' data-target='#emailModal' onclick=\"CANDIDATE_ID = '".$candidate->getID()."'\">".$candidate->getFirstName()." ".$candidate->getLastName()."</h4>
                     </div>
                     <div class='col-sm my-auto'>
                         <h5 class='$statusColor'>$status</h5>
@@ -249,8 +249,11 @@ function determineUserNextRound($roundDao, $feedbackDao, $qualForRoundDao, $feed
     ?>
 </div>
 
+<?php include_once PUBLIC_FILES . '/modules/emailModal.php'; ?>
+
 <script>
     const POSITION_ID = (new URL(window.location.href)).searchParams.get('id');
+    let CANDIDATE_ID;   // Used for email
 
     document.getElementById('startInterviewingBtn')?.addEventListener('click', e => {
         if(!confirm('Are you sure you want to change the position\'s status to "Interviewing"? This will restrict your options for modifying this position and allow committee members to begin submitting feedback for candidates.'))
