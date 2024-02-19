@@ -67,8 +67,14 @@ renderBreadcrumb(["./pages/user/dashboard.php"=>"Dashboard", ("./pages/user/view
             <h2 class="my-auto" style="text-align: center;"><?php echo $candidate->getFirstName().' '.$candidate->getLastName() ?></h2>
         </div>
         <div class="col-6">
-            <h6>Email: <button id="emailCandidate" class="btn btn-link" type="button" data-toggle="modal" data-target="#emailModal"><?php echo $candidate->getEmail() ?></button></h6>
-            <h6>Phone: <a href="tel:<?php echo $candidate->getPhoneNumber() ?>"><?php echo $candidate->getPhoneNumber() ?></a></h6>
+            <h6>Email: 
+                <button id="emailCandidate" class="btn btn-link" style="user-select: auto; -webkit-user-select: auto; -moz-user-select: auto; -ms-user-select: auto;" type="button" data-toggle="modal" data-target="#emailModal"><?php echo $candidate->getEmail() ?></button>
+                <span onclick="navigator.clipboard.writeText('<?php echo $candidate->getEmail() ?>'); snackbar('Copied email address', 'success');"><i class="far fa-clipboard ml-1"></i></span>
+            </h6>
+            <h6>Phone: 
+                <a href="tel:<?php echo $candidate->getPhoneNumber() ?>"><?php echo $candidate->getPhoneNumber() ?></a>
+                <span onclick="navigator.clipboard.writeText('<?php echo $candidate->getPhoneNumber() ?>'); snackbar('Copied phone number', 'success');"><i class="far fa-clipboard ml-1"></i></span>
+            </h6>
             <!-- <h6>Location: <a target="_blank" href="https://www.google.com/maps?q=<?php echo $candidate->getLocation() ?>"><?php echo $candidate->getLocation() ?></a></h6> -->
             <?php
                 if(count($files)) {
