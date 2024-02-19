@@ -168,8 +168,16 @@ function determineUserNextRound($roundDao, $feedbackDao, $qualForRoundDao, $feed
                     if($lastRound === false) {
                         $status = "No Rounds Completed";
                     } else {
-                        $status = "Completed ".$lastRound->getName();
-                        $lastRoundQuery = '&round='.$lastRound->getID();
+                        $lastRoundStatus = $candidateRoundNoteDao->getCandidateNotesForRound($candidate->getID(), $lastRound->getID())?->getDecision();
+
+                        if($lastRoundStatus == "Disqualified") {
+                            $disqualified = true;
+                            $status = "Disqualified (final disposition not set)";
+                            $statusColor = "text-danger";
+                        } else {
+                            $status = "Completed ".$lastRound->getName();
+                            $lastRoundQuery = '&round='.$lastRound->getID();
+                        }
                     }
                 }
 
@@ -177,8 +185,14 @@ function determineUserNextRound($roundDao, $feedbackDao, $qualForRoundDao, $feed
                 $userNextRound = determineUserNextRound($roundDao, $feedbackDao, $qualForRoundDao, $feedbackForQualDao, $candidate->getID());
                 $nextRoundBtnStyle = "btn-primary";
                 $nextRoundQuery = '';
-                if($committeeNextRound[1] === false) {
-                    /* No rounds left to review */
+                if($disqualified) {
+                    /* Open details page to where disqualification happened */
+                    if($lastRound)
+                        $nextRoundQuery = "&round=".$lastRound->getID();
+                    $nextRound = "Update Reviews";
+                    $nextRoundBtnStyle = "btn-warning";
+                } else if($committeeNextRound[1] === false) {
+                    /* No rounds left to review; just allow updates */
                     $nextRound = "Update Reviews";
                     $nextRoundBtnStyle = "btn-warning";
                 } else if ($committeeNextRound[1] == $userNextRound[1]) {
@@ -196,11 +210,6 @@ function determineUserNextRound($roundDao, $feedbackDao, $qualForRoundDao, $feed
                     $nextRoundQuery = "&round=".$committeeNextRound[1]->getID();
                     $nextRound = "Begin ".$committeeNextRound[1]->getName();
                 }
-
-                $lastRoundStatus = "";
-                if($lastRound !== false)
-                    $lastRoundStatus = $candidateRoundNoteDao->getCandidateNotesForRound($candidate->getID(), $lastRound->getID())?->getDecision();
-                $disqualified = $disqualified || ($lastRoundStatus == "Disqualified"); // Update if the candidate has been marked "Disqualified" but Final Disposition is not yet set
                 
                 // NOTE: Below, date '-0001-11-30' seems random, but is the format result for the timestamp '0000-00-00 00:00:00' in the database
                 $output = "
