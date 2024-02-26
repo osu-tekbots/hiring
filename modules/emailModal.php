@@ -12,7 +12,7 @@
     <div class="modal-content">
         <div class="modal-header" style="flex-direction: column">
             <h5 class="modal-title w-100 text-center">Email Candidate</h5>
-            <p class="col text-center mb-0">This will send an email from <?= $position->getCommitteeEmail() ?> and CC that email address on all emails.</p>
+            <p class="col text-center mb-0">This will send an email as <?= $position->getCommitteeEmail() ?> and CC that email address on all emails.</p>
         </div>
         <div class="modal-body">
             <div class="input-group my-2">
