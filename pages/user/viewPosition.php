@@ -225,7 +225,7 @@ function determineUserNextRound($roundDao, $feedbackDao, $qualForRoundDao, $feed
                     </div>
                     <div class='col-sm-2 my-auto'>";
                 if(!$finalDecision && ($position->getStatus() == 'Interviewing' || $position->getStatus() == 'Completed'))
-                    $output .= "<a href='user/reviewCandidate.php?id=".$candidate->getID()."$nextRoundQuery' class='btn $nextRoundBtnStyle float-right'>$nextRound</a>";
+                    $output .= "<a href='user/reviewCandidate.php?id=".$candidate->getID()."$nextRoundQuery' class='btn $nextRoundBtnStyle float-right w-100 h-100'>$nextRound</a>";
 
                 $output .= "
                 </div>
