@@ -215,7 +215,7 @@ function determineUserNextRound($roundDao, $feedbackDao, $qualForRoundDao, $feed
                 $output = "
                 <div class='row py-3 candidate ".($disqualified ? "d-none" : "")."' style='border: 1px solid black' ".($disqualified ? "data-disqual" : "").">
                     <div class='col-sm-2 my-auto' style='vertial-align: middle'>
-                        <h4 id='emailCandidate' class='btn-link' style='user-select: auto; -webkit-user-select: auto; -moz-user-select: auto; -ms-user-select: auto; cursor: default;' role='button' data-toggle='modal' data-target='#emailModal' onclick=\"CANDIDATE_ID = '".$candidate->getID()."'\">".$candidate->getFirstName()." ".$candidate->getLastName()."</h4>
+                        <h4 id='emailCandidate' class='btn-link' style='user-select: auto; -webkit-user-select: auto; -moz-user-select: auto; -ms-user-select: auto; cursor: default;' role='button' data-toggle='modal' data-target='#emailModal' data-candidate-id='".$candidate->getID()."'>".$candidate->getFirstName()." ".$candidate->getLastName()."</h4>
                     </div>
                     <div class='col-sm my-auto'>
                         <h5 class='$statusColor'>$status</h5>

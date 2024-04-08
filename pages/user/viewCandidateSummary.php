@@ -68,7 +68,7 @@ renderBreadcrumb(["./pages/user/dashboard.php"=>"Dashboard", ("./pages/user/view
         </div>
         <div class="col-6">
             <h6>Email: 
-                <button id="emailCandidate" class="btn btn-link" style="user-select: auto; -webkit-user-select: auto; -moz-user-select: auto; -ms-user-select: auto;" type="button" data-toggle="modal" data-target="#emailModal"><?php echo $candidate->getEmail() ?></button>
+                <button id="emailCandidate" class="btn btn-link" style="user-select: auto; -webkit-user-select: auto; -moz-user-select: auto; -ms-user-select: auto;" type="button" data-toggle="modal" data-target="#emailModal" data-candidate-id="<?= $candidate->getID() ?>"><?php echo $candidate->getEmail() ?></button>
                 <?php
                     if($candidate->getEmail())
                         echo '<span onclick="navigator.clipboard.writeText(\''.$candidate->getEmail().'\'); snackbar(\'Copied email address\', \'success\');"><i class="far fa-clipboard ml-1"></i></span>';
