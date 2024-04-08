@@ -35,7 +35,8 @@
             <textarea id="emailBody" class="form-control" rows="6"></textarea>
         </div>
         <div class="modal-footer">
-            <button id="closeEmailModal" type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-outline-danger" onclick="clearEmail()">Clear</button>
             <button type="button" class="btn btn-primary" onclick="sendEmail(this)">Send</button>
         </div>
     </div>
@@ -64,5 +65,10 @@
         }).catch(err => {
             snackbar(err.message, 'error');
         }).finally(() => thisVal.disabled = false);
+    }
+
+    function clearEmail() {
+        document.getElementById('emailSubject').value = '';
+        document.getElementById('emailBody').value = '';
     }
 </script>
