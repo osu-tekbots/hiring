@@ -94,7 +94,7 @@ class RoleActionHandler extends ActionHandler {
         }
 
         // Email the new member to tell them they've been added
-        $hiringMailer = new HiringMailer($position->getCommitteeEmail(), $this->configManager->getAdminEmail(), null, $this->logger);
+        $hiringMailer = new HiringMailer($position->getCommitteeEmail(), $this->configManager->getBounceEmail(), null, $this->logger);
         $message = $this->messageDao->getMessageByID(1);
         $ok = $hiringMailer->sendAddedToCommitteeEmail($user, $message, $position, $role->getName());
         if(!$ok) {

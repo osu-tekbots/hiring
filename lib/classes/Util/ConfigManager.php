@@ -206,6 +206,10 @@ class ConfigManager {
         return $this->get('email.admin_address');
     }
 
+    public function getBounceEmail() {
+        return $this->get('email.bounce_address');
+    }
+
     public function getAdminEmailTag() {
         return $this->get('email.admin_subject_tag');
     }

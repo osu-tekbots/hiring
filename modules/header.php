@@ -166,7 +166,7 @@ header("Expires: 0");
                     echo '<div class="d-flex align-items-end justify-content-center navbarBrowser" style="flex-grow: 1">
                         <div class="alert alert-warning mb-0">
                             <i class="fas fa-question-circle"></i>
-                            This site is currently under development. Please direct questions and feedback <a style="text-decoration: underline" href="mailto:bairdn@oregonstate.edu">here</a>.
+                            This site is currently under development. Please direct questions and feedback <a style="text-decoration: underline" href="mailto:'.$configManager->getAdminEmail().'">here</a>.
                         </div>
                     </div>';
             } else {

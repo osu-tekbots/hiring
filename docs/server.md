@@ -15,6 +15,7 @@ auth_providers_config_file = ; auth.ini
 subject_tag = ; optional tag to prepend all email subjects with
 admin_address = ; email address for admins that need important site notifications
 admin_subject_tag = SPT Admin ; subject tag for emails sent from the site admins
+bounce_address = ; email address to send bounced emails to
 
 [client]
 base_url = ; base URL used by the frontend (e.g. http://eecs.oregonstate.edu/education/hiring/)
