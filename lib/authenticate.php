@@ -1,4 +1,13 @@
 <?php
+/**
+ * This script ensures that the user is properly authenticated for the SPT. It is designed
+ * to prevent session collisions with other sites TekBots manages, such as the TekBots 
+ * storefront, Project Portal, and SPT.
+ * 
+ * This script should be included in every script the user can potentially call, including
+ * all pages/ and api/ files. The best spot for it is in bootstrap.php
+ */
+
 
 use DataAccess\UserDao;
 use DataAccess\RoleDao;

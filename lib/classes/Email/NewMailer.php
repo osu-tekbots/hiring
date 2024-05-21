@@ -1,6 +1,11 @@
 <?php
 namespace Email;
 
+/**
+ * Uses PHPMailer to ensure consistent results with advanced mailing functionality, such 
+ * as adding attachments to emails.
+ */
+
 use Util\Security;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;

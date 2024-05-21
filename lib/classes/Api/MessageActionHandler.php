@@ -3,7 +3,6 @@ namespace Api;
 
 use Model\Message;
 use DataAccess\MessageDao;
-// Below for filling test email templates
 use Model\User;
 use Model\Position;
 
