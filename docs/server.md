@@ -72,14 +72,19 @@ EMAIL=""
 
 ```
 Notice the `<CHANGEME>` text above. This must be changed to the absolute path of the root of this Git repo on your server.
-For example, if the website is hosted at `https://eecs.engineering.oregonstate.edu/education/hiring`, then you would replace `<CHANGME>` with `https://eecs.engineering.oregonstate.edu/education/hiring`.
+For example, if the website is hosted at `https://eecs.engineering.oregonstate.edu/education/hiring`, then you would replace `<CHANGME>` with `https://eecs.engineering.oregonstate.edu/education/hiring`. Also, please note that there are only two lines of text (`24 0 ... deleteExamples.php` is all one line) and that the file ends with a blank line.
 
 Additionally, this cronjob is set to execute every other week at 12:24 AM. If you choose to modify this time, you may find [this tool](https://crontab.guru) helpful for double-checking the timing you settle on.
 
-Please note that there are only two lines of text (`24 0 ... deleteExamples.php` is all one line) and that the file ends with a blank line.
+
+### Starting the Cronjob
 
 After the file is created, open the terminal and enter the following shell command to start the cronjob:
-
 ```bash
 crontab crontab.txt
+```
+
+Alternatively, on the OSU servers, you can add the following line to your `~/.bashrc`. This will check if the cron job exists and start it if not. It will also prevent creating duplicate jobs on multiple servers (eg `flip1` and `flip3`), though you should note that **only one person** should run the cron jobs as well, preferably a faculty/ staff member. Once again, note the `<CHANGEME>` text that must be replaced with the absolute path to the root of this Git repo.
+```bash
+<CHANGEME>/scripts/checkCron.sh
 ```
