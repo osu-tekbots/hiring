@@ -68,13 +68,13 @@ For example, if the website is hosted at `http://eecs.oregonstate.edu/education/
 Finally, this project includes a cronjob for deleting old test positions (and eventually, old positions). To set this up, create a `crontab.txt` file in the repository root with the following contents:
 ```crontab
 EMAIL=""
-24 0 * * */14 /bin/wget -O /dev/null -o /dev/null <CHANGEME>/scripts/deleteExamples.php
+24 0 * * */14 /bin/php <CHANGEME>/scripts/deleteExamples.php
 
 ```
-Notice the `<CHANGEME>` text above. This should be changed to the root URL of the website hosting the application.
+Notice the `<CHANGEME>` text above. This must be changed to the absolute path of the root of this Git repo on your server.
 For example, if the website is hosted at `https://eecs.engineering.oregonstate.edu/education/hiring`, then you would replace `<CHANGME>` with `https://eecs.engineering.oregonstate.edu/education/hiring`.
 
-Additionally, this cronjob is set to execute every other week at 12:24 AM. If you choosed to modify this time, you may find [this tool](https://crontab.guru) helpful for double-checking the timing you settle on.
+Additionally, this cronjob is set to execute every other week at 12:24 AM. If you choose to modify this time, you may find [this tool](https://crontab.guru) helpful for double-checking the timing you settle on.
 
 Please note that there are only two lines of text (`24 0 ... deleteExamples.php` is all one line) and that the file ends with a blank line.
 

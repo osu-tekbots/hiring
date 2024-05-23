@@ -1,6 +1,6 @@
 <?php
 
-include_once "../bootstrap.php";
+include_once dirname(__FILE__) . "/../bootstrap.php";
 
 use Api\PositionActionHandler;
 use DataAccess\CandidateDao;
@@ -122,6 +122,7 @@ function deletePosition(
     return true;
 }
 
+$logger->trace('Cron job executing to remove old example positions');
 foreach($positions as $position) {
     $twoWeeks = new DateTime("2 weeks ago");
 
@@ -129,6 +130,6 @@ foreach($positions as $position) {
         $result = deletePosition($position, $candidateDao, $candidateFileDao, $feedbackFileDao, $positionDao, $qualificationDao, $roundDao, $configManager, $logger);
 
         if($result)
-            $logger->trace('Deleted '.$position->getID().' ('.$position->getTitle().')');
+            $logger->trace('Deleted old example position: '.$position->getID().' ('.$position->getTitle().')');
     }
-}  
+}
