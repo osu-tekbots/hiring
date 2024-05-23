@@ -21,7 +21,11 @@ class Logger {
             throw new \Exception('Failed to create new logger: filename required');
         }
         $this->setLevel($level);
+        $existed = file_exists($file);
         $this->file = fopen($file, 'a');
+        if (!$existed)
+            /* Ensure proper permissions are set for new log files */
+            chmod($file, 0660);
         if (!$this->file) {
             throw new \Exception('Failed to create new logger: failed to open log file to append entries to');
         }
