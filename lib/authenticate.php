@@ -8,7 +8,6 @@
  * all pages/ and api/ files. The best spot for it is in bootstrap.php
  */
 
-
 use DataAccess\UserDao;
 use DataAccess\RoleDao;
 $userDao = new UserDao($dbConn, $logger);
@@ -77,6 +76,8 @@ if(isset($_SESSION['site']) && $_SESSION['site'] == 'hiring') {
  * @return bool Whether the person who initiated the current request has one of the given access levels
  */
 function verifyPermissions($allowedAccessLevels) {
+    global $logger;
+
     try {
         $isLoggedIn = isset($_SESSION['userID']) && !empty($_SESSION['userID']);
         $isAdmin = $isLoggedIn && isset($_SESSION['userAccessLevel']) && $_SESSION['userAccessLevel'] == 'Admin';
@@ -113,6 +114,8 @@ function verifyPermissions($allowedAccessLevels) {
  * @return bool Whether the person who initiated the current request has one of the given roles for the given position
  */
 function checkRoleForPosition($allowedRoles, $positionID) {
+    global $logger;
+
     try {
         global $roleDao;
 
