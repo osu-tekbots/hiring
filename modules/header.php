@@ -147,9 +147,9 @@ header("Expires: 0");
     </script>
 
     <header id="header" class="dark" style="position: sticky;">
-        <a class="header-main-link" href="">
+        <a class="header-main-link" href="/pages">
             <div class="logo">
-                <img class="logo" src="../tekbotSuite/tekbot/assets/img/osu-logo-orange.png" />
+                <img class="logo" src="assets/img/osu-logo-orange.png" />
                 <h1><span id="projectPrefix"><b>Search Progress Tracker</b></span> </h1>
             </div>
         </a>
