@@ -139,7 +139,7 @@ header("Expires: 0");
             document.getElementById('masq').disabled = true;
 
             api.post('/user.php', {action: 'stopMasquerade'}).then(res => {
-                location.href = './admin/user.php';
+                location.href = './pages/admin/user.php';
             }).catch(err => {
                 snackbar(err.message, 'error');
             }).finally(() => document.getElementById('masq').disabled = false);

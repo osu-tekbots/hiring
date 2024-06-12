@@ -225,14 +225,14 @@ function determineUserNextRound($roundDao, $feedbackDao, $qualForRoundDao, $feed
                     </div>
                     <div class='col-sm-2 my-auto'>";
                 if(!$finalDecision && ($position->getStatus() == 'Interviewing' || $position->getStatus() == 'Completed'))
-                    $output .= "<a href='user/reviewCandidate.php?id=".$candidate->getID()."$nextRoundQuery' class='btn $nextRoundBtnStyle float-right w-100 h-100'>$nextRound</a>";
+                    $output .= "<a href='pages/user/reviewCandidate.php?id=".$candidate->getID()."$nextRoundQuery' class='btn $nextRoundBtnStyle float-right w-100 h-100'>$nextRound</a>";
 
                 $output .= "
                 </div>
                     <div class='col-sm-2 my-auto'>";
 
                 if($position->getStatus() == 'Interviewing' || $position->getStatus() == 'Completed') {
-                    $output .= "<a href='user/viewCandidateSummary.php?id=".$candidate->getID()."$nextRoundQuery' class='btn btn-outline-primary float-right'>View All Reviews</a>";
+                    $output .= "<a href='pages/user/viewCandidateSummary.php?id=".$candidate->getID()."$nextRoundQuery' class='btn btn-outline-primary float-right'>View All Reviews</a>";
                 }
 
                 $output .= "</div>

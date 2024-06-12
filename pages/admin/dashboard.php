@@ -50,8 +50,8 @@ function echoPositions($positions, $roleDao) {
                     <button type='button' class='btn btn-outline-info' onclick='exportPosition(this, \"".$position->getID()."\")'>Export Data</button>
                 </div>
                 <div class='col-3 my-auto'>
-                    <a href='user/viewPosition.php?id=".$position->getID()."' class='btn btn-primary float-right'>View</a>
-                    <a href='user/updatePosition.php?id=".$position->getID()."' class='btn btn-outline-warning float-right mx-2'>Edit</a>";
+                    <a href='pages/user/viewPosition.php?id=".$position->getID()."' class='btn btn-primary float-right'>View</a>
+                    <a href='pages/user/updatePosition.php?id=".$position->getID()."' class='btn btn-outline-warning float-right mx-2'>Edit</a>";
             if($position->getStatus() == 'Requested')
                 echo "<button type='button' id='approve".$position->getID()."' onclick='approvePosition(\"".$position->getID()."\")' class='btn btn-outline-success float-right'>Approve</a>";
             if($position->getIsExample())

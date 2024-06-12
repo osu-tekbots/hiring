@@ -68,9 +68,9 @@ $positions = $positionDao->getPositionsForUser($_SESSION['userID']);
                 echo "</div>
                     <div class='col-2 my-auto'>";
                 if($position->getStatus() != 'Requested' || verifyPermissions('admin'))
-                    echo "<a href='user/viewPosition.php?id=".$position->getID()."' class='btn btn-primary float-right'>View</a>";
+                    echo "<a href='pages/user/viewPosition.php?id=".$position->getID()."' class='btn btn-primary float-right'>View</a>";
                 if(checkRoleForPosition('Search Chair', $position->getID()) && $position->getStatus() != 'Requested' || verifyPermissions('admin'))
-                    echo "<a href='user/updatePosition.php?id=".$position->getID()."' class='btn btn-outline-warning float-right mx-2'>Edit</a>";
+                    echo "<a href='pages/user/updatePosition.php?id=".$position->getID()."' class='btn btn-outline-warning float-right mx-2'>Edit</a>";
                 echo "</div>
                 </div>";
             }

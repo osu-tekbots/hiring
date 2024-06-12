@@ -73,8 +73,8 @@ renderBreadcrumb(["./pages/user/dashboard.php"=>"Dashboard"], $title);
         api.post('/position.php', data).then(res => {
             snackbar(res.message, 'success');
             setTimeout(() => {
-                let url = './user/dashboard.php'; // Changed to require approval before updating position
-                // let url = new URL('./user/updatePosition.php', document.baseURI);
+                let url = './pages/user/dashboard.php'; // Changed to require approval before updating position
+                // let url = new URL('./pages/user/updatePosition.php', document.baseURI);
                 // url.searchParams.set('id', res.content);
                 
                 window.location.replace(url);

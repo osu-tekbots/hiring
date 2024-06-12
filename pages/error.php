@@ -34,7 +34,7 @@ echo "
             <h1>Whoops!</h1>
             <p style='white-space: initial'>$message</p>
             <p class='d-inline'><b>NOTE: </b>If you believe this site contains an error, please click the orange feeedback button to submit an issue report.</p>
-            <a href='$baseUrl' class='btn btn-primary float-right'>Home Page</a>
+            <a href='$baseUrl/pages' class='btn btn-primary float-right'>Home Page</a>
             <button type='button' class='btn btn-outline-primary mx-2 float-right' onclick='window.history.back();'>Back</button>
         </div>
     </div>

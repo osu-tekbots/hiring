@@ -249,7 +249,7 @@ class PositionActionHandler extends ActionHandler {
             $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Search Chair not found'));
         }
         foreach($searchChairs as $searchChair) {
-            $ok = $this->hiringMailer->sendPositionApprovedEmail($searchChair->getUser(), $message, 'https://eecs.engineering.oregonstate.edu/education/hiring/user/updatePosition.php?id='.$position->getID());
+            $ok = $this->hiringMailer->sendPositionApprovedEmail($searchChair->getUser(), $message, 'https://eecs.engineering.oregonstate.edu/education/hiring/pages/user/updatePosition.php?id='.$position->getID());
             
             if(!$ok) {
                 $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to email Search Chair'));

@@ -140,7 +140,7 @@ $onidProvider = $userDao->getAuthProviderByName('onid');
         document.getElementById('masq'+id).disabled = true;
 
         api.post('/user.php', data).then(res => {
-            location.href = './user/dashboard.php';
+            location.href = './pages/user/dashboard.php';
         }).catch(err => {
             snackbar(err.message, 'error');
         }).finally(() => document.getElementById('masq'+id).disabled = false);
