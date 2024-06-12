@@ -154,22 +154,8 @@ header("Expires: 0");
             </div>
         </a>
         <?php 
-            if(!isset($_SESSION['masq']) || !$_SESSION['masq']['active']) {
-                if(!in_array($_SERVER['SCRIPT_NAME'], [
-                    '/education/hiring/pages/index.php', 
-                    '/education/hiring/pages/login.php', 
-                    '/education/hiring/pages/local/login.php',
-                    '/education/hiring/pages/local/forgotPassword.php',
-                    '/education/hiring/pages/local/resetPassword.php',
-                    '/education/hiring/pages/local/newUser.php',
-                    '/education/hiring/pages/error.php']))
-                    echo '<div class="d-flex align-items-end justify-content-center navbarBrowser" style="flex-grow: 1">
-                        <div class="alert alert-warning mb-0">
-                            <i class="fas fa-question-circle"></i>
-                            This site is currently under development. Please direct questions and feedback <a style="text-decoration: underline" href="mailto:'.$configManager->getAdminEmail().'">here</a>.
-                        </div>
-                    </div>';
-            } else {
+            /* For desktop users */
+            if(isset($_SESSION['masq']) && $_SESSION['masq']['active'])  {
                 $user = $userDao->getUserByID($_SESSION['userID']);
 
                 echo '<div class="d-flex align-items-end justify-content-center navbarBrowser" style="flex-grow: 1">
@@ -193,18 +179,8 @@ header("Expires: 0");
 
     <main class="px-1" style="padding-top: initial;">
     <?php
-        if(!isset($_SESSION['masq']) || !$_SESSION['masq']['active']) {
-            if(!in_array($_SERVER['SCRIPT_NAME'], [
-                '/education/hiring/pages/index.php', 
-                '/education/hiring/pages/login.php', 
-                '/education/hiring/pages/local/login.php',
-                '/education/hiring/pages/local/forgotPassword.php',
-                '/education/hiring/pages/local/newUser.php',
-                '/education/hiring/pages/error.php']))
-                echo '<div class="alert alert-warning mb-0 navbarMobile w-100">
-                        This site is currently under development. Please direct questions and feedback <a href="mailto:bairdn@oregonstate.edu">here</a>.
-                    </div>';
-        } else {
+        /* For mobile device users */
+        if(isset($_SESSION['masq']) && $_SESSION['masq']['active']) {
             $user = $userDao->getUserByID($_SESSION['userID']);
 
             echo '<div class="navbarMobile w-100" style="flex-grow: 1">

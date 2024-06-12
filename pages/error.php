@@ -33,9 +33,8 @@ echo "
         <div class='col'>
             <h1>Whoops!</h1>
             <p style='white-space: initial'>$message</p>
-            <p class='d-inline'><b>NOTE: </b>If you believe this site contains an error, please click the red button to submit an issue report.</p>
+            <p class='d-inline'><b>NOTE: </b>If you believe this site contains an error, please click the orange feeedback button to submit an issue report.</p>
             <a href='$baseUrl' class='btn btn-primary float-right'>Home Page</a>
-            <a href='mailto:$adminEmail' class='btn btn-outline-danger float-right mx-2'>Report to Admins</a>
         </div>
     </div>
 </div>

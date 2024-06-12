@@ -122,3 +122,5 @@ function getName($authMethod) {
         }).finally(() => thisVal.disabled = false);
     }
 </script>
+
+<?php include_once PUBLIC_FILES . '/modules/footer.php'; ?>
