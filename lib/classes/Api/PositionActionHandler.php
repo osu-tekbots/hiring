@@ -159,6 +159,11 @@ class PositionActionHandler extends ActionHandler {
             $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Search Chair role not set'));
         }
 
+        // Notify the admins that a position has been created
+        $user = $this->userDao->getUserByID($_SESSION['userID']);
+        $message = $this->messageDao->getMessageByID(6);
+        $ok = $this->hiringMailer->sendPositionCreatedEmail($message, $user->getFirstName().' '.$user->getLastName(), $body['title'], $this->configManager);
+
         // Use Response object to send success
         $this->respond(new Response(Response::OK, 'Position created', $position->getID()));
     }

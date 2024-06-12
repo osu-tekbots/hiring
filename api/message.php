@@ -19,7 +19,7 @@ if(!session_id()) {
 
 $messageDao = new MessageDao($dbConn, $logger);
 $hiringMailer = new HiringMailer($configManager->getAdminEmail(), $configManager->getBounceEmail(), $configManager->getAdminEmailTag(), $logger);
-$handler = new MessageActionHandler($messageDao, $hiringMailer, $logger);
+$handler = new MessageActionHandler($messageDao, $hiringMailer, $configManager, $logger);
 
 // Ensure the user is logged in
 if (verifyPermissions(['user', 'admin'])) {

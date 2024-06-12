@@ -17,6 +17,9 @@ class MessageActionHandler extends ActionHandler {
     /** @var \Mailer\HiringMailer */
     private $hiringMailer;
 
+    /** @var \Util\ConfigManager */
+    private $configManager;
+
     /** @var string The string to fill test email templates with */
     private $testString;
 	
@@ -28,13 +31,15 @@ class MessageActionHandler extends ActionHandler {
      *
      * @param \DataAccess\MessageDao $messageDao The class for accessing the Message database table
      * @param \Mailer\HiringMailer $hiringMailer The class for sending Hiring emails
+     * @param \Util\ConfigManager $configManager The class for getting configuration information
      * @param \Util\Logger $logger The class for logging execution details
      */
-	public function __construct($messageDao, $hiringMailer, $logger)
+	public function __construct($messageDao, $hiringMailer, $configManager, $logger)
     {
         parent::__construct($logger);
 		$this->messageDao = $messageDao;
         $this->hiringMailer = $hiringMailer;
+        $this->configManager = $configManager;
         $this->testString = '<i>&lt;test&gt;</i>';
     }
 
@@ -119,6 +124,9 @@ class MessageActionHandler extends ActionHandler {
                 break;
             case 5: // Reminder to complete feedback
                 $ok = $this->hiringMailer->sendFeedbackReminderEmail($user, $message, "Jane Doe", "Bob Smith", "CEO");
+                break;
+            case 6: // Position created
+                $ok = $this->hiringMailer->sendPositionCreatedEmail($message, "Jane Doe", "CEO", $this->configManager);
                 break;
             default:
                 $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Message not Found'));

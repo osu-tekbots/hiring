@@ -60,7 +60,7 @@ class MessageDao {
      * 
      * @param string $messageID The Message to get
      *
-     * @return Message|boolean a Message object if the fetch succeeds, false otherwise
+     * @return \Model\Message|boolean a Message object if the fetch succeeds, false otherwise
      */
     public function getMessageByID($messageID) {
         try {
