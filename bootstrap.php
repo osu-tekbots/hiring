@@ -1,6 +1,6 @@
 <?php
 /**
- * This page contains bootstraping logic required on all pages. It should be included at the very top of every file in
+ * This page contains bootstrapping logic required on all pages. It should be included at the very top of every file in
  *  the `/pages` directory.
  */
 
