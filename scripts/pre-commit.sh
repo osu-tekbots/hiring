@@ -11,7 +11,7 @@ echo "Starting pre-commit..."
 
 echo "Making sure permissions for files and directories are public"
 
-find . -not -path "./.git/*" -not -path "./uploads/*" -not -path "./scripts/*" -not -path "./.private/*" -not -path "./docs/*" -not -path "*/composer*" -not -path "./vendor/*" | while read f;
+find . -not -path "./crontab.txt" -not -path "./uploads/*" -not -path "./scripts/*" -not -path "./.private/*" -not -path "./docs/*" -not -path "*/composer*" -not -path "./vendor/*" -not -path "./.*" -not -path "*.md"  | while read f;
 do
     if [ "$f" = "." ] || [ "$f" = "./.git" ] || [ "$f" = "./uploads" ] || [ "$f" = "./scripts" ] || [ "$f" = "./.private" ] || [ "$f" = "./docs" ]; then
         continue
@@ -20,13 +20,32 @@ do
     FILE_PERMISSIONS=$(stat -c "%a" "$f")
 
     if [ -d "$f" ] && [ "$FILE_PERMISSIONS" != '2775' ]; then
+        echo
         echo "ERROR: Found directory '$f' with incorrect permissions '$FILE_PERMISSIONS'"
-        echo "Run 'chmod 775 \"$f\"' (or 'sh scripts/allow.sh' to fix all permissions) from the repository root before committing."
-        exit 1
+        echo "Would you like to update this directory's permissions to rwxrwxr-x??"
+        read -p "y/n: " yn < /dev/tty
+
+        if [ "$yn" = "y" ] || [ "$yn" = "yes" ]; then
+            chmod 775 "$f"
+        else
+            echo "Run 'chmod 775 \"$f\"' (or 'sh scripts/allow.sh' to fix all permissions) from the repository root before committing."
+            echo "Update 2024: scripts/allow.sh is out of date. Must be updated before being used."
+            exit 1
+        fi
+    
     elif [ -f "$f" ] && [ "$FILE_PERMISSIONS" != '775' ]; then
+        echo
         echo "ERROR: Found file '$f' with incorrect permissions '$FILE_PERMISSIONS'"
-        echo "Run 'chmod 775 \"$f\"' (or 'sh scripts/allow.sh' to fix all permissions) from the repository root before committing."
-        exit 1
+        echo "Would you like to update this file's permissions to rwxrwxr-x?"
+        read -p "y/n: " yn < /dev/tty
+
+        if [ "$yn" = "y" ]; then
+            chmod 775 "$f"
+        else
+            echo "Run 'chmod 775 \"$f\"' (or 'sh scripts/allow.sh' to fix all permissions) from the repository root before committing."
+            echo "Update 2024: scripts/allow.sh is out of date. Must be updated before being used."
+            exit 1
+        fi
     fi
 done
 
