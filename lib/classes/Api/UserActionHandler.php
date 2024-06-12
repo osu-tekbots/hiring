@@ -3,7 +3,6 @@ namespace Api;
 
 use Model\User;
 use Model\UserAuth;
-use DataAccess\UserDao;
 
 /**
  * Defines the logic for how to handle API requests made to modify User information.
@@ -12,6 +11,9 @@ class UserActionHandler extends ActionHandler {
 
     /** @var \DataAccess\UserDao */
     private $userDao;
+
+    /** @var \Util\ConfigManager */
+    private $configManager;
 	
     /**
      * Constructs a new instance of the User action handler.
@@ -20,12 +22,14 @@ class UserActionHandler extends ActionHandler {
      * internally.
      *
      * @param \DataAccess\UserDao $userDao The class for accessing the User database table
+     * @param \Util\ConfigManager $configManager The class for getting configuration details
      * @param \Util\Logger $logger The class for logging execution details
      */
-	public function __construct($userDao, $logger)
+	public function __construct($userDao, $configManager, $logger)
     {
         parent::__construct($logger);
 		$this->userDao = $userDao;
+		$this->configManager = $configManager;
     }
 
 	/**
@@ -79,6 +83,8 @@ class UserActionHandler extends ActionHandler {
         $this->requireParam('lastName');
         
         $body = $this->requestBody;
+
+        $this->verifyUserRole(['User', 'Admin'], NULL);
 
         if($body['onid'] == '') {
             $this->respond(new Response(Response::BAD_REQUEST, 'ONID must be provided'));
@@ -134,7 +140,8 @@ class UserActionHandler extends ActionHandler {
         $body = $this->requestBody;
 
         // Check if the user is allowed to masquerade
-        $this->verifyUserRole('Admin', NULL);
+        if ($this->configManager->getEnvironment() != 'dev')
+            $this->verifyUserRole('Admin', NULL);
 
         $user = $this->userDao->getUserByID($body['id']);
 
@@ -151,8 +158,9 @@ class UserActionHandler extends ActionHandler {
             'savedPreviousUser' => true,
             'userID' => $_SESSION['userID'],
             'userAccessLevel' => $_SESSION['userAccessLevel'],
-            'newUser' => $_SESSION['newUser'],
+            'newUser' => $_SESSION['newUser'] ?? false,
         );
+        $_SESSION['site'] = 'hiring';
         $_SESSION['userID'] = $user->getID();
         $_SESSION['userAccessLevel'] = $user->getAccessLevel();
         $_SESSION['newUser'] = false;
@@ -205,6 +213,8 @@ class UserActionHandler extends ActionHandler {
         $this->requireParam('id');
         
         $body = $this->requestBody;
+        
+        $this->verifyUserRole(['User', 'Admin'], NULL);
         
         if(!isset($body['firstName']) && !isset($body['lastName']) 
             && !isset($body['email']) && !isset($body['phone'])
@@ -260,6 +270,8 @@ class UserActionHandler extends ActionHandler {
         $this->requireParam('onid');
         
         $body = $this->requestBody;
+
+        $this->verifyUserRole('Admin', NULL);
 
         $user = $this->userDao->getUserByID($body['id']);
         if(!$user) {

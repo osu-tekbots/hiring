@@ -16,13 +16,9 @@ if(!session_id()) {
 }
 
 $userDao = new UserDao($dbConn, $logger);
-$handler = new UserActionHandler($userDao, $logger);
+$handler = new UserActionHandler($userDao, $configManager, $logger);
 
-// Ensure the user is logged in
-if (verifyPermissions(['user', 'admin'])) {
-	$handler->handleRequest();
-} else {
-    $handler->respond(new Response(Response::UNAUTHORIZED, 'You do not have permission to access this resource. Do you need to re-login?'));
-}
+// Request authentication happens in ActionHandler methods
+$handler->handleRequest();
 
 ?>

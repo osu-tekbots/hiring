@@ -7,7 +7,7 @@ if(!isset($_SESSION)) {
 
 // Make sure the user is logged in and allowed to be on this page
 include_once PUBLIC_FILES . '/lib/authorize.php';
-allowIf(verifyPermissions(['user', 'admin']), 'index.php');
+allowIf(verifyPermissions(['user', 'admin']), '../index.php');
 
 $title = 'Dashboard';
 include_once PUBLIC_FILES . '/modules/header.php';

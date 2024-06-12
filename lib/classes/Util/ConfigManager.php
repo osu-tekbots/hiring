@@ -88,6 +88,15 @@ class ConfigManager {
     }
 
     /**
+     * Fetches the environment (development or production) from configuration.
+     *
+     * @return string|null the environment if defined, null otherwise
+     */
+    public function getEnvironment() {
+        return $this->get('server.environment');
+    }
+
+    /**
      * Configures the server to display or hide errors.
      * 
      * This function uses the `ini_set()` PHP function internally.

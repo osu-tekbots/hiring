@@ -6,8 +6,12 @@ if(!isset($_SESSION)) {
 }
 
 // Make sure the user is logged in and allowed to be on this page
-include_once PUBLIC_FILES . '/lib/authorize.php';
-allowIf(verifyPermissions('admin'), '../index.php');
+if ($configManager->getEnvironment() != 'dev') {
+    // Make sure the user is an admin
+    include_once PUBLIC_FILES . '/lib/authorize.php';
+    allowIf(verifyPermissions('admin'), '../index.php');
+}
+
 
 $title = 'Dashboard';
 $css = array(array('defer' => 'true', 'href' => 'assets/css/sb-admin.min.css'), 'assets/css/admin.css');
