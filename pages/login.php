@@ -25,7 +25,12 @@ include_once PUBLIC_FILES . '/modules/header.php';
         <br>
         <hr class="my-4">
         <h4 class="text-center">OSU Employee Login</h4>
-        <a class="login" href="auth/index.php?provider=onid" style="text-decoration:none;">
+        <?php 
+            if ($configManager->getEnvironment() == 'dev')
+                echo '<a class="login" href="masq/index.php" style="text-decoration:none;">';
+            else
+                echo '<a class="login" href="auth/index.php?provider=onid" style="text-decoration:none;">';
+        ?>
             <button id="onidBtn" class="btn btn-lg btn-warning btn-block text-uppercase" type="submit">
                 <i class="fas fa-book mr-2"></i> ONID Login
             </button>
